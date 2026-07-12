@@ -231,7 +231,7 @@ export default function Dashboard() {
       const courseObj = courses.find(c => c.id === selectedCourse);
       const courseName = courseObj?.name || "Introduction to Sovereign AI";
       const questions = COURSE_QUESTIONS[courseName] || COURSE_QUESTIONS["Introduction to Sovereign AI"];
-      const isCorrect = answer === questions[qIndex].options[questions[qIndex].answerIndex];
+      const isCorrect = questions[qIndex] ? answer === questions[qIndex].options[questions[qIndex].answerIndex] : false;
       const payloadAnswer = isCorrect ? "CORRECT_ANSWER_PADDED" : "WRONG";
 
       const tx = await contract.submitAnswer(selectedCourse, quizId, payloadAnswer);
@@ -469,8 +469,9 @@ export default function Dashboard() {
                     const courseObj = courses.find(c => c.id === selectedCourse);
                     const courseName = courseObj?.name || "Introduction to Sovereign AI";
                     const questions = COURSE_QUESTIONS[courseName] || COURSE_QUESTIONS["Introduction to Sovereign AI"];
-                    const qText = questions[qObj.qIndex].q;
-                    const correctAns = questions[qObj.qIndex].options[questions[qObj.qIndex].answerIndex];
+                    const qItem = questions[qObj.qIndex];
+                    const qText = qItem ? qItem.q : "Legacy Question";
+                    const correctAns = qItem ? qItem.options[qItem.answerIndex] : "N/A";
                     return (
                       <div key={i} style={{ padding: '1rem', background: 'rgba(255,255,255,0.02)', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.05)' }}>
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.5rem' }}>
