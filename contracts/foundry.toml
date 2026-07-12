@@ -1,0 +1,17 @@
+[profile.default]
+src = "src"
+out = "out"
+libs = ["lib"]
+
+[fmt]
+  line_length = 120
+  tab_width = 4
+  bracket_spacing = true
+  number_padding = true
+  quote_style = "double"
+
+[solc]
+  version = "0.8.20"
+  optimizer = true
+  via_ir = true
+  evm_version = "shanghai"
