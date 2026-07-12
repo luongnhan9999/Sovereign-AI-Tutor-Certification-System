@@ -70,22 +70,28 @@ export default function Dashboard() {
   const requestQuiz = async () => {
     if (!selectedCourse) return;
     try {
+      await switchNetwork(); // Ensure they are on Ritual before writing
       const signer = await getSigner();
+      if (!signer) return;
       const contract = new ethers.Contract(CONTRACTS.tutor.address, CONTRACTS.tutor.abi, signer);
       const tx = await contract.requestQuiz(selectedCourse);
       await tx.wait();
       
       setQuizId("mock-quiz-" + account.slice(0,6) + "-" + selectedCourse + "-" + Date.now());
-    } catch (e) {
+    } catch (e: any) {
       console.error(e);
-      alert("Failed to request quiz. Make sure you are connected to the Base Sepolia network.");
+      if (e.code !== 4001) { // 4001 is user rejected
+        alert("Failed to request quiz. Make sure you are connected to the Ritual Testnet.");
+      }
     }
   };
 
   const submitAnswer = async () => {
     if (!selectedCourse || !quizId) return;
     try {
+      await switchNetwork(); // Ensure they are on Ritual before writing
       const signer = await getSigner();
+      if (!signer) return;
       const contract = new ethers.Contract(CONTRACTS.tutor.address, CONTRACTS.tutor.abi, signer);
       const tx = await contract.submitAnswer(selectedCourse, quizId, answer);
       await tx.wait();
@@ -94,9 +100,11 @@ export default function Dashboard() {
       setProgress({ completed: Number(prog[0]), certificateMinted: prog[2] });
       setQuizId('');
       setAnswer('');
-    } catch (e) {
+    } catch (e: any) {
       console.error(e);
-      alert("Failed to submit answer.");
+      if (e.code !== 4001) {
+        alert("Failed to submit answer.");
+      }
     }
   };
 
@@ -190,8 +198,13 @@ export default function Dashboard() {
               {quizId && (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginTop: '1rem' }}>
                   <div style={{ padding: '1rem', background: 'rgba(99, 102, 241, 0.1)', border: '1px solid rgba(99, 102, 241, 0.2)', borderRadius: 'var(--radius-md)' }}>
-                    <span style={{ fontSize: '0.8rem', color: 'var(--accent-blue)', textTransform: 'uppercase', fontWeight: 600 }}>Active Quiz</span>
-                    <p style={{ marginTop: '0.5rem', fontFamily: 'monospace', fontSize: '0.85rem' }}>{quizId}</p>
+                    <span style={{ fontSize: '0.8rem', color: 'var(--accent-blue)', textTransform: 'uppercase', fontWeight: 600 }}>Active Quiz (Powered by Ritual)</span>
+                    <p style={{ marginTop: '0.5rem', fontFamily: 'monospace', fontSize: '0.85rem', color: 'var(--text-muted)' }}>ID: {quizId}</p>
+                    <div style={{ marginTop: '1rem', padding: '1rem', background: 'var(--bg-secondary)', borderRadius: 'var(--radius-md)', border: '1px solid var(--glass-border)' }}>
+                      <p style={{ fontSize: '1rem', lineHeight: '1.6' }}>
+                        <strong>Question:</strong> Please write a short essay explaining the core concepts of Sovereign AI and how Trusted Execution Environments (TEEs) ensure verifiable execution of AI models on the blockchain.
+                      </p>
+                    </div>
                   </div>
                   <textarea
                     placeholder="Type your answer here..."

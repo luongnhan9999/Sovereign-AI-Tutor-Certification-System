@@ -406,6 +406,7 @@ a { text-decoration: none; color: inherit; }
   background: linear-gradient(135deg, rgba(99,102,241,0.05), transparent 50%);
   opacity: 0;
   transition: opacity 0.4s;
+  pointer-events: none;
 }
 
 .glass-card:hover::before { opacity: 1; }
