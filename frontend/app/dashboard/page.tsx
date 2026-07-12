@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react';
 import { ethers } from 'ethers';
 import Link from 'next/link';
-import { getProvider, getReadProvider, getSigner, CONTRACTS } from '@/lib/web3';
+import { getProvider, getReadProvider, getSigner, switchNetwork, CONTRACTS } from '@/lib/web3';
 
 export default function Dashboard() {
   const [account, setAccount] = useState<string>('');
