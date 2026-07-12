@@ -10,7 +10,7 @@ async function main() {
   const provider = new ethers.JsonRpcProvider(rpc);
   const wallet = new ethers.Wallet(privateKey, provider);
 
-  const agentAddress = "0x270F0738793c5C958a95bb823720F82B45147a29";
+  const agentAddress = "0x1fdC33140418aC0F6E11019FC615fCDE74e407F4";
   const abi = ["function setMockMode(bool) external"];
   const contract = new ethers.Contract(agentAddress, abi, wallet);
 
