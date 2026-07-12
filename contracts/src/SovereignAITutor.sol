@@ -86,8 +86,8 @@ contract SovereignAITutor is ERC721URIStorage, Ownable {
         }
         prog.lastQuizTimestamp = block.timestamp;
         emit QuizAnswered(msg.sender, courseId, correct);
-        // Auto-mint certificate if course completed and not yet minted
-        if (prog.completedQuizzes >= courses[courseId].totalQuizzes && !prog.certificateMinted) {
+        // Auto-mint certificate if course reached Diamond rank (201) and not yet minted
+        if (prog.completedQuizzes >= 201 && !prog.certificateMinted) {
             uint256 tokenId = uint256(keccak256(abi.encodePacked(msg.sender, courseId, block.timestamp)));
             _safeMint(msg.sender, tokenId);
             // In a real implementation, set token URI to metadata JSON

@@ -73,7 +73,7 @@ export async function switchNetwork() {
  */
 export const CONTRACTS = {
   tutor: {
-    address: '0x3bCb82d3A5642E8b1FF1E492eeaBD2b3A8972251',
+    address: '0x949f655ea660CC6FD620f2866CE7eE9f924C8368',
     abi: [
       // Minimal ABI needed for the dashboard UI
       'function nextCourseId() view returns (uint256)',
