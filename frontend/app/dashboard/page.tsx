@@ -255,34 +255,7 @@ export default function Dashboard() {
                 </div>
               </div>
 
-              {(() => {
-                let badge = null;
-                if (progress.completed >= 201) badge = { name: "Diamond Badge", icon: "💎", color: "#00d2ff" };
-                else if (progress.completed >= 101) badge = { name: "Gold Badge", icon: "🥇", color: "#ffd700" };
-                else if (progress.completed >= 51) badge = { name: "Silver Badge", icon: "🥈", color: "#c0c0c0" };
-                else if (progress.completed >= 10) badge = { name: "Bronze Badge", icon: "🥉", color: "#cd7f32" };
-                
-                if (badge) {
-                  return (
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', padding: '1rem', background: 'rgba(255,255,255,0.03)', borderRadius: '8px', border: `1px solid ${badge.color}40`, marginTop: '1rem' }}>
-                      <div style={{ fontSize: '2.5rem' }}>{badge.icon}</div>
-                      <div>
-                        <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '1px' }}>Current Rank</div>
-                        <div style={{ color: badge.color, fontWeight: 700, fontSize: '1.2rem' }}>{badge.name}</div>
-                      </div>
-                    </div>
-                  );
-                }
-                return (
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', padding: '1rem', background: 'rgba(255,255,255,0.02)', borderRadius: '8px', border: '1px dashed rgba(255,255,255,0.1)', marginTop: '1rem' }}>
-                    <div style={{ fontSize: '2rem', opacity: 0.5 }}>🏆</div>
-                    <div>
-                      <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>No Badge Yet</div>
-                      <div style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>Reach 10 correct answers for Bronze!</div>
-                    </div>
-                  </div>
-                );
-              })()}
+
 
               {!quizId && (
                 <button className="btn btn-primary" style={{ width: '100%', marginTop: '2rem' }} onClick={() => requestQuiz(true)} disabled={isSubmitting}>
@@ -318,13 +291,30 @@ export default function Dashboard() {
                   </button>
                 </div>
               )}
-              {progress.certificateMinted && (
-                <div style={{ marginTop: '2rem', padding: '1.5rem', background: 'rgba(34, 197, 94, 0.1)', border: '1px solid rgba(34, 197, 94, 0.2)', borderRadius: 'var(--radius-md)', textAlign: 'center' }}>
-                  <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>🏆</div>
-                  <h3 style={{ color: '#4ade80', marginBottom: '0.5rem' }}>Course Completed!</h3>
-                  <p style={{ color: 'var(--text-muted)' }}>You have successfully completed all quizzes. Your NFT Certificate and Reward have been minted.</p>
-                </div>
-              )}
+              {(() => {
+                let badge = null;
+                if (progress.completed >= 201) badge = { name: "Diamond Badge", icon: "💎", color: "#00d2ff", bg: "rgba(0, 210, 255, 0.1)" };
+                else if (progress.completed >= 101) badge = { name: "Gold Badge", icon: "🥇", color: "#ffd700", bg: "rgba(255, 215, 0, 0.1)" };
+                else if (progress.completed >= 51) badge = { name: "Silver Badge", icon: "🥈", color: "#c0c0c0", bg: "rgba(192, 192, 192, 0.1)" };
+                else if (progress.completed >= 10) badge = { name: "Bronze Badge", icon: "🥉", color: "#cd7f32", bg: "rgba(205, 127, 50, 0.1)" };
+                
+                if (badge) {
+                  return (
+                    <div style={{ marginTop: '2rem', padding: '2rem', background: badge.bg, border: `1px solid ${badge.color}40`, borderRadius: 'var(--radius-md)', textAlign: 'center' }}>
+                      <div style={{ fontSize: '4rem', marginBottom: '1rem', filter: `drop-shadow(0 0 10px ${badge.color}80)` }}>{badge.icon}</div>
+                      <h3 style={{ color: badge.color, marginBottom: '0.5rem', fontSize: '1.8rem' }}>{badge.name}</h3>
+                      <p style={{ color: 'var(--text-muted)' }}>Congratulations! Keep answering correctly to reach the next rank.</p>
+                    </div>
+                  );
+                }
+                return (
+                  <div style={{ marginTop: '2rem', padding: '2rem', background: 'rgba(255, 255, 255, 0.02)', border: '1px dashed rgba(255, 255, 255, 0.1)', borderRadius: 'var(--radius-md)', textAlign: 'center' }}>
+                    <div style={{ fontSize: '3rem', marginBottom: '1rem', opacity: 0.5, filter: 'grayscale(100%)' }}>🏆</div>
+                    <h3 style={{ color: 'var(--text-muted)', marginBottom: '0.5rem', fontSize: '1.2rem' }}>No Badge Yet</h3>
+                    <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: '0.9rem' }}>Answer 10 questions correctly to unlock the Bronze Badge.</p>
+                  </div>
+                );
+              })()}
             </div>
           ) : (
             <div className="glass-card" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', minHeight: '300px', color: 'var(--text-muted)' }}>
