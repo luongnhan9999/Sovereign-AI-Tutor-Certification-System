@@ -1,12 +1,17 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
 
+import "@openzeppelin/contracts/utils/Strings.sol";
+
 /**
  * @title TutorAgent
  * @dev Interacts with Ritual TEE precompiles for LLM and HTTP.
  *      Supports mock mode for demo purposes.
  */
 contract TutorAgent {
+    using Strings for uint256;
+    using Strings for address;
+
     // ---------------------------------------------------------------
     // State
     // ---------------------------------------------------------------
@@ -50,7 +55,7 @@ contract TutorAgent {
     function generateQuiz(address user, uint256 courseId) external view returns (string memory quizId) {
         if (isMockMode) {
             // simple deterministic mock
-            quizId = string(abi.encodePacked("mock-quiz-", toString(user), "-", toString(courseId)));
+            quizId = string(abi.encodePacked("mock-quiz-", user.toHexString(), "-", courseId.toString()));
         } else {
             // Call LLM precompile – custom ABI assumed: (address,uint256) -> (string)
             bytes memory payload = abi.encodeWithSignature("generateQuiz(address,uint256)", user, courseId);
@@ -74,25 +79,5 @@ contract TutorAgent {
             require(success, "LLM evaluate failed");
             correct = abi.decode(ret, (bool));
         }
-    }
-
-    // ---------------------------------------------------------------
-    // Helper utilities
-    // ---------------------------------------------------------------
-    function toString(address a) internal pure returns (string memory) {
-        return toHexString(uint160(a), 20);
-    }
-
-    function toHexString(uint256 value, uint256 length) internal pure returns (string memory) {
-        bytes16 hexAlphabet = "0123456789abcdef";
-        bytes memory buffer = new bytes(2 * length + 2);
-        buffer[0] = "0";
-        buffer[1] = "x";
-        for (uint256 i = 0; i < length; i++) {
-            buffer[2 * length + 1 - i * 2] = hexAlphabet[value & 0xf];
-            buffer[2 * length + 2 - i * 2] = hexAlphabet[(value >> 4) & 0xf];
-            value >>= 8;
-        }
-        return string(buffer);
     }
 }

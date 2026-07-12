@@ -16,11 +16,12 @@ export function getProvider(): ethers.Provider {
 }
 
 /** Returns a signer attached to MetaMask (if present). */
-export function getSigner(): ethers.Signer {
-  const provider = getProvider();
-  // BrowserProvider has getSigner method
-  // @ts-ignore – TypeScript guard for BrowserProvider
-  return (provider as any).getSigner?.();
+export async function getSigner(): Promise<ethers.JsonRpcSigner | null> {
+  if (typeof window !== 'undefined' && (window as any).ethereum) {
+    const provider = new ethers.BrowserProvider((window as any).ethereum);
+    return await provider.getSigner();
+  }
+  return null;
 }
 
 /**

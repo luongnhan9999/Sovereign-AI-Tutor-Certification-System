@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
 
-import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "./TutorAgent.sol";
@@ -11,7 +10,7 @@ import "./TutorAgent.sol";
  * @dev Main contract managing users, courses, progress, rewards, and certificates.
  *      Integrates with TutorAgent for AI-driven quiz generation and evaluation.
  */
-contract SovereignAITutor is ERC20, ERC721URIStorage, Ownable {
+contract SovereignAITutor is ERC721URIStorage, Ownable {
     // ---------------------------------------------------------------------
     // Types & Structs
     // ---------------------------------------------------------------------
@@ -19,7 +18,7 @@ contract SovereignAITutor is ERC20, ERC721URIStorage, Ownable {
         uint256 id;
         string name;
         uint256 totalQuizzes;
-        uint256 rewardAmount; // amount of ERC20 reward per completed quiz
+        uint256 rewardAmount; // amount of reward points per completed quiz
     }
 
     struct Progress {
@@ -34,6 +33,7 @@ contract SovereignAITutor is ERC20, ERC721URIStorage, Ownable {
     uint256 public nextCourseId;
     mapping(uint256 => Course) public courses;                 // courseId => Course
     mapping(address => mapping(uint256 => Progress)) public userProgress; // user => courseId => Progress
+    mapping(address => uint256) public rewardBalance;          // simple token balance mapping
     TutorAgent public tutorAgent;
 
     // ---------------------------------------------------------------------
@@ -47,7 +47,7 @@ contract SovereignAITutor is ERC20, ERC721URIStorage, Ownable {
     // ---------------------------------------------------------------------
     // Constructor
     // ---------------------------------------------------------------------
-    constructor(address _agent) ERC20("TutorReward", "TRW") ERC721("TutorCertificate", "TCERT") {
+    constructor(address _agent) ERC721("TutorCertificate", "TCERT") Ownable(msg.sender) {
         tutorAgent = TutorAgent(_agent);
     }
 
@@ -78,8 +78,8 @@ contract SovereignAITutor is ERC20, ERC721URIStorage, Ownable {
         Progress storage prog = userProgress[msg.sender][courseId];
         if (correct) {
             prog.completedQuizzes += 1;
-            // Reward ERC20 tokens
-            _mint(msg.sender, courses[courseId].rewardAmount);
+            // Reward points
+            rewardBalance[msg.sender] += courses[courseId].rewardAmount;
         }
         prog.lastQuizTimestamp = block.timestamp;
         emit QuizAnswered(msg.sender, courseId, correct);
