@@ -348,13 +348,18 @@ export default function Dashboard() {
         <div className="wallet-badge" style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
           {account ? (
             <>
-              <div><span className="status-dot"></span> {account}</div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', background: 'rgba(34, 197, 94, 0.1)', border: '1px solid rgba(34, 197, 94, 0.3)', padding: '0.5rem 1rem', borderRadius: 'var(--radius-full)', color: '#4ade80', fontWeight: 600, fontSize: '0.95rem' }}>
+                <span className="status-dot" style={{ background: '#4ade80', width: '8px', height: '8px', borderRadius: '50%', boxShadow: '0 0 8px #4ade80' }}></span> 
+                {account.slice(0,6)}...{account.slice(-4)}
+              </div>
               <button 
-                className="btn" 
-                style={{ background: 'rgba(239, 68, 68, 0.1)', color: '#ef4444', border: '1px solid rgba(239, 68, 68, 0.3)', padding: '0.4rem 0.8rem', fontSize: '0.8rem', cursor: 'pointer', borderRadius: 'var(--radius-sm)' }} 
-                onClick={() => setAccount("")}
+                className="btn hover-effect" 
+                style={{ background: 'rgba(239, 68, 68, 0.15)', color: '#f87171', border: '1px solid rgba(239, 68, 68, 0.3)', padding: '0.5rem 1rem', fontSize: '0.9rem', cursor: 'pointer', borderRadius: 'var(--radius-full)', display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 600 }} 
+                onClick={() => { setAccount(""); setAskedQuestions([]); setProgress({completed: 0, pending: 0}); }}
+                title="Disconnect Wallet"
               >
-                Logout
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+                Disconnect
               </button>
             </>
           ) : (
