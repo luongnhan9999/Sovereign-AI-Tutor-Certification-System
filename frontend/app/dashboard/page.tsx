@@ -4,6 +4,18 @@ import { ethers } from 'ethers';
 import Link from 'next/link';
 import { getProvider, getReadProvider, getSigner, switchNetwork, CONTRACTS } from '@/lib/web3';
 
+const RITUAL_QUESTIONS = [
+  "Explain the execution-cost inversion problem in current blockchain SMR protocols and how Symphony addresses it.",
+  "What are the two independent sources of randomness that break replicated execution in GPU-accelerated workloads according to Ritual?",
+  "Describe the difference between hardware non-reproducibility and algorithmic randomness.",
+  "How does Symphony's product lattice over proof systems enable heterogeneous verification?",
+  "What is Extended External Validity and how does Symphony use it to enforce proposer guarantees?",
+  "Explain the difference between inclusion guarantees and exclusion guarantees in Symphony.",
+  "How does Symphony handle conflicting inclusion and exclusion guarantees during block construction?",
+  "What is the two-phase saga semantics for delegated execution in Symphony?",
+  "How does Symphony's structure-exploiting workload decomposition optimize proof generation for neural networks?"
+];
+
 export default function Dashboard() {
   const [account, setAccount] = useState<string>('');
   const [courses, setCourses] = useState<Array<any>>([]);
