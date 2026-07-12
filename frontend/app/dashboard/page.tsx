@@ -125,13 +125,16 @@ export default function Dashboard() {
       if (stored) {
         try {
           const parsed = JSON.parse(stored);
+          let hasLegacy = false;
           const formatted = parsed.map((item: any) => {
             if (typeof item === 'number') {
-              return { qIndex: item, answered: true, correct: true };
+              hasLegacy = true;
+              return { qIndex: item, answered: true, correct: true, selectedAnswer: null };
             }
             return item;
           });
-          setAskedQuestions(formatted);
+          // If we have legacy data, we filter them out so user only sees accurate history
+          setAskedQuestions(hasLegacy ? formatted.filter((q: any) => q.selectedAnswer !== null) : formatted);
         } catch(e) {
           setAskedQuestions([]);
         }
@@ -202,9 +205,12 @@ export default function Dashboard() {
       setAskedQuestions(prev => {
         const newQ = [...prev];
         if (newQ.length > 0) {
-          newQ[newQ.length - 1].answered = true;
-          newQ[newQ.length - 1].correct = isCorrect;
-          newQ[newQ.length - 1].selectedAnswer = answer;
+          newQ[newQ.length - 1] = {
+            ...newQ[newQ.length - 1],
+            answered: true,
+            correct: isCorrect,
+            selectedAnswer: answer
+          };
         }
         return newQ;
       });
