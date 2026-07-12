@@ -96,52 +96,84 @@ export default function Dashboard() {
   };
 
   return (
-    <main className="flex flex-col items-center p-8 min-h-screen bg-gray-900 text-white">
-      <h1 className="text-3xl font-bold mb-6">Dashboard</h1>
+    <main className="dashboard-container">
+      <h1 className="dashboard-title">📊 Dashboard</h1>
+
       {account ? (
-        <p className="mb-4">Connected as: {account}</p>
+        <p style={{ marginBottom: '1rem', color: 'rgba(255,255,255,0.7)' }}>
+          Connected as: <strong>{account}</strong>
+        </p>
       ) : (
-        <p className="mb-4 text-red-400">Please connect MetaMask.</p>
+        <p style={{ marginBottom: '1rem', color: '#f87171' }}>Please connect MetaMask.</p>
       )}
-      <section className="w-full max-w-2xl mb-8">
-        <h2 className="text-xl font-semibold mb-3">Available Courses</h2>
-        <ul className="space-y-2">
+
+      <section style={{ marginBottom: '2rem' }}>
+        <h2 style={{ fontSize: '1.3rem', fontWeight: 600, marginBottom: '1rem' }}>Available Courses</h2>
+        <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
           {courses.map((c) => (
-            <li key={c.id} className="p-3 bg-white/5 rounded-md cursor-pointer hover:bg-white/10" onClick={() => setSelectedCourse(c.id)}>
-              <span className="font-medium">{c.name}</span> – {c.totalQuizzes} quizzes – Reward: {c.reward} TRW
+            <li
+              key={c.id}
+              className="glass-card"
+              style={{ cursor: 'pointer' }}
+              onClick={() => setSelectedCourse(c.id)}
+            >
+              <strong>{c.name}</strong> – {c.totalQuizzes} quizzes – Reward: {c.reward} TRW
             </li>
           ))}
         </ul>
       </section>
+
       {selectedCourse && (
-        <section className="w-full max-w-2xl space-y-6">
-          <h2 className="text-xl font-semibold">Course #{selectedCourse}</h2>
+        <section className="glass-card" style={{ maxWidth: '700px' }}>
+          <h2 style={{ fontSize: '1.2rem', fontWeight: 600, marginBottom: '1rem' }}>
+            Course #{selectedCourse}
+          </h2>
+
           {progress && (
-            <p>Completed quizzes: {progress.completed} / {courses.find((c) => c.id === selectedCourse)?.totalQuizzes}</p>
+            <p style={{ marginBottom: '0.75rem' }}>
+              Completed quizzes: {progress.completed} / {courses.find((c) => c.id === selectedCourse)?.totalQuizzes}
+            </p>
           )}
+
           {progress?.certificateMinted && (
-            <p className="text-green-400">Certificate minted! 🎉</p>
+            <p style={{ color: '#34d399', marginBottom: '1rem' }}>Certificate minted! 🎉</p>
           )}
+
           {!quizId && (
-            <button onClick={requestQuiz} className="px-4 py-2 bg-indigo-600 rounded hover:bg-indigo-500 transition">
+            <button onClick={requestQuiz} className="btn-primary">
               Request Quiz
             </button>
           )}
+
           {quizId && (
-            <div className="space-y-4">
-              <p className="font-medium">Quiz ID: {quizId}</p>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginTop: '1rem' }}>
+              <p><strong>Quiz ID:</strong> {quizId}</p>
               <textarea
                 placeholder="Your answer"
                 value={answer}
                 onChange={(e) => setAnswer(e.target.value)}
-                className="w-full p-2 bg-gray-800 rounded text-white"
+                style={{
+                  width: '100%',
+                  padding: '0.75rem',
+                  background: 'rgba(255,255,255,0.05)',
+                  border: '1px solid rgba(255,255,255,0.15)',
+                  borderRadius: '0.5rem',
+                  color: '#fff',
+                  fontFamily: 'inherit',
+                  fontSize: '0.95rem',
+                  resize: 'vertical',
+                  minHeight: '80px',
+                }}
               />
-              <button onClick={submitAnswer} className="px-4 py-2 bg-green-600 rounded hover:bg-green-500 transition">
+              <button onClick={submitAnswer} className="btn-primary" style={{ alignSelf: 'flex-start' }}>
                 Submit Answer
               </button>
             </div>
           )}
-          <Link href="/" className="inline-block mt-4 text-indigo-300 hover:underline">← Back to Home</Link>
+
+          <Link href="/" style={{ display: 'inline-block', marginTop: '1.5rem', color: '#a5b4fc', textDecoration: 'none' }}>
+            ← Back to Home
+          </Link>
         </section>
       )}
     </main>
