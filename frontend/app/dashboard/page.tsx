@@ -50,7 +50,7 @@ export default function Dashboard() {
       const readProvider = getReadProvider();
       const contract = new ethers.Contract(CONTRACTS.tutor.address, CONTRACTS.tutor.abi, readProvider);
       const nextId = await contract.nextCourseId();
-      const count = Number(nextId) - 1;
+      const count = Number(nextId);
       const loaded = [];
       for (let i = 1; i <= count; i++) {
         const c = await contract.courses(i);
