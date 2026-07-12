@@ -605,7 +605,7 @@ a { text-decoration: none; color: inherit; }
 
 .dash-grid {
   display: grid;
-  grid-template-columns: 350px 1fr;
+  grid-template-columns: 350px 1fr 350px;
   gap: 2rem;
 }
 

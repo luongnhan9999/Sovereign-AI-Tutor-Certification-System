@@ -387,6 +387,25 @@ export default function Dashboard() {
             </div>
           )}
         </section>
+        
+        {/* History Panel */}
+        <section className="history-panel">
+          <div className="glass-card history-room" style={{ height: '100%', minHeight: '500px', display: 'flex', flexDirection: 'column' }}>
+            <h3 style={{ marginBottom: '1.5rem', color: 'var(--text-muted)' }}>Quiz History</h3>
+            <div style={{ flex: 1, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '1rem', maxHeight: '600px', paddingRight: '0.5rem' }}>
+              {askedQuestions.length === 0 ? (
+                <p style={{ fontSize: '0.9rem', color: 'rgba(255,255,255,0.4)', textAlign: 'center', marginTop: '2rem' }}>No history yet. Start learning!</p>
+              ) : (
+                [...askedQuestions].reverse().map((qIdx, i) => (
+                  <div key={i} style={{ padding: '1rem', background: 'rgba(255,255,255,0.02)', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.05)' }}>
+                    <div style={{ fontSize: '0.75rem', color: 'var(--accent-emerald)', marginBottom: '0.5rem', textTransform: 'uppercase', fontWeight: 600 }}>Completed Quiz</div>
+                    <p style={{ margin: 0, fontSize: '0.9rem', lineHeight: '1.4' }}>{RITUAL_QUESTIONS[qIdx].q}</p>
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
+        </section>
       </main>
     </div>
   );
