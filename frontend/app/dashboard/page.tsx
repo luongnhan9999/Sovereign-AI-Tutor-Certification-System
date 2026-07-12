@@ -114,9 +114,11 @@ export default function Dashboard() {
 
   useEffect(() => {
     if (typeof window !== 'undefined' && (window as any).ethereum) {
-      (window as any).ethereum.request({ method: 'eth_accounts' }).then((accounts: string[]) => {
-        if (accounts.length) setAccount(ethers.getAddress(accounts[0]));
-      }).catch(() => {});
+      if (localStorage.getItem('manuallyDisconnected') !== 'true') {
+        (window as any).ethereum.request({ method: 'eth_accounts' }).then((accounts: string[]) => {
+          if (accounts.length) setAccount(ethers.getAddress(accounts[0]));
+        }).catch(() => {});
+      }
       (window as any).ethereum.on('accountsChanged', (accounts: string[]) => {
         setAccount(accounts.length ? ethers.getAddress(accounts[0]) : '');
       });

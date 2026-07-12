@@ -12,11 +12,13 @@ export default function Header() {
   // Check if wallet is already connected on load
   useEffect(() => {
     if (typeof window !== 'undefined' && (window as any).ethereum) {
-      (window as any).ethereum
-        .request({ method: 'eth_accounts' })
-        .then((accounts: string[]) => {
-          if (accounts.length) setAccount(ethers.getAddress(accounts[0]));
-        });
+      if (localStorage.getItem('manuallyDisconnected') !== 'true') {
+        (window as any).ethereum
+          .request({ method: 'eth_accounts' })
+          .then((accounts: string[]) => {
+            if (accounts.length) setAccount(ethers.getAddress(accounts[0]));
+          });
+      }
       (window as any).ethereum.on('accountsChanged', (accounts: string[]) => {
         setAccount(accounts.length ? ethers.getAddress(accounts[0]) : '');
       });
@@ -28,6 +30,7 @@ export default function Header() {
       try {
         const accounts = await (window as any).ethereum.request({ method: 'eth_requestAccounts' });
         if (accounts.length) {
+          localStorage.removeItem('manuallyDisconnected');
           setAccount(ethers.getAddress(accounts[0]));
           await switchNetwork();
         }
@@ -71,6 +74,7 @@ export default function Header() {
                 onClick={() => {
                   setAccount("");
                   setShowDropdown(false);
+                  localStorage.setItem('manuallyDisconnected', 'true');
                   // Reload the page to clear the dashboard state as well since it has its own account state
                   window.location.reload();
                 }}
