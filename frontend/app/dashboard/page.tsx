@@ -253,15 +253,36 @@ export default function Dashboard() {
                   <span>Progress: {progress.completed} Quizzes Completed</span>
                   <span style={{ color: 'var(--accent-blue)', fontWeight: 600 }}>Balance: {points} Ritual Points</span>
                 </div>
-                <div className="progress-track" style={{ width: '100%', height: '8px', background: 'rgba(255,255,255,0.05)', borderRadius: '4px', overflow: 'hidden' }}>
-                  <div className="progress-fill" style={{ 
-                    width: `${(progress.completed / (courses.find(c => c.id === selectedCourse)?.totalQuizzes || 1)) * 100}%`, 
-                    height: '100%', 
-                    background: 'linear-gradient(90deg, var(--accent-blue), var(--accent-purple))',
-                    transition: 'width 0.4s ease'
-                  }}></div>
-                </div>
               </div>
+
+              {(() => {
+                let badge = null;
+                if (progress.completed >= 201) badge = { name: "Diamond Badge", icon: "💎", color: "#00d2ff" };
+                else if (progress.completed >= 101) badge = { name: "Gold Badge", icon: "🥇", color: "#ffd700" };
+                else if (progress.completed >= 51) badge = { name: "Silver Badge", icon: "🥈", color: "#c0c0c0" };
+                else if (progress.completed >= 10) badge = { name: "Bronze Badge", icon: "🥉", color: "#cd7f32" };
+                
+                if (badge) {
+                  return (
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', padding: '1rem', background: 'rgba(255,255,255,0.03)', borderRadius: '8px', border: `1px solid ${badge.color}40`, marginTop: '1rem' }}>
+                      <div style={{ fontSize: '2.5rem' }}>{badge.icon}</div>
+                      <div>
+                        <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '1px' }}>Current Rank</div>
+                        <div style={{ color: badge.color, fontWeight: 700, fontSize: '1.2rem' }}>{badge.name}</div>
+                      </div>
+                    </div>
+                  );
+                }
+                return (
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', padding: '1rem', background: 'rgba(255,255,255,0.02)', borderRadius: '8px', border: '1px dashed rgba(255,255,255,0.1)', marginTop: '1rem' }}>
+                    <div style={{ fontSize: '2rem', opacity: 0.5 }}>🏆</div>
+                    <div>
+                      <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>No Badge Yet</div>
+                      <div style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>Reach 10 correct answers for Bronze!</div>
+                    </div>
+                  </div>
+                );
+              })()}
 
               {!quizId && (
                 <button className="btn btn-primary" style={{ width: '100%', marginTop: '2rem' }} onClick={() => requestQuiz(true)} disabled={isSubmitting}>
