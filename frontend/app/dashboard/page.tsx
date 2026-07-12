@@ -98,7 +98,7 @@ export default function Dashboard() {
       
       try {
         const bal = await contract.rewardBalance(account);
-        setPoints(Number(ethers.formatEther(bal || 0)) * 1e18); // Since reward is e.g. 10 * 1e18
+        setPoints(Number(ethers.formatEther(bal || 0)));
       } catch (e) {
         setPoints(0);
       }
@@ -173,9 +173,9 @@ export default function Dashboard() {
       setQuizId('');
       setAnswer('');
       
-      // Automatically request next quiz if not done
+      // Automatically request next quiz
       const courseDetails = courses.find(c => c.id === selectedCourse);
-      if (courseDetails && newProg !== undefined && newProg < courseDetails.totalQuizzes) {
+      if (courseDetails && newProg !== undefined) {
         // Auto trigger next
         setTimeout(() => requestQuiz(false), 500);
       }
@@ -234,7 +234,7 @@ export default function Dashboard() {
                 >
                   <div className="card-icon" style={{ marginBottom: '1rem', width: '40px', height: '40px', fontSize: '1.2rem' }}>📚</div>
                   <h3>{c.name}</h3>
-                  <p><strong>{c.totalQuizzes}</strong> Quizzes • Reward: <strong>{c.reward} Ritual Points</strong></p>
+                  <p style={{ margin: 0, fontSize: '0.85rem', color: 'var(--text-muted)' }}>Unlimited Quizzes • Reward Balance: {points} Ritual Points</p>
                 </div>
               ))
             )}
@@ -250,7 +250,7 @@ export default function Dashboard() {
               
               <div className="progress-bar-container">
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem', fontSize: '0.85rem', color: 'var(--text-muted)' }}>
-                  <span>Progress: {progress.completed} / {courses.find(c => c.id === selectedCourse)?.totalQuizzes}</span>
+                  <span>Progress: {progress.completed} Quizzes Completed</span>
                   <span style={{ color: 'var(--accent-blue)', fontWeight: 600 }}>Balance: {points} Ritual Points</span>
                 </div>
                 <div className="progress-track" style={{ width: '100%', height: '8px', background: 'rgba(255,255,255,0.05)', borderRadius: '4px', overflow: 'hidden' }}>
@@ -263,7 +263,7 @@ export default function Dashboard() {
                 </div>
               </div>
 
-              {!quizId && progress.completed < (courses.find(c => c.id === selectedCourse)?.totalQuizzes || 1) && (
+              {!quizId && (
                 <button className="btn btn-primary" style={{ width: '100%', marginTop: '2rem' }} onClick={() => requestQuiz(true)} disabled={isSubmitting}>
                   {isSubmitting ? "Processing..." : progress.completed === 0 ? "Start Course" : "Request Next Quiz"}
                 </button>
