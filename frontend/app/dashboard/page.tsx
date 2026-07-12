@@ -418,7 +418,12 @@ export default function Dashboard() {
                   const correctAns = RITUAL_QUESTIONS[qObj.qIndex].options[RITUAL_QUESTIONS[qObj.qIndex].answerIndex];
                   return (
                     <div key={i} style={{ padding: '1rem', background: 'rgba(255,255,255,0.02)', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.05)' }}>
-                      <p style={{ margin: '0 0 0.5rem 0', fontSize: '0.9rem', lineHeight: '1.4', fontWeight: 600 }}>{qText}</p>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.5rem' }}>
+                        <p style={{ margin: '0 0 0.5rem 0', fontSize: '0.9rem', lineHeight: '1.4', fontWeight: 600, flex: 1, paddingRight: '1rem' }}>{qText}</p>
+                        <span style={{ fontSize: '0.75rem', padding: '0.2rem 0.5rem', borderRadius: '4px', background: qObj.correct ? 'rgba(34, 197, 94, 0.2)' : 'rgba(239, 68, 68, 0.2)', color: qObj.correct ? '#4ade80' : '#f87171', fontWeight: 600, whiteSpace: 'nowrap' }}>
+                           {qObj.correct ? 'CORRECT' : 'INCORRECT'}
+                        </span>
+                      </div>
                       <div style={{ fontSize: '0.85rem', marginTop: '0.5rem', padding: '0.5rem', background: qObj.correct ? 'rgba(34, 197, 94, 0.1)' : 'rgba(239, 68, 68, 0.1)', borderLeft: `3px solid ${qObj.correct ? '#4ade80' : '#f87171'}`, borderRadius: '4px' }}>
                         <div style={{ color: 'var(--text-secondary)' }}>Your answer: <strong style={{ color: qObj.correct ? '#4ade80' : '#f87171' }}>{qObj.selectedAnswer || (qObj.correct ? correctAns : 'Unknown')}</strong></div>
                         {!qObj.correct && (
