@@ -5,14 +5,21 @@ import { ethers } from 'ethers';
 const PUBLIC_RPC = process.env.NEXT_PUBLIC_RPC_URL || 'https://sepolia.base.org';
 
 /**
- * Returns an ethers provider. If MetaMask is available it will be used for write
- * operations, otherwise the public RPC is returned for read‑only calls.
+ * Returns a read-only provider pointing directly to our network (Base Sepolia).
+ * This ensures we can fetch course data even if the user's wallet is on the wrong network.
+ */
+export function getReadProvider(): ethers.Provider {
+  return new ethers.JsonRpcProvider(PUBLIC_RPC);
+}
+
+/**
+ * Returns the user's wallet provider if available.
  */
 export function getProvider(): ethers.Provider {
   if (typeof window !== 'undefined' && (window as any).ethereum) {
     return new ethers.BrowserProvider((window as any).ethereum);
   }
-  return new ethers.JsonRpcProvider(PUBLIC_RPC);
+  return getReadProvider();
 }
 
 /** Returns a signer attached to MetaMask (if present). */

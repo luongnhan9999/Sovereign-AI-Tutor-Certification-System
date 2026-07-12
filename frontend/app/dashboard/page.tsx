@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react';
 import { ethers } from 'ethers';
 import Link from 'next/link';
-import { getProvider, getSigner, CONTRACTS } from '@/lib/web3';
+import { getProvider, getReadProvider, getSigner, CONTRACTS } from '@/lib/web3';
 
 export default function Dashboard() {
   const [account, setAccount] = useState<string>('');
@@ -17,9 +17,9 @@ export default function Dashboard() {
     if (typeof window !== 'undefined' && (window as any).ethereum) {
       (window as any).ethereum.request({ method: 'eth_requestAccounts' }).then((accounts: string[]) => {
         setAccount(ethers.getAddress(accounts[0]));
-      });
+      }).catch(() => {});
       (window as any).ethereum.on('accountsChanged', (accounts: string[]) => {
-        setAccount(ethers.getAddress(accounts[0]));
+        setAccount(accounts.length ? ethers.getAddress(accounts[0]) : '');
       });
       (window as any).ethereum.on('chainChanged', () => window.location.reload());
     }
@@ -29,7 +29,7 @@ export default function Dashboard() {
   useEffect(() => {
     async function fetchCourses() {
       try {
-        const provider = getProvider();
+        const provider = getReadProvider();
         const contract = new ethers.Contract(CONTRACTS.tutor.address, CONTRACTS.tutor.abi, provider);
         const courseCount = await contract.nextCourseId();
         const list = [];
@@ -56,7 +56,7 @@ export default function Dashboard() {
     if (!selectedCourse || !account) return;
     async function fetchProgress() {
       try {
-        const provider = getProvider();
+        const provider = getReadProvider();
         const contract = new ethers.Contract(CONTRACTS.tutor.address, CONTRACTS.tutor.abi, provider);
         const prog = await contract.userProgress(account, selectedCourse);
         setProgress({ completed: Number(prog[0]), certificateMinted: prog[2] });
