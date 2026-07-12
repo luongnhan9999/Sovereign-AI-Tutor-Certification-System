@@ -4,49 +4,58 @@ import { ethers } from 'ethers';
 import Link from 'next/link';
 import { getProvider, getReadProvider, getSigner, switchNetwork, CONTRACTS } from '@/lib/web3';
 
-const RITUAL_QUESTIONS = [
-  {
-    q: "What is the primary problem with Replicated State Machine (SMR) for GPU workloads according to Ritual?",
-    options: ["GPUs are too expensive.", "Hardware non-reproducibility causes divergent state roots.", "Smart contracts cannot call GPUs.", "Nodes don't have enough storage."],
-    answerIndex: 1
-  },
-  {
-    q: "What does Extended External Validity in Symphony achieve?",
-    options: ["It encrypts the mempool.", "It transfers proposer's powers (inclusion, exclusion, ordering) to users.", "It reduces the block time to 1 second.", "It increases block gas limits."],
-    answerIndex: 1
-  },
-  {
-    q: "What are Inclusion Guarantees in Symphony?",
-    options: ["A promise of execution.", "A fee market priority.", "A way to include data.", "A protocol-enforced rule where a block is invalid if a triggered transaction is absent."],
-    answerIndex: 3
-  },
-  {
-    q: "How does Symphony verify long-running delegated computations?",
-    options: ["All validators re-run it.", "Fraud proofs.", "Product Lattice over proof systems (TEE, ZKP) and committee sampling.", "Trusting a centralized server."],
-    answerIndex: 2
-  },
-  {
-    q: "What is the primary role of the Ritual Chain?",
-    options: ["To store user profile pictures.", "To execute AI models on-chain without any off-chain coprocessors.", "To act as a sovereign execution layer orchestrating AI workloads.", "To replace Ethereum's consensus layer."],
-    answerIndex: 2
-  },
-  {
-    q: "Why is the LLM precompile important in the Ritual architecture?",
-    options: ["It allows smart contracts to natively call AI models.", "It reduces the gas cost of transferring ERC20 tokens.", "It prevents users from deploying malicious contracts.", "It generates random numbers for games."],
-    answerIndex: 0
-  },
-  {
-    q: "In the context of Sovereign AI Tutor, how are correct answers evaluated?",
-    options: ["By a manual human grader.", "Using Ritual's TEE/LLM precompiles.", "By executing Python scripts on IPFS.", "By polling the network validators."],
-    answerIndex: 1
-  }
-];
+const COURSE_QUESTIONS: Record<string, {q: string, options: string[], answerIndex: number}[]> = {
+  "Introduction to Sovereign AI": [
+    {
+      q: "Please write a short essay explaining the core concepts of Sovereign AI and how Trusted Execution Environments (TEEs) ensure verifiable execution of AI models on the blockchain.",
+      options: ["Submit Essay"],
+      answerIndex: 0
+    },
+    {
+      q: "What is Sovereign AI?",
+      options: ["AI models controlled by a single corporation.", "AI models deployed on verifiable, decentralized infrastructure.", "AI models that run offline.", "AI models that do not require data."],
+      answerIndex: 1
+    },
+    {
+      q: "How do Trusted Execution Environments (TEEs) help Sovereign AI?",
+      options: ["They make AI models run faster.", "They reduce the cost of training.", "They ensure verifiable and tamper-proof execution.", "They provide free data storage."],
+      answerIndex: 2
+    },
+    {
+      q: "What is a major challenge of running AI on-chain?",
+      options: ["Blockchains have too much storage.", "High computational cost and non-determinism of AI models.", "Smart contracts cannot do math.", "There are no use cases for it."],
+      answerIndex: 1
+    }
+  ],
+  "Symphony Whitepaper: Execution-Aware Consensus": [
+    {
+      q: "What is the primary problem with Replicated State Machine (SMR) for GPU workloads according to Ritual?",
+      options: ["GPUs are too expensive.", "Hardware non-reproducibility causes divergent state roots.", "Smart contracts cannot call GPUs.", "Nodes don't have enough storage."],
+      answerIndex: 1
+    },
+    {
+      q: "What does Extended External Validity in Symphony achieve?",
+      options: ["It encrypts the mempool.", "It transfers proposer's powers (inclusion, exclusion, ordering) to users.", "It reduces the block time to 1 second.", "It increases block gas limits."],
+      answerIndex: 1
+    },
+    {
+      q: "What are Inclusion Guarantees in Symphony?",
+      options: ["A promise of execution.", "A fee market priority.", "A way to include data.", "A protocol-enforced rule where a block is invalid if a triggered transaction is absent."],
+      answerIndex: 3
+    },
+    {
+      q: "How does Symphony verify long-running delegated computations?",
+      options: ["All validators re-run it.", "Fraud proofs.", "Product Lattice over proof systems (TEE, ZKP) and committee sampling.", "Trusting a centralized server."],
+      answerIndex: 2
+    }
+  ]
+};
 
 export default function Dashboard() {
   const [account, setAccount] = useState<string>('');
   const [courses, setCourses] = useState<Array<any>>([]);
   const [selectedCourse, setSelectedCourse] = useState<number | null>(null);
-  const [progress, setProgress] = useState<{ completed: number, certificateMinted: boolean }>({ completed: 0, certificateMinted: false });
+  const [progress, setProgress] = useState<{ completed: number, certificateMinted: boolean, askedQuestions?: number[] }>({ completed: 0, certificateMinted: false, askedQuestions: [] });
   const [points, setPoints] = useState<number>(0);
   const [askedQuestions, setAskedQuestions] = useState<any[]>([]);
   const [quizId, setQuizId] = useState<string>('');
@@ -69,7 +78,6 @@ export default function Dashboard() {
   useEffect(() => {
     const interval = setInterval(() => {
       setBotPlayers(prev => prev.map(bot => {
-        // Bots answer randomly every 10s
         if (Math.random() < 0.4) {
           return { ...bot, score: bot.score + 1 };
         }
@@ -79,7 +87,6 @@ export default function Dashboard() {
     return () => clearInterval(interval);
   }, []);
 
-  // Load account from MetaMask silently on load
   useEffect(() => {
     if (typeof window !== 'undefined' && (window as any).ethereum) {
       (window as any).ethereum.request({ method: 'eth_accounts' }).then((accounts: string[]) => {
@@ -99,8 +106,11 @@ export default function Dashboard() {
       const nextId = await contract.nextCourseId();
       const count = Number(nextId);
       const loaded = [];
+      const seenNames = new Set();
       for (let i = 1; i <= count; i++) {
         const c = await contract.courses(i);
+        if (seenNames.has(c[1])) continue;
+        seenNames.add(c[1]);
         loaded.push({
           id: i,
           name: c[1],
@@ -120,7 +130,7 @@ export default function Dashboard() {
       const readProvider = getReadProvider();
       const contract = new ethers.Contract(CONTRACTS.tutor.address, CONTRACTS.tutor.abi, readProvider);
       const prog = await contract.userProgress(account, selectedCourse);
-      setProgress({ completed: Number(prog[0]), certificateMinted: prog[2] });
+      setProgress({ completed: Number(prog[0]), certificateMinted: prog[2], askedQuestions: [] });
       
       try {
         const bal = await contract.rewardBalance(account);
@@ -144,7 +154,6 @@ export default function Dashboard() {
     setQuizId('');
     setAnswer('');
     
-    // Load askedQuestions from localStorage
     if (account && selectedCourse) {
       const stored = localStorage.getItem(`askedQuestions_${account}_${selectedCourse}`);
       if (stored) {
@@ -158,7 +167,6 @@ export default function Dashboard() {
             }
             return item;
           });
-          // If we have legacy data, we filter them out so user only sees accurate history
           setAskedQuestions(hasLegacy ? formatted.filter((q: any) => q.selectedAnswer !== null) : formatted);
         } catch(e) {
           setAskedQuestions([]);
@@ -171,7 +179,6 @@ export default function Dashboard() {
     }
   }, [account, selectedCourse]);
 
-  // Save askedQuestions to localStorage whenever it changes
   useEffect(() => {
     if (account && selectedCourse && askedQuestions.length > 0) {
       localStorage.setItem(`askedQuestions_${account}_${selectedCourse}`, JSON.stringify(askedQuestions));
@@ -182,27 +189,25 @@ export default function Dashboard() {
     if (!selectedCourse) return;
     setIsSubmitting(true);
     try {
-      if (forceNetworkSwitch) await switchNetwork(); // Ensure they are on Ritual before writing
+      if (forceNetworkSwitch) await switchNetwork();
       const signer = await getSigner();
       if (!signer) { setIsSubmitting(false); return; }
       const contract = new ethers.Contract(CONTRACTS.tutor.address, CONTRACTS.tutor.abi, signer);
       const tx = await contract.requestQuiz(selectedCourse);
       await tx.wait();
       
-      // Find a random question that hasn't been asked yet
-      let qIndex = Math.floor(Math.random() * RITUAL_QUESTIONS.length);
-      let attempts = 0;
-      while (askedQuestions.some(q => q.qIndex === qIndex) && attempts < 50) {
-        qIndex = Math.floor(Math.random() * RITUAL_QUESTIONS.length);
-        attempts++;
-      }
-      setAskedQuestions(prev => [...prev, { qIndex, answered: false }]);
+      const courseObj = courses.find(c => c.id === selectedCourse);
+      const courseName = courseObj?.name || "Introduction to Sovereign AI";
+      const questions = COURSE_QUESTIONS[courseName] || COURSE_QUESTIONS["Introduction to Sovereign AI"];
+      const unaskedIndices = questions.map((_, i) => i).filter(i => !askedQuestions.some(aq => aq.qIndex === i));
+      const qIndex = unaskedIndices.length > 0 ? unaskedIndices[Math.floor(Math.random() * unaskedIndices.length)] : 0;
       
-      setQuizId("mock-quiz-" + account.slice(0,6) + "-" + selectedCourse + "-" + qIndex + "-" + Date.now());
+      setAskedQuestions(prev => [...prev, { qIndex, answered: false }]);
+      setQuizId(`mock-quiz-${account.slice(0,6)}-${selectedCourse}-${qIndex}-${Date.now()}`);
       setAnswer('');
     } catch (e: any) {
       console.error(e);
-      if (e.code !== 4001) { // 4001 is user rejected
+      if (e.code !== 4001) {
         alert("Failed to request quiz: " + (e.message || "Unknown error. Check console or get Ritual tokens."));
       }
     }
@@ -213,15 +218,16 @@ export default function Dashboard() {
     if (!selectedCourse || !quizId || !answer) return;
     setIsSubmitting(true);
     try {
-      await switchNetwork(); // Ensure they are on Ritual before writing
+      await switchNetwork();
       const signer = await getSigner();
       if (!signer) { setIsSubmitting(false); return; }
       const contract = new ethers.Contract(CONTRACTS.tutor.address, CONTRACTS.tutor.abi, signer);
       
-      // We are using TutorAgent Mock Mode which checks bytes(answer).length > 10.
-      // So we format the string sent to the contract based on whether it is actually correct.
-      const currentQ = getQuestion();
-      const isCorrect = currentQ && currentQ.options.indexOf(answer) === currentQ.answerIndex;
+      const qIndex = parseInt(quizId.split('-')[4]);
+      const courseObj = courses.find(c => c.id === selectedCourse);
+      const courseName = courseObj?.name || "Introduction to Sovereign AI";
+      const questions = COURSE_QUESTIONS[courseName] || COURSE_QUESTIONS["Introduction to Sovereign AI"];
+      const isCorrect = answer === questions[qIndex].options[questions[qIndex].answerIndex];
       const payloadAnswer = isCorrect ? "CORRECT_ANSWER_PADDED" : "WRONG";
 
       const tx = await contract.submitAnswer(selectedCourse, quizId, payloadAnswer);
@@ -245,7 +251,6 @@ export default function Dashboard() {
       setQuizId('');
       setAnswer('');
       
-      // Check for badge unlock
       if (newProg !== undefined && newProg > oldCompleted) {
         const thresholds = [
           { score: 201, badge: { name: "Diamond Badge", icon: "💎", color: "#00d2ff" } },
@@ -257,16 +262,14 @@ export default function Dashboard() {
         for (const t of thresholds) {
           if (oldCompleted < t.score && newProg >= t.score) {
             setNewBadgePopup(t.badge);
-            setTimeout(() => setNewBadgePopup(null), 6000); // Hide after 6 seconds
+            setTimeout(() => setNewBadgePopup(null), 6000);
             break;
           }
         }
       }
       
-      // Automatically request next quiz
       const courseDetails = courses.find(c => c.id === selectedCourse);
       if (courseDetails && newProg !== undefined) {
-        // Auto trigger next
         setTimeout(() => requestQuiz(false), 500);
       }
       
@@ -279,21 +282,8 @@ export default function Dashboard() {
     setIsSubmitting(false);
   };
 
-  // Helper to parse question
-  const getQuestion = () => {
-    if (!quizId) return null;
-    const parts = quizId.split('-');
-    if (parts.length > 4) {
-      const idx = parseInt(parts[4]) % RITUAL_QUESTIONS.length;
-      return RITUAL_QUESTIONS[idx];
-    }
-    return RITUAL_QUESTIONS[0];
-  };
-  const currentQ = getQuestion();
-
   return (
     <div className="dashboard-container">
-      {/* Badge Unlock Popup */}
       {newBadgePopup && (
         <div style={{
           position: 'fixed', top: '20px', right: '20px', zIndex: 9999,
@@ -367,42 +357,48 @@ export default function Dashboard() {
                 </div>
               </div>
 
-
-
               {!quizId && (
                 <button className="btn btn-primary" style={{ width: '100%', marginTop: '2rem' }} onClick={() => requestQuiz(true)} disabled={isSubmitting}>
                   {isSubmitting ? "Processing..." : progress.completed === 0 ? "Start Course" : "Request Next Quiz"}
                 </button>
               )}
 
-              {quizId && currentQ && (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginTop: '2rem' }}>
-                  <div style={{ padding: '1.5rem', background: 'var(--bg-secondary)', border: '1px solid var(--glass-border)', borderRadius: 'var(--radius-md)' }}>
-                    <span style={{ fontSize: '0.8rem', color: 'var(--accent-blue)', textTransform: 'uppercase', fontWeight: 600 }}>Active Quiz (Ritual Network)</span>
-                    <p style={{ marginTop: '1rem', fontSize: '1.1rem', lineHeight: '1.6', fontWeight: 500 }}>
-                      {currentQ.q}
-                    </p>
-                    
-                    <div style={{ marginTop: '1.5rem', display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
-                      {currentQ.options.map((opt, i) => (
-                        <label key={i} style={{
-                          display: 'flex', alignItems: 'center', gap: '1rem', padding: '1rem',
-                          background: answer === opt ? 'rgba(99, 102, 241, 0.2)' : 'rgba(255,255,255,0.03)',
-                          border: answer === opt ? '1px solid var(--accent-blue)' : '1px solid transparent',
-                          borderRadius: '8px', cursor: 'pointer', transition: 'all 0.2s'
-                        }}>
-                          <input type="radio" name="quiz_option" value={opt} onChange={() => setAnswer(opt)} checked={answer === opt} style={{ accentColor: 'var(--accent-blue)', width: '18px', height: '18px' }} />
-                          <span style={{ fontSize: '0.95rem' }}>{opt}</span>
-                        </label>
-                      ))}
+              {(() => {
+                const courseObj = courses.find(c => c.id === selectedCourse);
+                const courseName = courseObj?.name || "Introduction to Sovereign AI";
+                const questions = COURSE_QUESTIONS[courseName] || COURSE_QUESTIONS["Introduction to Sovereign AI"];
+                const currentQ = quizId && quizId.split('-').length > 4 ? questions[parseInt(quizId.split('-')[4])] : null;
+                
+                return quizId && currentQ ? (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginTop: '2rem' }}>
+                    <div className="quiz-card" style={{ padding: '1.5rem', background: 'var(--bg-secondary)', border: '1px solid var(--glass-border)', borderRadius: 'var(--radius-md)' }}>
+                      <span className="quiz-label" style={{ fontSize: '0.8rem', color: 'var(--accent-blue)', textTransform: 'uppercase', fontWeight: 600 }}>Active Quiz (Ritual Network)</span>
+                      <p className="quiz-question" style={{ marginTop: '1rem', fontSize: '1.1rem', lineHeight: '1.6', fontWeight: 500 }}>
+                        {currentQ.q}
+                      </p>
+                      
+                      <div className="quiz-options" style={{ marginTop: '1.5rem', display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
+                        {currentQ.options.map((opt: string, i: number) => (
+                          <label key={i} className="quiz-option" style={{
+                            display: 'flex', alignItems: 'center', gap: '1rem', padding: '1rem',
+                            background: answer === opt ? 'rgba(99, 102, 241, 0.2)' : 'rgba(255,255,255,0.03)',
+                            border: answer === opt ? '1px solid var(--accent-blue)' : '1px solid transparent',
+                            borderRadius: '8px', cursor: 'pointer', transition: 'all 0.2s'
+                          }}>
+                            <input type="radio" name="quiz_option" value={opt} onChange={() => setAnswer(opt)} checked={answer === opt} style={{ accentColor: 'var(--accent-blue)', width: '18px', height: '18px' }} />
+                            <span style={{ fontSize: '0.95rem' }}>{opt}</span>
+                          </label>
+                        ))}
+                      </div>
                     </div>
+                    
+                    <button className="btn btn-secondary" onClick={submitAnswer} disabled={!answer || isSubmitting}>
+                      {isSubmitting ? "Submitting..." : "Submit Answer"}
+                    </button>
                   </div>
-                  
-                  <button className="btn btn-secondary" onClick={submitAnswer} disabled={!answer || isSubmitting}>
-                    {isSubmitting ? "Submitting..." : "Submit Answer"}
-                  </button>
-                </div>
-              )}
+                ) : null;
+              })()}
+              
               {(() => {
                 let badge = null;
                 if (progress.completed >= 201) badge = { name: "Diamond Badge", icon: "💎", color: "#00d2ff", bg: "rgba(0, 210, 255, 0.1)" };
@@ -410,25 +406,19 @@ export default function Dashboard() {
                 else if (progress.completed >= 51) badge = { name: "Silver Badge", icon: "🥈", color: "#c0c0c0", bg: "rgba(192, 192, 192, 0.1)" };
                 else if (progress.completed >= 10) badge = { name: "Bronze Badge", icon: "🥉", color: "#cd7f32", bg: "rgba(205, 127, 50, 0.1)" };
                 
-                if (badge) {
-                  return (
-                    <div style={{ marginTop: '2rem', padding: '2rem', background: badge.bg, border: `1px solid ${badge.color}40`, borderRadius: 'var(--radius-md)', textAlign: 'center' }}>
-                      <div style={{ fontSize: '4rem', marginBottom: '1rem', filter: `drop-shadow(0 0 10px ${badge.color}80)` }}>{badge.icon}</div>
-                      <h3 style={{ color: badge.color, marginBottom: '0.5rem', fontSize: '1.8rem' }}>{badge.name}</h3>
-                      <p style={{ color: 'var(--text-muted)' }}>Congratulations! Keep answering correctly to reach the next rank.</p>
-                    </div>
-                  );
-                }
+                if (!badge) return null;
+                
                 return (
-                  <div style={{ marginTop: '2rem', padding: '2rem', background: 'rgba(255, 255, 255, 0.02)', border: '1px dashed rgba(255, 255, 255, 0.1)', borderRadius: 'var(--radius-md)', textAlign: 'center' }}>
-                    <div style={{ fontSize: '3rem', marginBottom: '1rem', opacity: 0.5, filter: 'grayscale(100%)' }}>🏆</div>
-                    <h3 style={{ color: 'var(--text-muted)', marginBottom: '0.5rem', fontSize: '1.2rem' }}>No Badge Yet</h3>
-                    <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: '0.9rem' }}>Answer 10 questions correctly to unlock the Bronze Badge.</p>
+                  <div style={{ marginTop: '2rem', padding: '1.5rem', background: badge.bg, border: `1px solid ${badge.color}40`, borderRadius: 'var(--radius-md)', display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                    <div style={{ fontSize: '3rem', filter: `drop-shadow(0 0 10px ${badge.color}80)` }}>{badge.icon}</div>
+                    <div>
+                      <h4 style={{ color: badge.color, marginBottom: '0.25rem', fontSize: '1.1rem' }}>{badge.name} Unlocked!</h4>
+                      <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>You have reached {progress.completed} correct answers.</p>
+                    </div>
                   </div>
                 );
               })()}
 
-              {/* NFT Certificate Section */}
               {progress.completed >= 10 && (
                 <div style={{ marginTop: '2rem', padding: '2rem', background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.15) 0%, rgba(236, 72, 153, 0.15) 100%)', border: '1px solid rgba(236, 72, 153, 0.3)', borderRadius: 'var(--radius-md)', textAlign: 'center', boxShadow: '0 0 20px rgba(236, 72, 153, 0.1)' }}>
                   <div style={{ fontSize: '4rem', marginBottom: '1rem', filter: 'drop-shadow(0 0 15px rgba(236, 72, 153, 0.6))' }}>📜</div>
@@ -449,7 +439,6 @@ export default function Dashboard() {
           )}
         </section>
         
-        {/* History Panel */}
         <section className="history-panel">
           <div className="glass-card history-room" style={{ height: '100%', minHeight: '500px', display: 'flex', flexDirection: 'column' }}>
             <div style={{ display: 'flex', gap: '1.5rem', marginBottom: '1.5rem' }}>
@@ -473,8 +462,11 @@ export default function Dashboard() {
                   <p style={{ fontSize: '0.9rem', color: 'rgba(255,255,255,0.4)', textAlign: 'center', marginTop: '2rem' }}>No history yet. Start learning!</p>
                 ) : (
                   [...askedQuestions].reverse().filter(q => q.answered).map((qObj, i) => {
-                    const qText = RITUAL_QUESTIONS[qObj.qIndex].q;
-                    const correctAns = RITUAL_QUESTIONS[qObj.qIndex].options[RITUAL_QUESTIONS[qObj.qIndex].answerIndex];
+                    const courseObj = courses.find(c => c.id === selectedCourse);
+                    const courseName = courseObj?.name || "Introduction to Sovereign AI";
+                    const questions = COURSE_QUESTIONS[courseName] || COURSE_QUESTIONS["Introduction to Sovereign AI"];
+                    const qText = questions[qObj.qIndex].q;
+                    const correctAns = questions[qObj.qIndex].options[questions[qObj.qIndex].answerIndex];
                     return (
                       <div key={i} style={{ padding: '1rem', background: 'rgba(255,255,255,0.02)', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.05)' }}>
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.5rem' }}>

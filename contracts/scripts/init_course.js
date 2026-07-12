@@ -25,6 +25,11 @@ async function main() {
   await tx.wait();
   console.log("Course registered!");
 
+  console.log("Registering second course...");
+  const tx2 = await tutor.registerCourse("Symphony Whitepaper: Execution-Aware Consensus", 3, ethers.parseEther("15"));
+  await tx2.wait();
+  console.log("Course 2 registered!");
+
   const nextId = await tutor.nextCourseId();
   console.log("Next Course ID is now:", nextId.toString());
 }
