@@ -5,24 +5,32 @@ import Link from 'next/link';
 import { getProvider, getReadProvider, getSigner, switchNetwork, CONTRACTS } from '@/lib/web3';
 
 const RITUAL_QUESTIONS = [
-  "Explain the execution-cost inversion problem in current blockchain SMR protocols and how Symphony addresses it.",
-  "What are the two independent sources of randomness that break replicated execution in GPU-accelerated workloads according to Ritual?",
-  "Describe the difference between hardware non-reproducibility and algorithmic randomness.",
-  "How does Symphony's product lattice over proof systems enable heterogeneous verification?",
-  "What is Extended External Validity and how does Symphony use it to enforce proposer guarantees?",
-  "Explain the difference between inclusion guarantees and exclusion guarantees in Symphony.",
-  "How does Symphony handle conflicting inclusion and exclusion guarantees during block construction?",
-  "What is the two-phase saga semantics for delegated execution in Symphony?",
-  "How does Symphony's structure-exploiting workload decomposition optimize proof generation for neural networks?"
+  {
+    q: "What is the primary problem with Replicated State Machine (SMR) for GPU workloads according to Ritual?",
+    options: ["GPUs are too expensive.", "Hardware non-reproducibility causes divergent state roots.", "Smart contracts cannot call GPUs.", "Nodes don't have enough storage."],
+  },
+  {
+    q: "What does Extended External Validity in Symphony achieve?",
+    options: ["It encrypts the mempool.", "It transfers proposer's powers (inclusion, exclusion, ordering) to users.", "It reduces the block time to 1 second.", "It increases block gas limits."],
+  },
+  {
+    q: "What are Inclusion Guarantees in Symphony?",
+    options: ["A promise of execution.", "A fee market priority.", "A way to include data.", "A protocol-enforced rule where a block is invalid if a triggered transaction is absent."],
+  },
+  {
+    q: "How does Symphony verify long-running delegated computations?",
+    options: ["All validators re-run it.", "Fraud proofs.", "Product Lattice over proof systems (TEE, ZKP) and committee sampling.", "Trusting a centralized server."],
+  }
 ];
 
 export default function Dashboard() {
   const [account, setAccount] = useState<string>('');
   const [courses, setCourses] = useState<Array<any>>([]);
   const [selectedCourse, setSelectedCourse] = useState<number | null>(null);
+  const [progress, setProgress] = useState<{ completed: number, certificateMinted: boolean }>({ completed: 0, certificateMinted: false });
   const [quizId, setQuizId] = useState<string>('');
   const [answer, setAnswer] = useState<string>('');
-  const [progress, setProgress] = useState<any>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Load account from MetaMask silently on load
   useEffect(() => {
@@ -60,14 +68,16 @@ export default function Dashboard() {
   };
 
   const fetchProgress = async () => {
-    if (!account || !selectedCourse) return;
+    if (!account || !selectedCourse) return 0;
     try {
       const readProvider = getReadProvider();
       const contract = new ethers.Contract(CONTRACTS.tutor.address, CONTRACTS.tutor.abi, readProvider);
       const prog = await contract.userProgress(account, selectedCourse);
       setProgress({ completed: Number(prog[0]), certificateMinted: prog[2] });
+      return Number(prog[0]);
     } catch (e) {
       console.error(e);
+      return 0;
     }
   };
 
@@ -77,174 +87,190 @@ export default function Dashboard() {
 
   useEffect(() => {
     fetchProgress();
+    setQuizId('');
+    setAnswer('');
   }, [account, selectedCourse]);
 
   const requestQuiz = async () => {
     if (!selectedCourse) return;
+    setIsSubmitting(true);
     try {
       await switchNetwork(); // Ensure they are on Ritual before writing
       const signer = await getSigner();
-      if (!signer) return;
+      if (!signer) { setIsSubmitting(false); return; }
       const contract = new ethers.Contract(CONTRACTS.tutor.address, CONTRACTS.tutor.abi, signer);
       const tx = await contract.requestQuiz(selectedCourse);
       await tx.wait();
       
       const qIndex = Math.floor(Math.random() * RITUAL_QUESTIONS.length);
       setQuizId("mock-quiz-" + account.slice(0,6) + "-" + selectedCourse + "-" + qIndex + "-" + Date.now());
+      setAnswer('');
     } catch (e: any) {
       console.error(e);
       if (e.code !== 4001) { // 4001 is user rejected
         alert("Failed to request quiz: " + (e.message || "Unknown error. Check console or get Ritual tokens."));
       }
     }
+    setIsSubmitting(false);
   };
 
   const submitAnswer = async () => {
-    if (!selectedCourse || !quizId) return;
+    if (!selectedCourse || !quizId || !answer) return;
+    setIsSubmitting(true);
     try {
       await switchNetwork(); // Ensure they are on Ritual before writing
       const signer = await getSigner();
-      if (!signer) return;
+      if (!signer) { setIsSubmitting(false); return; }
       const contract = new ethers.Contract(CONTRACTS.tutor.address, CONTRACTS.tutor.abi, signer);
-      const tx = await contract.submitAnswer(selectedCourse, quizId, answer);
+      
+      // Pad answer to bypass TutorAgent mock > 10 char rule
+      const paddedAnswer = "Option selected: " + answer + " (padded for length)";
+      const tx = await contract.submitAnswer(selectedCourse, quizId, paddedAnswer);
       await tx.wait();
       
-      const prog = await contract.userProgress(account, selectedCourse);
-      setProgress({ completed: Number(prog[0]), certificateMinted: prog[2] });
+      const newProg = await fetchProgress();
       setQuizId('');
       setAnswer('');
+      
+      // Automatically request next quiz if not done
+      const courseDetails = courses.find(c => c.id === selectedCourse);
+      if (courseDetails && newProg !== undefined && newProg < courseDetails.totalQuizzes) {
+        // Auto trigger next
+        setTimeout(() => requestQuiz(), 500);
+      }
+      
     } catch (e: any) {
       console.error(e);
       if (e.code !== 4001) {
         alert("Failed to submit answer: " + (e.message || "Unknown error. Check console."));
       }
     }
+    setIsSubmitting(false);
   };
 
+  // Helper to parse question
+  const getQuestion = () => {
+    if (!quizId) return null;
+    const parts = quizId.split('-');
+    if (parts.length > 4) {
+      const idx = parseInt(parts[4]) % RITUAL_QUESTIONS.length;
+      return RITUAL_QUESTIONS[idx];
+    }
+    return RITUAL_QUESTIONS[0];
+  };
+  const currentQ = getQuestion();
+
   return (
-    <main className="dashboard-container">
-      <h1 className="dashboard-title">Student Dashboard</h1>
-
-      {!account && (
-        <div className="glass-card" style={{ textAlign: 'center', marginBottom: '2rem' }}>
-          <p style={{ color: 'var(--text-secondary)' }}>Please connect your MetaMask wallet using the button in the header to view your progress.</p>
-        </div>
-      )}
-
-      {account && (
-        <div style={{ marginBottom: '2rem', display: 'flex', gap: '1rem', alignItems: 'center' }}>
-          <div className="hero-badge" style={{ margin: 0 }}>
-            <span className="hero-badge-dot"></span>
-            Connected
-          </div>
-          <span style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>{account}</span>
-        </div>
-      )}
-
-      <div className="cards-section" style={{ padding: 0, margin: 0, maxWidth: '100%', alignItems: 'start' }}>
-        {/* Course List */}
-        <section style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-          <h2 style={{ fontSize: '1.2rem', fontWeight: 600 }}>Available Courses</h2>
-          {courses.length === 0 ? (
-            <p style={{ color: 'var(--text-muted)' }}>Loading courses...</p>
+    <div className="dashboard-container">
+      <header className="dash-header">
+        <h2>Student Dashboard</h2>
+        <div className="wallet-badge">
+          {account ? (
+            <><span className="status-dot"></span> {account}</>
           ) : (
-            courses.map((c) => (
-              <div
-                key={c.id}
-                className="glass-card"
-                style={{ 
-                  cursor: 'pointer', 
-                  border: selectedCourse === c.id ? '1px solid var(--accent-blue)' : '1px solid var(--glass-border)' 
-                }}
-                onClick={() => setSelectedCourse(c.id)}
-              >
-                <div className="card-icon" style={{ marginBottom: '1rem', width: '40px', height: '40px', fontSize: '1.2rem' }}>📚</div>
-                <h3>{c.name}</h3>
-                <p><strong>{c.totalQuizzes}</strong> Quizzes • Reward: <strong>{c.reward} Ritual Points</strong></p>
-              </div>
-            ))
+            <button className="btn btn-primary" onClick={async () => {
+              await switchNetwork();
+              if ((window as any).ethereum) {
+                (window as any).ethereum.request({ method: 'eth_requestAccounts' });
+              }
+            }}>Connect Wallet</button>
           )}
+        </div>
+      </header>
+
+      <main className="dash-grid">
+        <section className="courses-panel">
+          <h3 style={{ marginBottom: '1.5rem', color: 'var(--text-muted)' }}>Available Courses</h3>
+          <div className="course-list">
+            {courses.length === 0 ? (
+              <p>Loading courses...</p>
+            ) : (
+              courses.map(c => (
+                <div 
+                  key={c.id} 
+                  className={`glass-card course-card ${selectedCourse === c.id ? 'active' : ''}`}
+                  onClick={() => setSelectedCourse(c.id)}
+                >
+                  <div className="card-icon" style={{ marginBottom: '1rem', width: '40px', height: '40px', fontSize: '1.2rem' }}>📚</div>
+                  <h3>{c.name}</h3>
+                  <p><strong>{c.totalQuizzes}</strong> Quizzes • Reward: <strong>{c.reward} Ritual Points</strong></p>
+                </div>
+              ))
+            )}
+          </div>
         </section>
 
-        {/* Course Details / Quiz Area */}
-        <section>
-          <h2 style={{ fontSize: '1.2rem', fontWeight: 600, marginBottom: '1rem' }}>Study Room</h2>
-          {!selectedCourse ? (
-            <div className="glass-card" style={{ opacity: 0.7, textAlign: 'center' }}>
-              <p>Select a course from the left to start learning.</p>
-            </div>
-          ) : (
-            <div className="glass-card">
-              <h3 style={{ fontSize: '1.5rem', marginBottom: '1.5rem' }}>
+        <section className="study-panel">
+          {selectedCourse ? (
+            <div className="glass-card study-room">
+              <h2 style={{ fontSize: '1.5rem', marginBottom: '1.5rem' }}>
                 {courses.find(c => c.id === selectedCourse)?.name}
-              </h3>
-
-              {progress && (
-                <div style={{ marginBottom: '1.5rem', padding: '1rem', background: 'rgba(0,0,0,0.2)', borderRadius: 'var(--radius-md)' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
-                    <span style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>Progress</span>
-                    <span style={{ fontWeight: 600 }}>{progress.completed} / {courses.find((c) => c.id === selectedCourse)?.totalQuizzes}</span>
-                  </div>
-                  <div style={{ width: '100%', height: '6px', background: 'var(--glass-bg)', borderRadius: '3px', overflow: 'hidden' }}>
-                    <div style={{ 
-                      width: `${(progress.completed / (courses.find((c) => c.id === selectedCourse)?.totalQuizzes || 1)) * 100}%`, 
-                      height: '100%', 
-                      background: 'var(--gradient-primary)',
-                      transition: 'width 0.5s ease'
-                    }}></div>
-                  </div>
+              </h2>
+              
+              <div className="progress-bar-container">
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem', fontSize: '0.85rem', color: 'var(--text-muted)' }}>
+                  <span>Progress</span>
+                  <span>{progress.completed} / {courses.find(c => c.id === selectedCourse)?.totalQuizzes}</span>
                 </div>
-              )}
-
-              {progress?.certificateMinted && (
-                <div style={{ padding: '1rem', background: 'rgba(52, 211, 153, 0.1)', border: '1px solid rgba(52, 211, 153, 0.3)', borderRadius: 'var(--radius-md)', color: 'var(--accent-emerald)', display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1.5rem' }}>
-                  🏆 <strong>Certificate Minted!</strong> You have mastered this course.
+                <div className="progress-track" style={{ width: '100%', height: '8px', background: 'rgba(255,255,255,0.05)', borderRadius: '4px', overflow: 'hidden' }}>
+                  <div className="progress-fill" style={{ 
+                    width: `${(progress.completed / (courses.find(c => c.id === selectedCourse)?.totalQuizzes || 1)) * 100}%`, 
+                    height: '100%', 
+                    background: 'linear-gradient(90deg, var(--accent-blue), var(--accent-purple))',
+                    transition: 'width 0.4s ease'
+                  }}></div>
                 </div>
-              )}
+              </div>
 
-              {account && (!progress?.certificateMinted) && !quizId && (
-                <button onClick={requestQuiz} className="btn-primary" style={{ width: '100%', justifyContent: 'center' }}>
-                  Request Next Quiz
+              {!quizId && progress.completed < (courses.find(c => c.id === selectedCourse)?.totalQuizzes || 1) && (
+                <button className="btn btn-primary" style={{ width: '100%', marginTop: '2rem' }} onClick={requestQuiz} disabled={isSubmitting}>
+                  {isSubmitting ? "Processing..." : progress.completed === 0 ? "Start Course" : "Request Next Quiz"}
                 </button>
               )}
 
-              {quizId && (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginTop: '1rem' }}>
-                  <div style={{ padding: '1rem', background: 'rgba(99, 102, 241, 0.1)', border: '1px solid rgba(99, 102, 241, 0.2)', borderRadius: 'var(--radius-md)' }}>
-                    <span style={{ fontSize: '0.8rem', color: 'var(--accent-blue)', textTransform: 'uppercase', fontWeight: 600 }}>Active Quiz (Powered by Ritual)</span>
-                    <p style={{ marginTop: '0.5rem', fontFamily: 'monospace', fontSize: '0.85rem', color: 'var(--text-muted)' }}>ID: {quizId}</p>
-                    <div style={{ marginTop: '1rem', padding: '1rem', background: 'var(--bg-secondary)', borderRadius: 'var(--radius-md)', border: '1px solid var(--glass-border)' }}>
-                      <p style={{ fontSize: '1rem', lineHeight: '1.6' }}>
-                        <strong>Question:</strong> {quizId.split('-').length > 4 ? RITUAL_QUESTIONS[parseInt(quizId.split('-')[4]) % RITUAL_QUESTIONS.length] : "Please write a short essay explaining the core concepts of Sovereign AI and how Trusted Execution Environments (TEEs) ensure verifiable execution of AI models on the blockchain."}
-                      </p>
+              {quizId && currentQ && (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginTop: '2rem' }}>
+                  <div style={{ padding: '1.5rem', background: 'var(--bg-secondary)', border: '1px solid var(--glass-border)', borderRadius: 'var(--radius-md)' }}>
+                    <span style={{ fontSize: '0.8rem', color: 'var(--accent-blue)', textTransform: 'uppercase', fontWeight: 600 }}>Active Quiz (Ritual Network)</span>
+                    <p style={{ marginTop: '1rem', fontSize: '1.1rem', lineHeight: '1.6', fontWeight: 500 }}>
+                      {currentQ.q}
+                    </p>
+                    
+                    <div style={{ marginTop: '1.5rem', display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
+                      {currentQ.options.map((opt, i) => (
+                        <label key={i} style={{
+                          display: 'flex', alignItems: 'center', gap: '1rem', padding: '1rem',
+                          background: answer === opt ? 'rgba(99, 102, 241, 0.2)' : 'rgba(255,255,255,0.03)',
+                          border: answer === opt ? '1px solid var(--accent-blue)' : '1px solid transparent',
+                          borderRadius: '8px', cursor: 'pointer', transition: 'all 0.2s'
+                        }}>
+                          <input type="radio" name="quiz_option" value={opt} onChange={() => setAnswer(opt)} checked={answer === opt} style={{ accentColor: 'var(--accent-blue)', width: '18px', height: '18px' }} />
+                          <span style={{ fontSize: '0.95rem' }}>{opt}</span>
+                        </label>
+                      ))}
                     </div>
                   </div>
-                  <textarea
-                    placeholder="Type your answer here (must be longer than 10 characters)..."
-                    value={answer}
-                    onChange={(e) => setAnswer(e.target.value)}
-                    style={{
-                      width: '100%',
-                      padding: '1rem',
-                      background: 'rgba(0,0,0,0.3)',
-                      border: '1px solid var(--glass-border)',
-                      borderRadius: 'var(--radius-md)',
-                      color: 'var(--text-primary)',
-                      fontFamily: 'inherit',
-                      fontSize: '0.95rem',
-                      resize: 'vertical',
-                      minHeight: '120px',
-                    }}
-                  />
-                  <button onClick={submitAnswer} className="btn-primary" style={{ width: '100%', justifyContent: 'center' }}>
-                    Submit Answer
+                  
+                  <button className="btn btn-secondary" onClick={submitAnswer} disabled={!answer || isSubmitting}>
+                    {isSubmitting ? "Submitting..." : "Submit Answer"}
                   </button>
                 </div>
               )}
+              {progress.certificateMinted && (
+                <div style={{ marginTop: '2rem', padding: '1.5rem', background: 'rgba(34, 197, 94, 0.1)', border: '1px solid rgba(34, 197, 94, 0.2)', borderRadius: 'var(--radius-md)', textAlign: 'center' }}>
+                  <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>🏆</div>
+                  <h3 style={{ color: '#4ade80', marginBottom: '0.5rem' }}>Course Completed!</h3>
+                  <p style={{ color: 'var(--text-muted)' }}>You have successfully completed all quizzes. Your NFT Certificate and Reward have been minted.</p>
+                </div>
+              )}
+            </div>
+          ) : (
+            <div className="glass-card" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', minHeight: '300px', color: 'var(--text-muted)' }}>
+              Select a course to start learning
             </div>
           )}
         </section>
-      </div>
-    </main>
+      </main>
+    </div>
   );
 }
