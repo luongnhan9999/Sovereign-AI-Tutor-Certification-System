@@ -345,9 +345,18 @@ export default function Dashboard() {
       
       <header className="dash-header">
         <h2>Student Dashboard</h2>
-        <div className="wallet-badge">
+        <div className="wallet-badge" style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
           {account ? (
-            <><span className="status-dot"></span> {account}</>
+            <>
+              <div><span className="status-dot"></span> {account}</div>
+              <button 
+                className="btn" 
+                style={{ background: 'rgba(239, 68, 68, 0.1)', color: '#ef4444', border: '1px solid rgba(239, 68, 68, 0.3)', padding: '0.4rem 0.8rem', fontSize: '0.8rem', cursor: 'pointer', borderRadius: 'var(--radius-sm)' }} 
+                onClick={() => setAccount("")}
+              >
+                Logout
+              </button>
+            </>
           ) : (
             <button className="btn btn-primary" onClick={async () => {
               await switchNetwork();
