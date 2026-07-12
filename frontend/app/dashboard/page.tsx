@@ -28,18 +28,24 @@ export default function Dashboard() {
   // Fetch available courses (public view)
   useEffect(() => {
     async function fetchCourses() {
-      const provider = getProvider();
-      const contract = new ethers.Contract(CONTRACTS.tutor.address, CONTRACTS.tutor.abi, provider);
       try {
+        const provider = getProvider();
+        const contract = new ethers.Contract(CONTRACTS.tutor.address, CONTRACTS.tutor.abi, provider);
         const courseCount = await contract.nextCourseId();
         const list = [];
         for (let i = 1; i <= Number(courseCount); i++) {
           const c = await contract.courses(i);
-          list.push({ id: Number(c.id), name: c.name, totalQuizzes: Number(c.totalQuizzes), reward: ethers.formatEther(c.rewardAmount) });
+          // Ethers v6 tuple access
+          const id = Number(c[0]);
+          const name = c[1];
+          const totalQuizzes = Number(c[2]);
+          const rewardAmount = c[3];
+          
+          list.push({ id, name, totalQuizzes, reward: ethers.formatEther(rewardAmount) });
         }
         setCourses(list);
       } catch (e) {
-        console.error("Failed to fetch courses (dummy address?)", e);
+        console.error("Failed to fetch courses", e);
       }
     }
     fetchCourses();
@@ -49,11 +55,11 @@ export default function Dashboard() {
   useEffect(() => {
     if (!selectedCourse || !account) return;
     async function fetchProgress() {
-      const provider = getProvider();
-      const contract = new ethers.Contract(CONTRACTS.tutor.address, CONTRACTS.tutor.abi, provider);
       try {
+        const provider = getProvider();
+        const contract = new ethers.Contract(CONTRACTS.tutor.address, CONTRACTS.tutor.abi, provider);
         const prog = await contract.userProgress(account, selectedCourse);
-        setProgress({ completed: Number(prog.completedQuizzes), certificateMinted: prog.certificateMinted });
+        setProgress({ completed: Number(prog[0]), certificateMinted: prog[2] });
       } catch (e) {
         console.error("Failed to fetch progress", e);
       }
@@ -69,11 +75,10 @@ export default function Dashboard() {
       const tx = await contract.requestQuiz(selectedCourse);
       await tx.wait();
       
-      // We'll just fake a quiz ID for the demo if events fail
-      setQuizId("mock-quiz-" + account + "-" + selectedCourse);
+      setQuizId("mock-quiz-" + account.slice(0,6) + "-" + selectedCourse + "-" + Date.now());
     } catch (e) {
       console.error(e);
-      alert("Failed to request quiz. Make sure you are connected to the correct network and the contract exists.");
+      alert("Failed to request quiz. Make sure you are connected to the Base Sepolia network.");
     }
   };
 
@@ -84,9 +89,9 @@ export default function Dashboard() {
       const contract = new ethers.Contract(CONTRACTS.tutor.address, CONTRACTS.tutor.abi, signer);
       const tx = await contract.submitAnswer(selectedCourse, quizId, answer);
       await tx.wait();
-      // Refresh progress
+      
       const prog = await contract.userProgress(account, selectedCourse);
-      setProgress({ completed: Number(prog.completedQuizzes), certificateMinted: prog.certificateMinted });
+      setProgress({ completed: Number(prog[0]), certificateMinted: prog[2] });
       setQuizId('');
       setAnswer('');
     } catch (e) {
@@ -97,85 +102,123 @@ export default function Dashboard() {
 
   return (
     <main className="dashboard-container">
-      <h1 className="dashboard-title">📊 Dashboard</h1>
+      <h1 className="dashboard-title">Student Dashboard</h1>
 
-      {account ? (
-        <p style={{ marginBottom: '1rem', color: 'rgba(255,255,255,0.7)' }}>
-          Connected as: <strong>{account}</strong>
-        </p>
-      ) : (
-        <p style={{ marginBottom: '1rem', color: '#f87171' }}>Please connect MetaMask.</p>
+      {!account && (
+        <div className="glass-card" style={{ textAlign: 'center', marginBottom: '2rem' }}>
+          <p style={{ color: 'var(--text-secondary)' }}>Please connect your MetaMask wallet using the button in the header to view your progress.</p>
+        </div>
       )}
 
-      <section style={{ marginBottom: '2rem' }}>
-        <h2 style={{ fontSize: '1.3rem', fontWeight: 600, marginBottom: '1rem' }}>Available Courses</h2>
-        <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-          {courses.map((c) => (
-            <li
-              key={c.id}
-              className="glass-card"
-              style={{ cursor: 'pointer' }}
-              onClick={() => setSelectedCourse(c.id)}
-            >
-              <strong>{c.name}</strong> – {c.totalQuizzes} quizzes – Reward: {c.reward} TRW
-            </li>
-          ))}
-        </ul>
-      </section>
+      {account && (
+        <div style={{ marginBottom: '2rem', display: 'flex', gap: '1rem', alignItems: 'center' }}>
+          <div className="hero-badge" style={{ margin: 0 }}>
+            <span className="hero-badge-dot"></span>
+            Connected
+          </div>
+          <span style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>{account}</span>
+        </div>
+      )}
 
-      {selectedCourse && (
-        <section className="glass-card" style={{ maxWidth: '700px' }}>
-          <h2 style={{ fontSize: '1.2rem', fontWeight: 600, marginBottom: '1rem' }}>
-            Course #{selectedCourse}
-          </h2>
-
-          {progress && (
-            <p style={{ marginBottom: '0.75rem' }}>
-              Completed quizzes: {progress.completed} / {courses.find((c) => c.id === selectedCourse)?.totalQuizzes}
-            </p>
-          )}
-
-          {progress?.certificateMinted && (
-            <p style={{ color: '#34d399', marginBottom: '1rem' }}>Certificate minted! 🎉</p>
-          )}
-
-          {!quizId && (
-            <button onClick={requestQuiz} className="btn-primary">
-              Request Quiz
-            </button>
-          )}
-
-          {quizId && (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginTop: '1rem' }}>
-              <p><strong>Quiz ID:</strong> {quizId}</p>
-              <textarea
-                placeholder="Your answer"
-                value={answer}
-                onChange={(e) => setAnswer(e.target.value)}
-                style={{
-                  width: '100%',
-                  padding: '0.75rem',
-                  background: 'rgba(255,255,255,0.05)',
-                  border: '1px solid rgba(255,255,255,0.15)',
-                  borderRadius: '0.5rem',
-                  color: '#fff',
-                  fontFamily: 'inherit',
-                  fontSize: '0.95rem',
-                  resize: 'vertical',
-                  minHeight: '80px',
+      <div className="cards-section" style={{ padding: 0, margin: 0, maxWidth: '100%', alignItems: 'start' }}>
+        {/* Course List */}
+        <section style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+          <h2 style={{ fontSize: '1.2rem', fontWeight: 600 }}>Available Courses</h2>
+          {courses.length === 0 ? (
+            <p style={{ color: 'var(--text-muted)' }}>Loading courses...</p>
+          ) : (
+            courses.map((c) => (
+              <div
+                key={c.id}
+                className="glass-card"
+                style={{ 
+                  cursor: 'pointer', 
+                  border: selectedCourse === c.id ? '1px solid var(--accent-blue)' : '1px solid var(--glass-border)' 
                 }}
-              />
-              <button onClick={submitAnswer} className="btn-primary" style={{ alignSelf: 'flex-start' }}>
-                Submit Answer
-              </button>
+                onClick={() => setSelectedCourse(c.id)}
+              >
+                <div className="card-icon" style={{ marginBottom: '1rem', width: '40px', height: '40px', fontSize: '1.2rem' }}>📚</div>
+                <h3>{c.name}</h3>
+                <p><strong>{c.totalQuizzes}</strong> Quizzes • Reward: <strong>{c.reward} TRW</strong></p>
+              </div>
+            ))
+          )}
+        </section>
+
+        {/* Course Details / Quiz Area */}
+        <section>
+          <h2 style={{ fontSize: '1.2rem', fontWeight: 600, marginBottom: '1rem' }}>Study Room</h2>
+          {!selectedCourse ? (
+            <div className="glass-card" style={{ opacity: 0.7, textAlign: 'center' }}>
+              <p>Select a course from the left to start learning.</p>
+            </div>
+          ) : (
+            <div className="glass-card">
+              <h3 style={{ fontSize: '1.5rem', marginBottom: '1.5rem' }}>
+                {courses.find(c => c.id === selectedCourse)?.name}
+              </h3>
+
+              {progress && (
+                <div style={{ marginBottom: '1.5rem', padding: '1rem', background: 'rgba(0,0,0,0.2)', borderRadius: 'var(--radius-md)' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
+                    <span style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>Progress</span>
+                    <span style={{ fontWeight: 600 }}>{progress.completed} / {courses.find((c) => c.id === selectedCourse)?.totalQuizzes}</span>
+                  </div>
+                  <div style={{ width: '100%', height: '6px', background: 'var(--glass-bg)', borderRadius: '3px', overflow: 'hidden' }}>
+                    <div style={{ 
+                      width: `${(progress.completed / (courses.find((c) => c.id === selectedCourse)?.totalQuizzes || 1)) * 100}%`, 
+                      height: '100%', 
+                      background: 'var(--gradient-primary)',
+                      transition: 'width 0.5s ease'
+                    }}></div>
+                  </div>
+                </div>
+              )}
+
+              {progress?.certificateMinted && (
+                <div style={{ padding: '1rem', background: 'rgba(52, 211, 153, 0.1)', border: '1px solid rgba(52, 211, 153, 0.3)', borderRadius: 'var(--radius-md)', color: 'var(--accent-emerald)', display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1.5rem' }}>
+                  🏆 <strong>Certificate Minted!</strong> You have mastered this course.
+                </div>
+              )}
+
+              {account && (!progress?.certificateMinted) && !quizId && (
+                <button onClick={requestQuiz} className="btn-primary" style={{ width: '100%', justifyContent: 'center' }}>
+                  Request Next Quiz
+                </button>
+              )}
+
+              {quizId && (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginTop: '1rem' }}>
+                  <div style={{ padding: '1rem', background: 'rgba(99, 102, 241, 0.1)', border: '1px solid rgba(99, 102, 241, 0.2)', borderRadius: 'var(--radius-md)' }}>
+                    <span style={{ fontSize: '0.8rem', color: 'var(--accent-blue)', textTransform: 'uppercase', fontWeight: 600 }}>Active Quiz</span>
+                    <p style={{ marginTop: '0.5rem', fontFamily: 'monospace', fontSize: '0.85rem' }}>{quizId}</p>
+                  </div>
+                  <textarea
+                    placeholder="Type your answer here..."
+                    value={answer}
+                    onChange={(e) => setAnswer(e.target.value)}
+                    style={{
+                      width: '100%',
+                      padding: '1rem',
+                      background: 'rgba(0,0,0,0.3)',
+                      border: '1px solid var(--glass-border)',
+                      borderRadius: 'var(--radius-md)',
+                      color: 'var(--text-primary)',
+                      fontFamily: 'inherit',
+                      fontSize: '0.95rem',
+                      resize: 'vertical',
+                      minHeight: '120px',
+                    }}
+                  />
+                  <button onClick={submitAnswer} className="btn-primary" style={{ width: '100%', justifyContent: 'center' }}>
+                    Submit Answer
+                  </button>
+                </div>
+              )}
             </div>
           )}
-
-          <Link href="/" style={{ display: 'inline-block', marginTop: '1.5rem', color: '#a5b4fc', textDecoration: 'none' }}>
-            ← Back to Home
-          </Link>
         </section>
-      )}
+      </div>
     </main>
   );
 }
