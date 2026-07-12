@@ -347,7 +347,7 @@ export default function Dashboard() {
                 >
                   <div className="card-icon" style={{ marginBottom: '1rem', width: '40px', height: '40px', fontSize: '1.2rem' }}>📚</div>
                   <h3>{c.name}</h3>
-                  <p style={{ margin: 0, fontSize: '0.85rem', color: 'var(--text-muted)' }}>Unlimited Quizzes • Reward Balance: {points} Ritual Points</p>
+                  <p style={{ margin: 0, fontSize: '0.85rem', color: 'var(--text-muted)' }}>Unlimited Quizzes</p>
                 </div>
               ))
             )}
@@ -364,7 +364,6 @@ export default function Dashboard() {
               <div className="progress-bar-container">
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem', fontSize: '0.85rem', color: 'var(--text-muted)' }}>
                   <span>Progress: {progress.completed} Quizzes Completed</span>
-                  <span style={{ color: 'var(--accent-blue)', fontWeight: 600 }}>Balance: {points} Ritual Points</span>
                 </div>
               </div>
 
