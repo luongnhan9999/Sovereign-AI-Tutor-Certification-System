@@ -2,7 +2,7 @@
 import { ethers } from 'ethers';
 
 // Public RPC endpoint for read‑only calls (no wallet needed)
-const PUBLIC_RPC = 'https://rpc.ritualfoundation.org';
+const PUBLIC_RPC = process.env.NEXT_PUBLIC_RPC_URL || 'https://sepolia.base.org';
 
 /**
  * Returns an ethers provider. If MetaMask is available it will be used for write
@@ -30,7 +30,7 @@ export async function getSigner(): Promise<ethers.JsonRpcSigner | null> {
  */
 export const CONTRACTS = {
   tutor: {
-    address: process.env.NEXT_PUBLIC_TUTOR_ADDRESS || '',
+    address: process.env.NEXT_PUBLIC_TUTOR_ADDRESS || '0x4152723f23574eDB63284f21a99596609d2E3E92',
     abi: [
       // Minimal ABI needed for the dashboard UI
       'function nextCourseId() view returns (uint256)',
@@ -42,7 +42,7 @@ export const CONTRACTS = {
     ],
   },
   agent: {
-    address: process.env.NEXT_PUBLIC_AGENT_ADDRESS || '',
+    address: process.env.NEXT_PUBLIC_AGENT_ADDRESS || '0x6f854279b0910037A27491511Ddc0670E0Bb1711',
     abi: [
       'function isMockMode() view returns (bool)',
       'function setMockMode(bool)',
