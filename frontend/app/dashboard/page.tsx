@@ -190,15 +190,13 @@ export default function Dashboard() {
       if (stored) {
         try {
           const parsed = JSON.parse(stored);
-          let hasLegacy = false;
           const formatted = parsed.map((item: any) => {
             if (typeof item === 'number') {
-              hasLegacy = true;
               return { qIndex: item, answered: true, correct: true, selectedAnswer: null };
             }
             return item;
           });
-          setAskedQuestions(hasLegacy ? formatted.filter((q: any) => q.selectedAnswer !== null) : formatted);
+          setAskedQuestions(formatted);
         } catch(e) {
           setAskedQuestions([]);
         }

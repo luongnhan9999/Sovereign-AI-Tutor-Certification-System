@@ -33,6 +33,7 @@ export default function Header() {
           localStorage.removeItem('manuallyDisconnected');
           setAccount(ethers.getAddress(accounts[0]));
           await switchNetwork();
+          window.location.reload();
         }
       } catch (err) {
         console.error("User rejected request", err);
