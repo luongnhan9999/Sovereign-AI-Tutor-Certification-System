@@ -118,8 +118,30 @@ export default function Dashboard() {
     fetchProgress();
     setQuizId('');
     setAnswer('');
-    setAskedQuestions([]);
+    
+    // Load askedQuestions from localStorage
+    if (account && selectedCourse) {
+      const stored = localStorage.getItem(`askedQuestions_${account}_${selectedCourse}`);
+      if (stored) {
+        try {
+          setAskedQuestions(JSON.parse(stored));
+        } catch(e) {
+          setAskedQuestions([]);
+        }
+      } else {
+        setAskedQuestions([]);
+      }
+    } else {
+      setAskedQuestions([]);
+    }
   }, [account, selectedCourse]);
+
+  // Save askedQuestions to localStorage whenever it changes
+  useEffect(() => {
+    if (account && selectedCourse && askedQuestions.length > 0) {
+      localStorage.setItem(`askedQuestions_${account}_${selectedCourse}`, JSON.stringify(askedQuestions));
+    }
+  }, [askedQuestions, account, selectedCourse]);
 
   const requestQuiz = async (forceNetworkSwitch = true) => {
     if (!selectedCourse) return;
