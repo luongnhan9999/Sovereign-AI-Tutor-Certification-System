@@ -345,23 +345,6 @@ export default function Dashboard() {
       
       <header className="dash-header">
         <h2>Student Dashboard</h2>
-        <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
-          {account ? (
-            <>
-              <div className="wallet-badge">
-                <span className="status-dot"></span> 
-                {account.slice(0,6)}...{account.slice(-4)}
-              </div>
-            </>
-          ) : (
-            <button className="btn btn-primary" onClick={async () => {
-              await switchNetwork();
-              if ((window as any).ethereum) {
-                (window as any).ethereum.request({ method: 'eth_requestAccounts' });
-              }
-            }}>Connect Wallet</button>
-          )}
-        </div>
       </header>
 
       <main className="dash-grid">
