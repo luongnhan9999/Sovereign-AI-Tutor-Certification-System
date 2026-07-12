@@ -256,7 +256,15 @@ export default function Dashboard() {
       const courseObj = courses.find(c => c.id === selectedCourse);
       const courseName = courseObj?.name || "Introduction to Sovereign AI";
       const questions = COURSE_QUESTIONS[courseName] || COURSE_QUESTIONS["Introduction to Sovereign AI"];
-      const isCorrect = questions[qIndex] ? answer === questions[qIndex].options[questions[qIndex].answerIndex] : false;
+      const qItem = questions[qIndex];
+      let isCorrect = false;
+      if (qItem) {
+        if (qItem.options.length === 1 && qItem.options[0] === "Submit Essay") {
+          isCorrect = answer.trim().length > 10;
+        } else {
+          isCorrect = answer === qItem.options[qItem.answerIndex];
+        }
+      }
       const payloadAnswer = isCorrect ? "CORRECT_ANSWER_PADDED" : "WRONG";
 
       const tx = await contract.submitAnswer(selectedCourse, quizId, payloadAnswer);
@@ -407,17 +415,37 @@ export default function Dashboard() {
                       </p>
                       
                       <div className="quiz-options" style={{ marginTop: '1.5rem', display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
-                        {currentQ.options.map((opt: string, i: number) => (
-                          <label key={i} className="quiz-option" style={{
-                            display: 'flex', alignItems: 'center', gap: '1rem', padding: '1rem',
-                            background: answer === opt ? 'rgba(99, 102, 241, 0.2)' : 'rgba(255,255,255,0.03)',
-                            border: answer === opt ? '1px solid var(--accent-blue)' : '1px solid transparent',
-                            borderRadius: '8px', cursor: 'pointer', transition: 'all 0.2s'
-                          }}>
-                            <input type="radio" name="quiz_option" value={opt} onChange={() => setAnswer(opt)} checked={answer === opt} style={{ accentColor: 'var(--accent-blue)', width: '18px', height: '18px' }} />
-                            <span style={{ fontSize: '0.95rem' }}>{opt}</span>
-                          </label>
-                        ))}
+                        {currentQ.options.length === 1 && currentQ.options[0] === "Submit Essay" ? (
+                          <textarea
+                            placeholder="Type your answer here (must be longer than 10 characters)..."
+                            value={answer}
+                            onChange={(e) => setAnswer(e.target.value)}
+                            style={{
+                              width: '100%',
+                              padding: '1rem',
+                              background: 'rgba(0,0,0,0.3)',
+                              border: '1px solid var(--glass-border)',
+                              borderRadius: 'var(--radius-md)',
+                              color: 'var(--text-primary)',
+                              fontFamily: 'inherit',
+                              fontSize: '0.95rem',
+                              resize: 'vertical',
+                              minHeight: '120px',
+                            }}
+                          />
+                        ) : (
+                          currentQ.options.map((opt: string, i: number) => (
+                            <label key={i} className="quiz-option" style={{
+                              display: 'flex', alignItems: 'center', gap: '1rem', padding: '1rem',
+                              background: answer === opt ? 'rgba(99, 102, 241, 0.2)' : 'rgba(255,255,255,0.03)',
+                              border: answer === opt ? '1px solid var(--accent-blue)' : '1px solid transparent',
+                              borderRadius: '8px', cursor: 'pointer', transition: 'all 0.2s'
+                            }}>
+                              <input type="radio" name="quiz_option" value={opt} onChange={() => setAnswer(opt)} checked={answer === opt} style={{ accentColor: 'var(--accent-blue)', width: '18px', height: '18px' }} />
+                              <span style={{ fontSize: '0.95rem' }}>{opt}</span>
+                            </label>
+                          ))
+                        )}
                       </div>
                     </div>
                     
