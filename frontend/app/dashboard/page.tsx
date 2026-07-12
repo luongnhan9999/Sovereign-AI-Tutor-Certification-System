@@ -27,7 +27,7 @@ const COURSE_QUESTIONS: Record<string, {q: string, options: string[], answerInde
       answerIndex: 1
     }
   ],
-  "Symphony Whitepaper: Execution-Aware Consensus": [
+  "Ritual Whitepaper": [
     {
       q: "What is the primary problem with Replicated State Machine (SMR) for GPU workloads according to Ritual?",
       options: ["GPUs are too expensive.", "Hardware non-reproducibility causes divergent state roots.", "Smart contracts cannot call GPUs.", "Nodes don't have enough storage."],
@@ -109,11 +109,15 @@ export default function Dashboard() {
       const seenNames = new Set();
       for (let i = 1; i <= count; i++) {
         const c = await contract.courses(i);
-        if (seenNames.has(c[1])) continue;
-        seenNames.add(c[1]);
+        let courseName = c[1];
+        if (courseName === "Symphony Whitepaper: Execution-Aware Consensus") {
+          courseName = "Ritual Whitepaper";
+        }
+        if (seenNames.has(courseName)) continue;
+        seenNames.add(courseName);
         loaded.push({
           id: i,
-          name: c[1],
+          name: courseName,
           totalQuizzes: Number(c[2]),
           reward: ethers.formatEther(c[3])
         });
