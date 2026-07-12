@@ -565,7 +565,7 @@ a { text-decoration: none; color: inherit; }
 /* ─── Dashboard ─── */
 .dashboard-container {
   padding: 2.5rem;
-  max-width: 1200px;
+  max-width: 1600px;
   margin: 0 auto;
   width: 100%;
 }
@@ -605,7 +605,7 @@ a { text-decoration: none; color: inherit; }
 
 .dash-grid {
   display: grid;
-  grid-template-columns: 350px 1fr 350px;
+  grid-template-columns: 320px 1fr 350px;
   gap: 2rem;
 }
 
