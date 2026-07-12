@@ -48,7 +48,7 @@ export default function Dashboard() {
   const [selectedCourse, setSelectedCourse] = useState<number | null>(null);
   const [progress, setProgress] = useState<{ completed: number, certificateMinted: boolean }>({ completed: 0, certificateMinted: false });
   const [points, setPoints] = useState<number>(0);
-  const [askedQuestions, setAskedQuestions] = useState<number[]>([]);
+  const [askedQuestions, setAskedQuestions] = useState<any[]>([]);
   const [quizId, setQuizId] = useState<string>('');
   const [answer, setAnswer] = useState<string>('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -124,7 +124,14 @@ export default function Dashboard() {
       const stored = localStorage.getItem(`askedQuestions_${account}_${selectedCourse}`);
       if (stored) {
         try {
-          setAskedQuestions(JSON.parse(stored));
+          const parsed = JSON.parse(stored);
+          const formatted = parsed.map((item: any) => {
+            if (typeof item === 'number') {
+              return { qIndex: item, answered: true, correct: true };
+            }
+            return item;
+          });
+          setAskedQuestions(formatted);
         } catch(e) {
           setAskedQuestions([]);
         }
@@ -157,11 +164,11 @@ export default function Dashboard() {
       // Find a random question that hasn't been asked yet
       let qIndex = Math.floor(Math.random() * RITUAL_QUESTIONS.length);
       let attempts = 0;
-      while (askedQuestions.includes(qIndex) && attempts < 50) {
+      while (askedQuestions.some(q => q.qIndex === qIndex) && attempts < 50) {
         qIndex = Math.floor(Math.random() * RITUAL_QUESTIONS.length);
         attempts++;
       }
-      setAskedQuestions(prev => [...prev, qIndex]);
+      setAskedQuestions(prev => [...prev, { qIndex, answered: false }]);
       
       setQuizId("mock-quiz-" + account.slice(0,6) + "-" + selectedCourse + "-" + qIndex + "-" + Date.now());
       setAnswer('');
@@ -192,6 +199,15 @@ export default function Dashboard() {
       const tx = await contract.submitAnswer(selectedCourse, quizId, payloadAnswer);
       await tx.wait();
       
+      setAskedQuestions(prev => {
+        const newQ = [...prev];
+        if (newQ.length > 0) {
+          newQ[newQ.length - 1].answered = true;
+          newQ[newQ.length - 1].correct = isCorrect;
+        }
+        return newQ;
+      });
+
       const oldCompleted = progress.completed;
       const newProg = await fetchProgress();
       setQuizId('');
@@ -396,10 +412,15 @@ export default function Dashboard() {
               {askedQuestions.length === 0 ? (
                 <p style={{ fontSize: '0.9rem', color: 'rgba(255,255,255,0.4)', textAlign: 'center', marginTop: '2rem' }}>No history yet. Start learning!</p>
               ) : (
-                [...askedQuestions].reverse().map((qIdx, i) => (
+                [...askedQuestions].reverse().filter(q => q.answered).map((qObj, i) => (
                   <div key={i} style={{ padding: '1rem', background: 'rgba(255,255,255,0.02)', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.05)' }}>
-                    <div style={{ fontSize: '0.75rem', color: 'var(--accent-emerald)', marginBottom: '0.5rem', textTransform: 'uppercase', fontWeight: 600 }}>Completed Quiz</div>
-                    <p style={{ margin: 0, fontSize: '0.9rem', lineHeight: '1.4' }}>{RITUAL_QUESTIONS[qIdx].q}</p>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
+                      <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 600 }}>Completed Quiz</span>
+                      <span style={{ fontSize: '0.75rem', padding: '0.2rem 0.5rem', borderRadius: '4px', background: qObj.correct ? 'rgba(34, 197, 94, 0.2)' : 'rgba(239, 68, 68, 0.2)', color: qObj.correct ? '#4ade80' : '#f87171', fontWeight: 600 }}>
+                         {qObj.correct ? 'CORRECT' : 'INCORRECT'}
+                      </span>
+                    </div>
+                    <p style={{ margin: 0, fontSize: '0.9rem', lineHeight: '1.4' }}>{RITUAL_QUESTIONS[qObj.qIndex].q}</p>
                   </div>
                 ))
               )}
