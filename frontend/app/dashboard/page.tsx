@@ -25,47 +25,47 @@ export default function Dashboard() {
     }
   }, []);
 
-  // Fetch available courses (public view)
-  useEffect(() => {
-    async function fetchCourses() {
-      try {
-        const provider = getReadProvider();
-        const contract = new ethers.Contract(CONTRACTS.tutor.address, CONTRACTS.tutor.abi, provider);
-        const courseCount = await contract.nextCourseId();
-        const list = [];
-        for (let i = 1; i <= Number(courseCount); i++) {
-          const c = await contract.courses(i);
-          // Ethers v6 tuple access
-          const id = Number(c[0]);
-          const name = c[1];
-          const totalQuizzes = Number(c[2]);
-          const rewardAmount = c[3];
-          
-          list.push({ id, name, totalQuizzes, reward: ethers.formatEther(rewardAmount) });
-        }
-        setCourses(list);
-      } catch (e) {
-        console.error("Failed to fetch courses", e);
+  const fetchCourses = async () => {
+    try {
+      const readProvider = getReadProvider();
+      const contract = new ethers.Contract(CONTRACTS.tutor.address, CONTRACTS.tutor.abi, readProvider);
+      const nextId = await contract.nextCourseId();
+      const count = Number(nextId) - 1;
+      const loaded = [];
+      for (let i = 1; i <= count; i++) {
+        const c = await contract.courses(i);
+        loaded.push({
+          id: i,
+          name: c[1],
+          totalQuizzes: Number(c[2]),
+          reward: ethers.formatEther(c[3])
+        });
       }
+      setCourses(loaded);
+    } catch (e) {
+      console.error("Fetch courses error", e);
     }
+  };
+
+  const fetchProgress = async () => {
+    if (!account || !selectedCourse) return;
+    try {
+      const readProvider = getReadProvider();
+      const contract = new ethers.Contract(CONTRACTS.tutor.address, CONTRACTS.tutor.abi, readProvider);
+      const prog = await contract.userProgress(account, selectedCourse);
+      setProgress({ completed: Number(prog[0]), certificateMinted: prog[2] });
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  useEffect(() => {
     fetchCourses();
   }, []);
 
-  // Fetch user progress for selected course
   useEffect(() => {
-    if (!selectedCourse || !account) return;
-    async function fetchProgress() {
-      try {
-        const provider = getReadProvider();
-        const contract = new ethers.Contract(CONTRACTS.tutor.address, CONTRACTS.tutor.abi, provider);
-        const prog = await contract.userProgress(account, selectedCourse);
-        setProgress({ completed: Number(prog[0]), certificateMinted: prog[2] });
-      } catch (e) {
-        console.error("Failed to fetch progress", e);
-      }
-    }
     fetchProgress();
-  }, [selectedCourse, account]);
+  }, [account, selectedCourse]);
 
   const requestQuiz = async () => {
     if (!selectedCourse) return;
@@ -77,7 +77,8 @@ export default function Dashboard() {
       const tx = await contract.requestQuiz(selectedCourse);
       await tx.wait();
       
-      setQuizId("mock-quiz-" + account.slice(0,6) + "-" + selectedCourse + "-" + Date.now());
+      const qIndex = Math.floor(Math.random() * RITUAL_QUESTIONS.length);
+      setQuizId("mock-quiz-" + account.slice(0,6) + "-" + selectedCourse + "-" + qIndex + "-" + Date.now());
     } catch (e: any) {
       console.error(e);
       if (e.code !== 4001) { // 4001 is user rejected
@@ -202,12 +203,12 @@ export default function Dashboard() {
                     <p style={{ marginTop: '0.5rem', fontFamily: 'monospace', fontSize: '0.85rem', color: 'var(--text-muted)' }}>ID: {quizId}</p>
                     <div style={{ marginTop: '1rem', padding: '1rem', background: 'var(--bg-secondary)', borderRadius: 'var(--radius-md)', border: '1px solid var(--glass-border)' }}>
                       <p style={{ fontSize: '1rem', lineHeight: '1.6' }}>
-                        <strong>Question:</strong> Please write a short essay explaining the core concepts of Sovereign AI and how Trusted Execution Environments (TEEs) ensure verifiable execution of AI models on the blockchain.
+                        <strong>Question:</strong> {quizId.split('-').length > 4 ? RITUAL_QUESTIONS[parseInt(quizId.split('-')[4]) % RITUAL_QUESTIONS.length] : "Please write a short essay explaining the core concepts of Sovereign AI and how Trusted Execution Environments (TEEs) ensure verifiable execution of AI models on the blockchain."}
                       </p>
                     </div>
                   </div>
                   <textarea
-                    placeholder="Type your answer here..."
+                    placeholder="Type your answer here (must be longer than 10 characters)..."
                     value={answer}
                     onChange={(e) => setAnswer(e.target.value)}
                     style={{

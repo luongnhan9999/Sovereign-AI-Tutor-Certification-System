@@ -11,7 +11,8 @@ async function main() {
   const provider = new ethers.JsonRpcProvider(rpc);
   const wallet = new ethers.Wallet(privateKey, provider);
 
-  const tutorAddress = "0xCD5040C63Bc25F4F1c82C21221Dd2CdbC8823b81";
+  const tutorAddress = "0x16BcDc218f5FC823eBCF895acd602061a1a0f3f9";
+  
   const tutorAbi = [
     "function registerCourse(string memory name, uint256 totalQuizzes, uint256 rewardAmount) external",
     "function nextCourseId() view returns (uint256)"

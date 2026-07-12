@@ -71,8 +71,8 @@ contract TutorAgent {
      */
     function evaluateAnswer(address user, uint256 courseId, string memory quizId, string memory answer) external view returns (bool correct) {
         if (isMockMode) {
-            // Simple mock: answer is correct if it ends with "42"
-            correct = keccak256(bytes(answer)) == keccak256(bytes("42"));
+            // Mock mode: answer is correct if it's reasonably long (> 10 chars)
+            correct = bytes(answer).length > 10;
         } else {
             bytes memory payload = abi.encodeWithSignature("evaluateAnswer(address,uint256,string,string)", user, courseId, quizId, answer);
             (bool success, bytes memory ret) = LLM_PRECOMPILE.staticcall(payload);
