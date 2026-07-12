@@ -52,6 +52,7 @@ export default function Dashboard() {
   const [quizId, setQuizId] = useState<string>('');
   const [answer, setAnswer] = useState<string>('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [newBadgePopup, setNewBadgePopup] = useState<{name: string, icon: string, color: string} | null>(null);
 
   // Load account from MetaMask silently on load
   useEffect(() => {
@@ -169,9 +170,28 @@ export default function Dashboard() {
       const tx = await contract.submitAnswer(selectedCourse, quizId, payloadAnswer);
       await tx.wait();
       
+      const oldCompleted = progress.completed;
       const newProg = await fetchProgress();
       setQuizId('');
       setAnswer('');
+      
+      // Check for badge unlock
+      if (newProg !== undefined && newProg > oldCompleted) {
+        const thresholds = [
+          { score: 201, badge: { name: "Diamond Badge", icon: "💎", color: "#00d2ff" } },
+          { score: 101, badge: { name: "Gold Badge", icon: "🥇", color: "#ffd700" } },
+          { score: 51, badge: { name: "Silver Badge", icon: "🥈", color: "#c0c0c0" } },
+          { score: 10, badge: { name: "Bronze Badge", icon: "🥉", color: "#cd7f32" } },
+        ];
+        
+        for (const t of thresholds) {
+          if (oldCompleted < t.score && newProg >= t.score) {
+            setNewBadgePopup(t.badge);
+            setTimeout(() => setNewBadgePopup(null), 6000); // Hide after 6 seconds
+            break;
+          }
+        }
+      }
       
       // Automatically request next quiz
       const courseDetails = courses.find(c => c.id === selectedCourse);
@@ -203,6 +223,29 @@ export default function Dashboard() {
 
   return (
     <div className="dashboard-container">
+      {/* Badge Unlock Popup */}
+      {newBadgePopup && (
+        <div style={{
+          position: 'fixed', top: '20px', right: '20px', zIndex: 9999,
+          background: 'rgba(20, 20, 30, 0.95)', border: `1px solid ${newBadgePopup.color}`, 
+          borderRadius: '12px', padding: '1.5rem', display: 'flex', alignItems: 'center', gap: '1.5rem',
+          boxShadow: `0 0 20px ${newBadgePopup.color}60`, backdropFilter: 'blur(10px)',
+          animation: 'slideIn 0.5s ease-out, fadeOut 0.5s ease-in 5.5s'
+        }}>
+          <div style={{ fontSize: '3.5rem', filter: `drop-shadow(0 0 10px ${newBadgePopup.color})` }}>
+            {newBadgePopup.icon}
+          </div>
+          <div>
+            <h3 style={{ color: newBadgePopup.color, margin: '0 0 0.5rem 0', fontSize: '1.4rem' }}>
+              Unlocked {newBadgePopup.name}!
+            </h3>
+            <p style={{ color: 'var(--text-muted)', margin: 0, fontSize: '0.95rem' }}>
+              Congratulations on reaching this milestone!
+            </p>
+          </div>
+        </div>
+      )}
+      
       <header className="dash-header">
         <h2>Student Dashboard</h2>
         <div className="wallet-badge">
