@@ -81,7 +81,7 @@ export default function Dashboard() {
     } catch (e: any) {
       console.error(e);
       if (e.code !== 4001) { // 4001 is user rejected
-        alert("Failed to request quiz. Make sure you are connected to the Ritual Testnet.");
+        alert("Failed to request quiz: " + (e.message || "Unknown error. Check console or get Ritual tokens."));
       }
     }
   };
@@ -103,7 +103,7 @@ export default function Dashboard() {
     } catch (e: any) {
       console.error(e);
       if (e.code !== 4001) {
-        alert("Failed to submit answer.");
+        alert("Failed to submit answer: " + (e.message || "Unknown error. Check console."));
       }
     }
   };
@@ -147,7 +147,7 @@ export default function Dashboard() {
               >
                 <div className="card-icon" style={{ marginBottom: '1rem', width: '40px', height: '40px', fontSize: '1.2rem' }}>📚</div>
                 <h3>{c.name}</h3>
-                <p><strong>{c.totalQuizzes}</strong> Quizzes • Reward: <strong>{c.reward} TRW</strong></p>
+                <p><strong>{c.totalQuizzes}</strong> Quizzes • Reward: <strong>{c.reward} Ritual Points</strong></p>
               </div>
             ))
           )}

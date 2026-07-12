@@ -57,9 +57,11 @@ export async function switchNetwork() {
           });
         } catch (addError) {
           console.error('Failed to add Ritual network', addError);
+          throw new Error("Failed to add Ritual Testnet. Please add it manually to MetaMask.");
         }
       } else {
         console.error('Failed to switch to Ritual network', switchError);
+        throw new Error("Failed to switch to Ritual Testnet.");
       }
     }
   }
