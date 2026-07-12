@@ -31,6 +31,40 @@ export async function getSigner(): Promise<ethers.JsonRpcSigner | null> {
   return null;
 }
 
+/** Prompts MetaMask to switch to the Ritual Testnet (Chain ID 1979). Adds it if missing. */
+export async function switchNetwork() {
+  if (typeof window !== 'undefined' && (window as any).ethereum) {
+    const chainIdHex = '0x' + (1979).toString(16); // '0x7bb'
+    try {
+      await (window as any).ethereum.request({
+        method: 'wallet_switchEthereumChain',
+        params: [{ chainId: chainIdHex }],
+      });
+    } catch (switchError: any) {
+      if (switchError.code === 4902) {
+        try {
+          await (window as any).ethereum.request({
+            method: 'wallet_addEthereumChain',
+            params: [
+              {
+                chainId: chainIdHex,
+                chainName: 'Ritual Testnet',
+                nativeCurrency: { name: 'Ritual', symbol: 'RITUAL', decimals: 18 },
+                rpcUrls: ['https://rpc.ritualfoundation.org'],
+                blockExplorerUrls: ['https://explorer.ritualfoundation.org'],
+              },
+            ],
+          });
+        } catch (addError) {
+          console.error('Failed to add Ritual network', addError);
+        }
+      } else {
+        console.error('Failed to switch to Ritual network', switchError);
+      }
+    }
+  }
+}
+
 /**
  * Load contract ABIs and addresses.
  * After deployment, replace the placeholder addresses with the real ones.

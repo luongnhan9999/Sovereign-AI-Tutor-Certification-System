@@ -3,6 +3,8 @@ import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { ethers } from 'ethers';
 
+import { switchNetwork } from '@/lib/web3';
+
 export default function Header() {
   const [account, setAccount] = useState<string>('');
 
@@ -24,7 +26,10 @@ export default function Header() {
     if (typeof window !== 'undefined' && (window as any).ethereum) {
       try {
         const accounts = await (window as any).ethereum.request({ method: 'eth_requestAccounts' });
-        if (accounts.length) setAccount(ethers.getAddress(accounts[0]));
+        if (accounts.length) {
+          setAccount(ethers.getAddress(accounts[0]));
+          await switchNetwork();
+        }
       } catch (err) {
         console.error("User rejected request", err);
       }

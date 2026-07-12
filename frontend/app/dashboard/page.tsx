@@ -12,11 +12,11 @@ export default function Dashboard() {
   const [answer, setAnswer] = useState<string>('');
   const [progress, setProgress] = useState<any>(null);
 
-  // Load account from MetaMask
+  // Load account from MetaMask silently on load
   useEffect(() => {
     if (typeof window !== 'undefined' && (window as any).ethereum) {
-      (window as any).ethereum.request({ method: 'eth_requestAccounts' }).then((accounts: string[]) => {
-        setAccount(ethers.getAddress(accounts[0]));
+      (window as any).ethereum.request({ method: 'eth_accounts' }).then((accounts: string[]) => {
+        if (accounts.length) setAccount(ethers.getAddress(accounts[0]));
       }).catch(() => {});
       (window as any).ethereum.on('accountsChanged', (accounts: string[]) => {
         setAccount(accounts.length ? ethers.getAddress(accounts[0]) : '');
