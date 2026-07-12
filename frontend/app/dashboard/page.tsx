@@ -204,6 +204,7 @@ export default function Dashboard() {
         if (newQ.length > 0) {
           newQ[newQ.length - 1].answered = true;
           newQ[newQ.length - 1].correct = isCorrect;
+          newQ[newQ.length - 1].selectedAnswer = answer;
         }
         return newQ;
       });
@@ -412,17 +413,21 @@ export default function Dashboard() {
               {askedQuestions.length === 0 ? (
                 <p style={{ fontSize: '0.9rem', color: 'rgba(255,255,255,0.4)', textAlign: 'center', marginTop: '2rem' }}>No history yet. Start learning!</p>
               ) : (
-                [...askedQuestions].reverse().filter(q => q.answered).map((qObj, i) => (
-                  <div key={i} style={{ padding: '1rem', background: 'rgba(255,255,255,0.02)', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.05)' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
-                      <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 600 }}>Completed Quiz</span>
-                      <span style={{ fontSize: '0.75rem', padding: '0.2rem 0.5rem', borderRadius: '4px', background: qObj.correct ? 'rgba(34, 197, 94, 0.2)' : 'rgba(239, 68, 68, 0.2)', color: qObj.correct ? '#4ade80' : '#f87171', fontWeight: 600 }}>
-                         {qObj.correct ? 'CORRECT' : 'INCORRECT'}
-                      </span>
+                [...askedQuestions].reverse().filter(q => q.answered).map((qObj, i) => {
+                  const qText = RITUAL_QUESTIONS[qObj.qIndex].q;
+                  const correctAns = RITUAL_QUESTIONS[qObj.qIndex].options[RITUAL_QUESTIONS[qObj.qIndex].answerIndex];
+                  return (
+                    <div key={i} style={{ padding: '1rem', background: 'rgba(255,255,255,0.02)', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.05)' }}>
+                      <p style={{ margin: '0 0 0.5rem 0', fontSize: '0.9rem', lineHeight: '1.4', fontWeight: 600 }}>{qText}</p>
+                      <div style={{ fontSize: '0.85rem', marginTop: '0.5rem', padding: '0.5rem', background: qObj.correct ? 'rgba(34, 197, 94, 0.1)' : 'rgba(239, 68, 68, 0.1)', borderLeft: `3px solid ${qObj.correct ? '#4ade80' : '#f87171'}`, borderRadius: '4px' }}>
+                        <div style={{ color: 'var(--text-secondary)' }}>Your answer: <strong style={{ color: qObj.correct ? '#4ade80' : '#f87171' }}>{qObj.selectedAnswer || (qObj.correct ? correctAns : 'Unknown')}</strong></div>
+                        {!qObj.correct && (
+                          <div style={{ color: 'var(--text-secondary)', marginTop: '0.25rem' }}>Correct answer: <strong style={{ color: '#4ade80' }}>{correctAns}</strong></div>
+                        )}
+                      </div>
                     </div>
-                    <p style={{ margin: 0, fontSize: '0.9rem', lineHeight: '1.4' }}>{RITUAL_QUESTIONS[qObj.qIndex].q}</p>
-                  </div>
-                ))
+                  );
+                })
               )}
             </div>
           </div>
