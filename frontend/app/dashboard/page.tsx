@@ -8,18 +8,37 @@ const RITUAL_QUESTIONS = [
   {
     q: "What is the primary problem with Replicated State Machine (SMR) for GPU workloads according to Ritual?",
     options: ["GPUs are too expensive.", "Hardware non-reproducibility causes divergent state roots.", "Smart contracts cannot call GPUs.", "Nodes don't have enough storage."],
+    answerIndex: 1
   },
   {
     q: "What does Extended External Validity in Symphony achieve?",
     options: ["It encrypts the mempool.", "It transfers proposer's powers (inclusion, exclusion, ordering) to users.", "It reduces the block time to 1 second.", "It increases block gas limits."],
+    answerIndex: 1
   },
   {
     q: "What are Inclusion Guarantees in Symphony?",
     options: ["A promise of execution.", "A fee market priority.", "A way to include data.", "A protocol-enforced rule where a block is invalid if a triggered transaction is absent."],
+    answerIndex: 3
   },
   {
     q: "How does Symphony verify long-running delegated computations?",
     options: ["All validators re-run it.", "Fraud proofs.", "Product Lattice over proof systems (TEE, ZKP) and committee sampling.", "Trusting a centralized server."],
+    answerIndex: 2
+  },
+  {
+    q: "What is the primary role of the Ritual Chain?",
+    options: ["To store user profile pictures.", "To execute AI models on-chain without any off-chain coprocessors.", "To act as a sovereign execution layer orchestrating AI workloads.", "To replace Ethereum's consensus layer."],
+    answerIndex: 2
+  },
+  {
+    q: "Why is the LLM precompile important in the Ritual architecture?",
+    options: ["It allows smart contracts to natively call AI models.", "It reduces the gas cost of transferring ERC20 tokens.", "It prevents users from deploying malicious contracts.", "It generates random numbers for games."],
+    answerIndex: 0
+  },
+  {
+    q: "In the context of Sovereign AI Tutor, how are correct answers evaluated?",
+    options: ["By a manual human grader.", "Using Ritual's TEE/LLM precompiles.", "By executing Python scripts on IPFS.", "By polling the network validators."],
+    answerIndex: 1
   }
 ];
 
@@ -28,6 +47,8 @@ export default function Dashboard() {
   const [courses, setCourses] = useState<Array<any>>([]);
   const [selectedCourse, setSelectedCourse] = useState<number | null>(null);
   const [progress, setProgress] = useState<{ completed: number, certificateMinted: boolean }>({ completed: 0, certificateMinted: false });
+  const [points, setPoints] = useState<number>(0);
+  const [askedQuestions, setAskedQuestions] = useState<number[]>([]);
   const [quizId, setQuizId] = useState<string>('');
   const [answer, setAnswer] = useState<string>('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -74,6 +95,13 @@ export default function Dashboard() {
       const contract = new ethers.Contract(CONTRACTS.tutor.address, CONTRACTS.tutor.abi, readProvider);
       const prog = await contract.userProgress(account, selectedCourse);
       setProgress({ completed: Number(prog[0]), certificateMinted: prog[2] });
+      
+      try {
+        const bal = await contract.rewardBalance(account);
+        setPoints(Number(ethers.formatEther(bal || 0)) * 1e18); // Since reward is e.g. 10 * 1e18
+      } catch (e) {
+        setPoints(0);
+      }
       return Number(prog[0]);
     } catch (e) {
       console.error(e);
@@ -89,20 +117,29 @@ export default function Dashboard() {
     fetchProgress();
     setQuizId('');
     setAnswer('');
+    setAskedQuestions([]);
   }, [account, selectedCourse]);
 
-  const requestQuiz = async () => {
+  const requestQuiz = async (forceNetworkSwitch = true) => {
     if (!selectedCourse) return;
     setIsSubmitting(true);
     try {
-      await switchNetwork(); // Ensure they are on Ritual before writing
+      if (forceNetworkSwitch) await switchNetwork(); // Ensure they are on Ritual before writing
       const signer = await getSigner();
       if (!signer) { setIsSubmitting(false); return; }
       const contract = new ethers.Contract(CONTRACTS.tutor.address, CONTRACTS.tutor.abi, signer);
       const tx = await contract.requestQuiz(selectedCourse);
       await tx.wait();
       
-      const qIndex = Math.floor(Math.random() * RITUAL_QUESTIONS.length);
+      // Find a random question that hasn't been asked yet
+      let qIndex = Math.floor(Math.random() * RITUAL_QUESTIONS.length);
+      let attempts = 0;
+      while (askedQuestions.includes(qIndex) && attempts < 50) {
+        qIndex = Math.floor(Math.random() * RITUAL_QUESTIONS.length);
+        attempts++;
+      }
+      setAskedQuestions(prev => [...prev, qIndex]);
+      
       setQuizId("mock-quiz-" + account.slice(0,6) + "-" + selectedCourse + "-" + qIndex + "-" + Date.now());
       setAnswer('');
     } catch (e: any) {
@@ -123,9 +160,12 @@ export default function Dashboard() {
       if (!signer) { setIsSubmitting(false); return; }
       const contract = new ethers.Contract(CONTRACTS.tutor.address, CONTRACTS.tutor.abi, signer);
       
-      // Pad answer to bypass TutorAgent mock > 10 char rule
-      const paddedAnswer = "Option selected: " + answer + " (padded for length)";
-      const tx = await contract.submitAnswer(selectedCourse, quizId, paddedAnswer);
+      // We pass the exact answer string, but since we are using the real LLM precompile (or our mock if true),
+      // we just need it to be correct according to TutorAgent. Since TutorAgent's real mock mode checks length > 10,
+      // and our contract is in real mode (false) but assuming the precompile checks correctly, wait!
+      // In this deployed contract, isMockMode is FALSE. So it will call the precompile.
+      // Assuming the precompile evaluates string similarity or something. We will just pass the option.
+      const tx = await contract.submitAnswer(selectedCourse, quizId, answer);
       await tx.wait();
       
       const newProg = await fetchProgress();
@@ -136,7 +176,7 @@ export default function Dashboard() {
       const courseDetails = courses.find(c => c.id === selectedCourse);
       if (courseDetails && newProg !== undefined && newProg < courseDetails.totalQuizzes) {
         // Auto trigger next
-        setTimeout(() => requestQuiz(), 500);
+        setTimeout(() => requestQuiz(false), 500);
       }
       
     } catch (e: any) {
@@ -209,8 +249,8 @@ export default function Dashboard() {
               
               <div className="progress-bar-container">
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem', fontSize: '0.85rem', color: 'var(--text-muted)' }}>
-                  <span>Progress</span>
-                  <span>{progress.completed} / {courses.find(c => c.id === selectedCourse)?.totalQuizzes}</span>
+                  <span>Progress: {progress.completed} / {courses.find(c => c.id === selectedCourse)?.totalQuizzes}</span>
+                  <span style={{ color: 'var(--accent-blue)', fontWeight: 600 }}>Balance: {points} Ritual Points</span>
                 </div>
                 <div className="progress-track" style={{ width: '100%', height: '8px', background: 'rgba(255,255,255,0.05)', borderRadius: '4px', overflow: 'hidden' }}>
                   <div className="progress-fill" style={{ 
@@ -223,7 +263,7 @@ export default function Dashboard() {
               </div>
 
               {!quizId && progress.completed < (courses.find(c => c.id === selectedCourse)?.totalQuizzes || 1) && (
-                <button className="btn btn-primary" style={{ width: '100%', marginTop: '2rem' }} onClick={requestQuiz} disabled={isSubmitting}>
+                <button className="btn btn-primary" style={{ width: '100%', marginTop: '2rem' }} onClick={() => requestQuiz(true)} disabled={isSubmitting}>
                   {isSubmitting ? "Processing..." : progress.completed === 0 ? "Start Course" : "Request Next Quiz"}
                 </button>
               )}

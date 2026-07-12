@@ -73,12 +73,13 @@ export async function switchNetwork() {
  */
 export const CONTRACTS = {
   tutor: {
-    address: '0x16BcDc218f5FC823eBCF895acd602061a1a0f3f9',
+    address: '0x3bCb82d3A5642E8b1FF1E492eeaBD2b3A8972251',
     abi: [
       // Minimal ABI needed for the dashboard UI
       'function nextCourseId() view returns (uint256)',
       'function courses(uint256) view returns (uint256 id, string name, uint256 totalQuizzes, uint256 rewardAmount)',
       'function userProgress(address,uint256) view returns (uint256 completedQuizzes, uint256 lastQuizTimestamp, bool certificateMinted)',
+      'function rewardBalance(address) view returns (int256)',
       'function requestQuiz(uint256)',
       'function submitAnswer(uint256,string,string)',
       'event QuizGenerated(address indexed user, uint256 indexed courseId, string quizId)',

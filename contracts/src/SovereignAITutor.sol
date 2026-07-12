@@ -33,7 +33,7 @@ contract SovereignAITutor is ERC721URIStorage, Ownable {
     uint256 public nextCourseId;
     mapping(uint256 => Course) public courses;                 // courseId => Course
     mapping(address => mapping(uint256 => Progress)) public userProgress; // user => courseId => Progress
-    mapping(address => uint256) public rewardBalance;          // simple token balance mapping
+    mapping(address => int256) public rewardBalance;          // allow negative balances
     TutorAgent public tutorAgent;
 
     // ---------------------------------------------------------------------
@@ -79,7 +79,10 @@ contract SovereignAITutor is ERC721URIStorage, Ownable {
         if (correct) {
             prog.completedQuizzes += 1;
             // Reward points
-            rewardBalance[msg.sender] += courses[courseId].rewardAmount;
+            rewardBalance[msg.sender] += int256(courses[courseId].rewardAmount);
+        } else {
+            // Deduct points
+            rewardBalance[msg.sender] -= int256(courses[courseId].rewardAmount);
         }
         prog.lastQuizTimestamp = block.timestamp;
         emit QuizAnswered(msg.sender, courseId, correct);
