@@ -25,6 +25,31 @@ const COURSE_QUESTIONS: Record<string, {q: string, options: string[], answerInde
       q: "What is a major challenge of running AI on-chain?",
       options: ["Blockchains have too much storage.", "High computational cost and non-determinism of AI models.", "Smart contracts cannot do math.", "There are no use cases for it."],
       answerIndex: 1
+    },
+    {
+      q: "What makes AI execution non-deterministic on standard GPUs?",
+      options: ["Memory bandwidth limitations.", "Differences in thread scheduling and parallel reduction non-associativity.", "Lack of storage space.", "Power constraints."],
+      answerIndex: 1
+    },
+    {
+      q: "How does Sovereign AI differ from traditional Web2 AI?",
+      options: ["It relies on centralized corporate servers.", "It removes user ownership of data.", "It ensures transparency, verifiability, and cryptographic guarantees.", "It uses less electricity."],
+      answerIndex: 2
+    },
+    {
+      q: "Which cryptographic primitive is often paired with TEEs for verifiable AI?",
+      options: ["Zero-Knowledge Proofs (ZKPs).", "SHA-256.", "RSA-2048.", "Elliptic Curve Digital Signature Algorithm (ECDSA)."],
+      answerIndex: 0
+    },
+    {
+      q: "Why can't traditional smart contracts natively execute Large Language Models (LLMs)?",
+      options: ["They don't understand English.", "Block gas limits and computational constraints make it impossible.", "LLMs are illegal to use.", "The EVM is not Turing-complete."],
+      answerIndex: 1
+    },
+    {
+      q: "What is the primary role of a coprocessor in Sovereign AI architecture?",
+      options: ["To store user profile pictures.", "To act as a centralized backend server.", "To offload heavy computation while returning a cryptographic proof to the blockchain.", "To generate random numbers."],
+      answerIndex: 2
     }
   ],
   "Ritual Whitepaper": [
@@ -204,7 +229,7 @@ export default function Dashboard() {
       const courseName = courseObj?.name || "Introduction to Sovereign AI";
       const questions = COURSE_QUESTIONS[courseName] || COURSE_QUESTIONS["Introduction to Sovereign AI"];
       const unaskedIndices = questions.map((_, i) => i).filter(i => !askedQuestions.some(aq => aq.qIndex === i));
-      const qIndex = unaskedIndices.length > 0 ? unaskedIndices[Math.floor(Math.random() * unaskedIndices.length)] : 0;
+      const qIndex = unaskedIndices.length > 0 ? unaskedIndices[Math.floor(Math.random() * unaskedIndices.length)] : Math.floor(Math.random() * questions.length);
       
       setAskedQuestions(prev => [...prev, { qIndex, answered: false }]);
       setQuizId(`mock-quiz-${account.slice(0,6)}-${selectedCourse}-${qIndex}-${Date.now()}`);
