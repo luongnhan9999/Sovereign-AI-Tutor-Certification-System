@@ -53,6 +53,31 @@ export default function Dashboard() {
   const [answer, setAnswer] = useState<string>('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [newBadgePopup, setNewBadgePopup] = useState<{name: string, icon: string, color: string} | null>(null);
+  const [historyTab, setHistoryTab] = useState<'history' | 'leaderboard'>('history');
+  const [botPlayers, setBotPlayers] = useState<{address: string, score: number, isUser?: boolean}[]>([
+    { address: '0x1A2B...3C4D', score: 185 },
+    { address: '0x9F8E...7D6C', score: 142 },
+    { address: '0x4B5A...6C7D', score: 98 },
+    { address: '0x2C3D...4E5F', score: 76 },
+    { address: '0x8D9E...0F1A', score: 65 },
+    { address: '0x5E6F...7A8B', score: 43 },
+    { address: '0x3A4B...5C6D', score: 21 },
+    { address: '0x7C8D...9E0F', score: 15 },
+    { address: '0x6B7A...8C9D', score: 8 },
+  ]);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setBotPlayers(prev => prev.map(bot => {
+        // Bots answer randomly every 10s
+        if (Math.random() < 0.4) {
+          return { ...bot, score: bot.score + 1 };
+        }
+        return bot;
+      }));
+    }, 10000);
+    return () => clearInterval(interval);
+  }, []);
 
   // Load account from MetaMask silently on load
   useEffect(() => {
@@ -428,33 +453,75 @@ export default function Dashboard() {
         {/* History Panel */}
         <section className="history-panel">
           <div className="glass-card history-room" style={{ height: '100%', minHeight: '500px', display: 'flex', flexDirection: 'column' }}>
-            <h3 style={{ marginBottom: '1.5rem', color: 'var(--text-muted)' }}>Quiz History</h3>
-            <div style={{ flex: 1, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '1rem', maxHeight: '600px', paddingRight: '0.5rem' }}>
-              {askedQuestions.length === 0 ? (
-                <p style={{ fontSize: '0.9rem', color: 'rgba(255,255,255,0.4)', textAlign: 'center', marginTop: '2rem' }}>No history yet. Start learning!</p>
-              ) : (
-                [...askedQuestions].reverse().filter(q => q.answered).map((qObj, i) => {
-                  const qText = RITUAL_QUESTIONS[qObj.qIndex].q;
-                  const correctAns = RITUAL_QUESTIONS[qObj.qIndex].options[RITUAL_QUESTIONS[qObj.qIndex].answerIndex];
-                  return (
-                    <div key={i} style={{ padding: '1rem', background: 'rgba(255,255,255,0.02)', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.05)' }}>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.5rem' }}>
-                        <p style={{ margin: '0 0 0.5rem 0', fontSize: '0.9rem', lineHeight: '1.4', fontWeight: 600, flex: 1, paddingRight: '1rem' }}>{qText}</p>
-                        <span style={{ fontSize: '0.75rem', padding: '0.2rem 0.5rem', borderRadius: '4px', background: qObj.correct ? 'rgba(34, 197, 94, 0.2)' : 'rgba(239, 68, 68, 0.2)', color: qObj.correct ? '#4ade80' : '#f87171', fontWeight: 600, whiteSpace: 'nowrap' }}>
-                           {qObj.correct ? 'CORRECT' : 'INCORRECT'}
+            <div style={{ display: 'flex', gap: '1.5rem', marginBottom: '1.5rem' }}>
+              <h3 
+                onClick={() => setHistoryTab('history')}
+                style={{ cursor: 'pointer', color: historyTab === 'history' ? 'var(--text-primary)' : 'var(--text-muted)', borderBottom: historyTab === 'history' ? '2px solid var(--accent-blue)' : 'none', paddingBottom: '0.5rem', transition: 'all 0.2s' }}
+              >
+                Quiz History
+              </h3>
+              <h3 
+                onClick={() => setHistoryTab('leaderboard')}
+                style={{ cursor: 'pointer', color: historyTab === 'leaderboard' ? 'var(--text-primary)' : 'var(--text-muted)', borderBottom: historyTab === 'leaderboard' ? '2px solid var(--accent-blue)' : 'none', paddingBottom: '0.5rem', transition: 'all 0.2s' }}
+              >
+                Leaderboard 🏆
+              </h3>
+            </div>
+            
+            {historyTab === 'history' ? (
+              <div style={{ flex: 1, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '1rem', maxHeight: '600px', paddingRight: '0.5rem' }}>
+                {askedQuestions.length === 0 ? (
+                  <p style={{ fontSize: '0.9rem', color: 'rgba(255,255,255,0.4)', textAlign: 'center', marginTop: '2rem' }}>No history yet. Start learning!</p>
+                ) : (
+                  [...askedQuestions].reverse().filter(q => q.answered).map((qObj, i) => {
+                    const qText = RITUAL_QUESTIONS[qObj.qIndex].q;
+                    const correctAns = RITUAL_QUESTIONS[qObj.qIndex].options[RITUAL_QUESTIONS[qObj.qIndex].answerIndex];
+                    return (
+                      <div key={i} style={{ padding: '1rem', background: 'rgba(255,255,255,0.02)', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.05)' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.5rem' }}>
+                          <p style={{ margin: '0 0 0.5rem 0', fontSize: '0.9rem', lineHeight: '1.4', fontWeight: 600, flex: 1, paddingRight: '1rem' }}>{qText}</p>
+                          <span style={{ fontSize: '0.75rem', padding: '0.2rem 0.5rem', borderRadius: '4px', background: qObj.correct ? 'rgba(34, 197, 94, 0.2)' : 'rgba(239, 68, 68, 0.2)', color: qObj.correct ? '#4ade80' : '#f87171', fontWeight: 600, whiteSpace: 'nowrap' }}>
+                             {qObj.correct ? 'CORRECT' : 'INCORRECT'}
+                          </span>
+                        </div>
+                        <div style={{ fontSize: '0.85rem', marginTop: '0.5rem', padding: '0.5rem', background: qObj.correct ? 'rgba(34, 197, 94, 0.1)' : 'rgba(239, 68, 68, 0.1)', borderLeft: `3px solid ${qObj.correct ? '#4ade80' : '#f87171'}`, borderRadius: '4px' }}>
+                          <div style={{ color: 'var(--text-secondary)' }}>Your answer: <strong style={{ color: qObj.correct ? '#4ade80' : '#f87171' }}>{qObj.selectedAnswer || (qObj.correct ? correctAns : 'Unknown')}</strong></div>
+                          {!qObj.correct && (
+                            <div style={{ color: 'var(--text-secondary)', marginTop: '0.25rem' }}>Correct answer: <strong style={{ color: '#4ade80' }}>{correctAns}</strong></div>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })
+                )}
+              </div>
+            ) : (
+              <div style={{ flex: 1, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '0.8rem', paddingRight: '0.5rem' }}>
+                {(() => {
+                  const allPlayers = [...botPlayers];
+                  if (account) {
+                    allPlayers.push({ address: account.substring(0, 6) + '...' + account.substring(account.length - 4), score: progress.completed, isUser: true });
+                  }
+                  allPlayers.sort((a, b) => b.score - a.score);
+                  
+                  return allPlayers.slice(0, 10).map((player, idx) => (
+                    <div key={idx} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '1rem', background: player.isUser ? 'rgba(99, 102, 241, 0.15)' : 'rgba(255,255,255,0.02)', borderRadius: '8px', border: player.isUser ? '1px solid var(--accent-blue)' : '1px solid rgba(255,255,255,0.05)', transition: 'all 0.3s' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                        <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: idx === 0 ? '#ffd700' : idx === 1 ? '#c0c0c0' : idx === 2 ? '#cd7f32' : 'rgba(255,255,255,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: idx < 3 ? '#000' : '#fff', fontWeight: 'bold', boxShadow: idx < 3 ? `0 0 10px ${idx === 0 ? '#ffd700' : idx === 1 ? '#c0c0c0' : '#cd7f32'}` : 'none' }}>
+                          {idx + 1}
+                        </div>
+                        <span style={{ fontFamily: 'monospace', color: player.isUser ? 'var(--accent-blue)' : 'var(--text-primary)', fontWeight: player.isUser ? 'bold' : 'normal' }}>
+                          {player.isUser ? player.address + ' (You)' : player.address}
                         </span>
                       </div>
-                      <div style={{ fontSize: '0.85rem', marginTop: '0.5rem', padding: '0.5rem', background: qObj.correct ? 'rgba(34, 197, 94, 0.1)' : 'rgba(239, 68, 68, 0.1)', borderLeft: `3px solid ${qObj.correct ? '#4ade80' : '#f87171'}`, borderRadius: '4px' }}>
-                        <div style={{ color: 'var(--text-secondary)' }}>Your answer: <strong style={{ color: qObj.correct ? '#4ade80' : '#f87171' }}>{qObj.selectedAnswer || (qObj.correct ? correctAns : 'Unknown')}</strong></div>
-                        {!qObj.correct && (
-                          <div style={{ color: 'var(--text-secondary)', marginTop: '0.25rem' }}>Correct answer: <strong style={{ color: '#4ade80' }}>{correctAns}</strong></div>
-                        )}
+                      <div style={{ fontWeight: 'bold', color: 'var(--accent-pink)', fontSize: '1.1rem' }}>
+                        {player.score} <span style={{ fontSize: '0.8rem', fontWeight: 'normal', color: 'var(--text-muted)' }}>pts</span>
                       </div>
                     </div>
-                  );
-                })
-              )}
-            </div>
+                  ));
+                })()}
+              </div>
+            )}
           </div>
         </section>
       </main>
