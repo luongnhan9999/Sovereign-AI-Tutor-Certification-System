@@ -2,7 +2,7 @@
 import { ethers } from 'ethers';
 
 // Public RPC endpoint for read‑only calls (no wallet needed)
-const PUBLIC_RPC = process.env.NEXT_PUBLIC_RPC_URL || 'https://sepolia.base.org';
+const PUBLIC_RPC = process.env.NEXT_PUBLIC_RPC_URL || 'https://rpc.ritualfoundation.org';
 
 /**
  * Returns a read-only provider pointing directly to our network (Base Sepolia).
@@ -37,7 +37,7 @@ export async function getSigner(): Promise<ethers.JsonRpcSigner | null> {
  */
 export const CONTRACTS = {
   tutor: {
-    address: process.env.NEXT_PUBLIC_TUTOR_ADDRESS || '0x4152723f23574eDB63284f21a99596609d2E3E92',
+    address: process.env.NEXT_PUBLIC_TUTOR_ADDRESS || '0xCD5040C63Bc25F4F1c82C21221Dd2CdbC8823b81',
     abi: [
       // Minimal ABI needed for the dashboard UI
       'function nextCourseId() view returns (uint256)',
@@ -49,7 +49,7 @@ export const CONTRACTS = {
     ],
   },
   agent: {
-    address: process.env.NEXT_PUBLIC_AGENT_ADDRESS || '0x6f854279b0910037A27491511Ddc0670E0Bb1711',
+    address: process.env.NEXT_PUBLIC_AGENT_ADDRESS || '0xa5Cc4Df4F874484fDb073f220F6F45354326aD71',
     abi: [
       'function isMockMode() view returns (bool)',
       'function setMockMode(bool)',
