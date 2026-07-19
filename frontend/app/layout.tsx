@@ -19,7 +19,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <div className="ambient-background"></div>
 
         <Header />
-        {children}
+        <main style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+          {children}
+        </main>
 
         {/* Premium Minimalist Footer */}
         <footer style={{ 

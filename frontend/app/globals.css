@@ -54,7 +54,7 @@
 /* ─── Reset ─── */
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 html { scroll-behavior: smooth; }
-html, body { height: 100%; }
+html, body { min-height: 100%; }
 
 body {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
@@ -64,6 +64,12 @@ body {
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
   line-height: 1.6;
+}
+
+.app-body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
 }
 
 /* Custom Scrollbar */
