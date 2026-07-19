@@ -8,7 +8,7 @@ import './globals.css';
 
 export const metadata: Metadata = {
   title: 'VeriLearn',
-  description: 'Autonomous on‑chain AI tutor with certificate NFTs',
+  description: 'VeriLearn: Autonomous on‑chain AI tutor with certificate NFTs',
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

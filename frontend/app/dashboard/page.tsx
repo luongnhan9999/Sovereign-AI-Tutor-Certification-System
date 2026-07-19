@@ -5,14 +5,14 @@ import Link from 'next/link';
 import { getProvider, getReadProvider, getSigner, switchNetwork, CONTRACTS } from '@/lib/web3';
 
 const COURSE_QUESTIONS: Record<string, {q: string, options: string[], answerIndex: number}[]> = {
-  "Introduction to Sovereign AI": [
+  "Introduction to VeriLearn": [
     {
-      q: "Please write a short essay explaining the core concepts of Sovereign AI and how Trusted Execution Environments (TEEs) ensure verifiable execution of AI models on the blockchain.",
+      q: "Please write a short essay explaining the core concepts of VeriLearn and how Trusted Execution Environments (TEEs) ensure verifiable execution of AI models on the blockchain.",
       options: ["Submit Essay"],
       answerIndex: 0
     },
     {
-      q: "What is Sovereign AI?",
+      q: "What is VeriLearn?",
       options: ["AI models controlled by a single corporation.", "AI models deployed on verifiable, decentralized infrastructure.", "AI models that run offline.", "AI models that do not require data."],
       answerIndex: 1
     },
@@ -32,7 +32,7 @@ const COURSE_QUESTIONS: Record<string, {q: string, options: string[], answerInde
       answerIndex: 1
     },
     {
-      q: "How does Sovereign AI differ from traditional Web2 AI?",
+      q: "How does VeriLearn differ from traditional Web2 AI?",
       options: ["It relies on centralized corporate servers.", "It removes user ownership of data.", "It ensures transparency, verifiability, and cryptographic guarantees.", "It uses less electricity."],
       answerIndex: 2
     },
@@ -47,7 +47,7 @@ const COURSE_QUESTIONS: Record<string, {q: string, options: string[], answerInde
       answerIndex: 1
     },
     {
-      q: "What is the primary role of a coprocessor in Sovereign AI architecture?",
+      q: "What is the primary role of a coprocessor in VeriLearn architecture?",
       options: ["To store user profile pictures.", "To act as a centralized backend server.", "To offload heavy computation while returning a cryptographic proof to the blockchain.", "To generate random numbers."],
       answerIndex: 2
     }
@@ -140,6 +140,9 @@ export default function Dashboard() {
         if (courseName === "Symphony Whitepaper: Execution-Aware Consensus") {
           courseName = "Ritual Whitepaper";
         }
+        if (courseName === "Introduction to Sovereign AI") {
+          courseName = "Introduction to VeriLearn";
+        }
         if (seenNames.has(courseName)) continue;
         seenNames.add(courseName);
         loaded.push({
@@ -226,8 +229,8 @@ export default function Dashboard() {
       await tx.wait();
       
       const courseObj = courses.find(c => c.id === selectedCourse);
-      const courseName = courseObj?.name || "Introduction to Sovereign AI";
-      const questions = COURSE_QUESTIONS[courseName] || COURSE_QUESTIONS["Introduction to Sovereign AI"];
+      const courseName = courseObj?.name || "Introduction to VeriLearn";
+      const questions = COURSE_QUESTIONS[courseName] || COURSE_QUESTIONS["Introduction to VeriLearn"];
       const unaskedIndices = questions.map((_, i) => i).filter(i => !askedQuestions.some(aq => aq.qIndex === i));
       const qIndex = unaskedIndices.length > 0 ? unaskedIndices[Math.floor(Math.random() * unaskedIndices.length)] : Math.floor(Math.random() * questions.length);
       
@@ -254,8 +257,8 @@ export default function Dashboard() {
       
       const qIndex = parseInt(quizId.split('-')[4]);
       const courseObj = courses.find(c => c.id === selectedCourse);
-      const courseName = courseObj?.name || "Introduction to Sovereign AI";
-      const questions = COURSE_QUESTIONS[courseName] || COURSE_QUESTIONS["Introduction to Sovereign AI"];
+      const courseName = courseObj?.name || "Introduction to VeriLearn";
+      const questions = COURSE_QUESTIONS[courseName] || COURSE_QUESTIONS["Introduction to VeriLearn"];
       const qItem = questions[qIndex];
       let isCorrect = false;
       if (qItem) {
@@ -418,8 +421,8 @@ export default function Dashboard() {
 
               {(() => {
                 const courseObj = courses.find(c => c.id === selectedCourse);
-                const courseName = courseObj?.name || "Introduction to Sovereign AI";
-                const questions = COURSE_QUESTIONS[courseName] || COURSE_QUESTIONS["Introduction to Sovereign AI"];
+                const courseName = courseObj?.name || "Introduction to VeriLearn";
+                const questions = COURSE_QUESTIONS[courseName] || COURSE_QUESTIONS["Introduction to VeriLearn"];
                 const currentQ = quizId && quizId.split('-').length > 4 ? questions[parseInt(quizId.split('-')[4])] : null;
                 
                 return quizId && currentQ ? (
@@ -537,8 +540,8 @@ export default function Dashboard() {
                 ) : (
                   [...askedQuestions].reverse().filter(q => q.answered).map((qObj, i) => {
                     const courseObj = courses.find(c => c.id === selectedCourse);
-                    const courseName = courseObj?.name || "Introduction to Sovereign AI";
-                    const questions = COURSE_QUESTIONS[courseName] || COURSE_QUESTIONS["Introduction to Sovereign AI"];
+                    const courseName = courseObj?.name || "Introduction to VeriLearn";
+                    const questions = COURSE_QUESTIONS[courseName] || COURSE_QUESTIONS["Introduction to VeriLearn"];
                     const qItem = questions[qObj.qIndex];
                     const qText = qItem ? qItem.q : "Legacy Question";
                     const correctAns = qItem ? qItem.options[qItem.answerIndex] : "N/A";
