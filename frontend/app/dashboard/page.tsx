@@ -383,7 +383,7 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="dashboard-container" style={{ paddingTop: '120px' }}>
+    <div className="dashboard-container" style={{ flex: 1, display: 'flex', flexDirection: 'column', minHeight: 0, padding: '100px 2% 20px' }}>
       {newBadgePopup && (
         <div style={{
           position: 'fixed', top: '20px', right: '20px', zIndex: 9999,
@@ -407,9 +407,9 @@ export default function Dashboard() {
       )}
 
       <main className="dashboard-grid">
-        <aside className="sidebar vip-card">
+        <aside className="sidebar vip-card" style={{ display: 'flex', flexDirection: 'column' }}>
           
-          <div className="profile-card" style={{ borderBottom: '1px solid rgba(0, 229, 255, 0.2)', paddingBottom: '2rem', marginBottom: '2rem' }}>
+          <div className="profile-card" style={{ flexShrink: 0, borderBottom: '1px solid rgba(0, 229, 255, 0.2)', paddingBottom: '2rem', marginBottom: '2rem' }}>
             <div className="avatar-pro" style={{ boxShadow: '0 0 20px rgba(0, 229, 255, 0.4)', border: '2px solid var(--accent-cyan)' }}>{account ? account.slice(2,4).toUpperCase() : 'UI'}</div>
             <div>
               <h3 style={{ fontSize: '1.3rem', margin: '0 0 0.25rem 0', textShadow: '0 0 10px rgba(0, 229, 255, 0.3)' }}>Neural Link Profile</h3>
@@ -419,7 +419,7 @@ export default function Dashboard() {
             </div>
           </div>
 
-          <div className="stat-group" style={{ marginBottom: '2.5rem' }}>
+          <div className="stat-group" style={{ flexShrink: 0, marginBottom: '2.5rem' }}>
             <div className="stat-box" style={{ background: 'rgba(0,0,0,0.5)', borderColor: 'rgba(0, 229, 255, 0.2)' }}>
               <div className="val" style={{ textShadow: '0 0 10px var(--accent-cyan)' }}>{progress.completed}</div>
               <div className="lbl" style={{ color: 'rgba(255,255,255,0.7)' }}>Nodes Solved</div>
@@ -430,9 +430,9 @@ export default function Dashboard() {
             </div>
           </div>
 
-          <div>
-            <h3 style={{ marginBottom: '1.2rem', color: 'var(--accent-cyan)', fontSize: '0.9rem', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Neural Modules</h3>
-            <div className="course-list">
+          <div style={{ display: 'flex', flexDirection: 'column', flex: 1, minHeight: 0 }}>
+            <h3 style={{ flexShrink: 0, marginBottom: '1.2rem', color: 'var(--accent-cyan)', fontSize: '0.9rem', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Neural Modules</h3>
+            <div className="course-list" style={{ flex: 1, overflowY: 'auto', paddingRight: '0.5rem' }}>
               {courses.length === 0 ? (
                 <p className="text-muted" style={{ animation: 'pulse 1.5s infinite' }}>Initializing modules...</p>
               ) : (
@@ -461,7 +461,7 @@ export default function Dashboard() {
           </div>
         </aside>
 
-        <section className="workspace" style={{ display: 'flex', flexDirection: 'column', gap: '2rem', height: '100%', overflowY: 'auto' }}>
+        <section className="workspace" style={{ display: 'flex', flexDirection: 'column', gap: '2rem', flex: 1, minHeight: 0 }}>
           {selectedCourse ? (
             (() => {
               const courseObj = courses.find(c => c.id === selectedCourse);
@@ -589,7 +589,7 @@ export default function Dashboard() {
             );
           })()
           ) : (
-            <div className="vip-card" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', minHeight: '500px', textAlign: 'center' }}>
+            <div className="vip-card" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', flex: 1, minHeight: 0, textAlign: 'center' }}>
               <div style={{ position: 'relative', width: '120px', height: '120px', marginBottom: '2rem' }}>
                 <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, border: '2px solid rgba(0,229,255,0.3)', borderRadius: '50%', borderTopColor: 'var(--accent-cyan)', animation: 'spin 3s linear infinite' }}></div>
                 <div style={{ position: 'absolute', top: '15px', left: '15px', right: '15px', bottom: '15px', border: '2px solid rgba(181, 55, 242, 0.3)', borderRadius: '50%', borderBottomColor: 'var(--accent-purple)', animation: 'spin 2s linear infinite reverse' }}></div>
@@ -601,8 +601,8 @@ export default function Dashboard() {
           )}
         </section>
 
-        <aside className="telemetry-sidebar" style={{ display: 'flex', flexDirection: 'column', gap: '2rem', height: '100%', overflowY: 'auto' }}>
-          <div className="vip-card" style={{ padding: '1.5rem' }}>
+        <aside className="telemetry-sidebar" style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+          <div className="vip-card" style={{ padding: '1.5rem', flexShrink: 0 }}>
             <h4 style={{ color: 'var(--accent-cyan)', marginBottom: '1rem', fontFamily: 'Space Grotesk', display: 'flex', alignItems: 'center', gap: '0.5rem', textShadow: '0 0 10px rgba(0, 229, 255, 0.4)' }}>
               <span className="brand-dot" style={{ animation: 'pulse 2s infinite', background: 'var(--accent-cyan)', boxShadow: '0 0 10px var(--accent-cyan)' }}></span>
               System Telemetry
@@ -623,7 +623,7 @@ export default function Dashboard() {
             </div>
           </div>
 
-          <div className="vip-card" style={{ height: '100%', minHeight: '500px', display: 'flex', flexDirection: 'column', padding: '1.5rem' }}>
+          <div className="vip-card" style={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column', padding: '1.5rem' }}>
             <div className="leaderboard-header" style={{ marginBottom: '1.5rem' }}>
               <div className="tabs" style={{ display: 'flex', gap: '0.5rem', background: 'rgba(0,0,0,0.3)', padding: '0.25rem', borderRadius: 'var(--radius-sm)' }}>
                 <button 
