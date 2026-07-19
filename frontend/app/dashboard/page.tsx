@@ -409,7 +409,7 @@ export default function Dashboard() {
       <main className="dashboard-grid">
         <aside className="sidebar vip-card" style={{ display: 'flex', flexDirection: 'column', minHeight: 0 }}>
           
-          <div className="profile-card" style={{ flexShrink: 0, borderBottom: '1px solid rgba(0, 229, 255, 0.2)', paddingBottom: '1rem', marginBottom: '1rem' }}>
+          <div className="profile-card" style={{ flexShrink: 0, borderBottom: '1px solid rgba(0, 229, 255, 0.2)', paddingBottom: '1rem' }}>
             <div className="avatar-pro" style={{ boxShadow: '0 0 20px rgba(0, 229, 255, 0.4)', border: '2px solid var(--accent-cyan)' }}>{account ? account.slice(2,4).toUpperCase() : 'UI'}</div>
             <div>
               <h3 style={{ fontSize: '1.2rem', margin: '0 0 0.2rem 0', textShadow: '0 0 10px rgba(0, 229, 255, 0.3)' }}>Neural Link Profile</h3>
@@ -419,7 +419,7 @@ export default function Dashboard() {
             </div>
           </div>
 
-          <div className="stat-group" style={{ flexShrink: 0, marginBottom: '1rem' }}>
+          <div className="stat-group" style={{ flexShrink: 0 }}>
             <div className="stat-box" style={{ background: 'rgba(0,0,0,0.5)', borderColor: 'rgba(0, 229, 255, 0.2)' }}>
               <div className="val" style={{ textShadow: '0 0 10px var(--accent-cyan)' }}>{progress.completed}</div>
               <div className="lbl" style={{ color: 'rgba(255,255,255,0.7)' }}>Nodes Solved</div>
