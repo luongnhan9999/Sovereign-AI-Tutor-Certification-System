@@ -383,7 +383,7 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="dashboard-container">
+    <div className="dashboard-container" style={{ paddingTop: '120px' }}>
       {newBadgePopup && (
         <div style={{
           position: 'fixed', top: '20px', right: '20px', zIndex: 9999,
@@ -405,10 +405,6 @@ export default function Dashboard() {
           </div>
         </div>
       )}
-      
-      <header className="dash-header" style={{ marginBottom: '2rem' }}>
-        <h2 style={{ fontSize: '2.5rem', fontFamily: 'Space Grotesk', fontWeight: 700 }}>Neural <span className="gradient-text">Dashboard</span></h2>
-      </header>
 
       <main className="dashboard-grid">
         <aside className="sidebar">
