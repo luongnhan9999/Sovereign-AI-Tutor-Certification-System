@@ -36,9 +36,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           gap: '1rem'
         }}>
           <div className="footer-links" style={{ display: 'flex', gap: '2rem', alignItems: 'center' }}>
-            <a href="/terms" style={{ fontSize: '0.9rem' }}>Terms of Service</a>
-            <a href="/privacy" style={{ fontSize: '0.9rem' }}>Privacy Policy</a>
-            <a href="https://docs.ritual.net" target="_blank" rel="noreferrer" style={{ fontSize: '0.9rem' }}>Documentation</a>
+            <a href="https://ritual.net/" target="_blank" rel="noreferrer" style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', transition: 'color 0.2s' }} onMouseEnter={e => e.currentTarget.style.color = '#fff'} onMouseLeave={e => e.currentTarget.style.color = 'var(--text-secondary)'}>Ritual.net</a>
+            <a href="https://x.com/ritualnet" target="_blank" rel="noreferrer" style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', transition: 'color 0.2s' }} onMouseEnter={e => e.currentTarget.style.color = '#fff'} onMouseLeave={e => e.currentTarget.style.color = 'var(--text-secondary)'}>X (Twitter)</a>
+            <a href="https://discord.gg/CzEF6dz2w" target="_blank" rel="noreferrer" style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', transition: 'color 0.2s' }} onMouseEnter={e => e.currentTarget.style.color = '#fff'} onMouseLeave={e => e.currentTarget.style.color = 'var(--text-secondary)'}>Discord</a>
+            <a href="https://docs.ritual.net" target="_blank" rel="noreferrer" style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', transition: 'color 0.2s' }} onMouseEnter={e => e.currentTarget.style.color = '#fff'} onMouseLeave={e => e.currentTarget.style.color = 'var(--text-secondary)'}>Documentation</a>
+            <a href="/terms" style={{ fontSize: '0.9rem', color: 'var(--text-muted)' }}>Terms</a>
+            <a href="/privacy" style={{ fontSize: '0.9rem', color: 'var(--text-muted)' }}>Privacy</a>
           </div>
           <div style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', fontWeight: 500 }}>
             © {new Date().getFullYear()} VeriLearn. Secured by Ritual TEE.
