@@ -52,12 +52,26 @@ export default function Header() {
 
   return (
     <header className={`app-header ${isScrolled ? 'scrolled' : ''}`}>
-      <Link href="/" className="brand">
-        <span className="brand-dot"></span>
-        VeriLearn
+      <Link href="/" className="brand" style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', textDecoration: 'none' }}>
+        <div style={{ position: 'relative', width: '36px', height: '36px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(0,229,255,0.1)', borderRadius: '10px', border: '1px solid rgba(0,229,255,0.3)', boxShadow: '0 0 15px rgba(0,229,255,0.2)' }}>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--accent-cyan)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <circle cx="18" cy="5" r="3"></circle>
+            <circle cx="6" cy="12" r="3"></circle>
+            <circle cx="18" cy="19" r="3"></circle>
+            <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+            <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+          </svg>
+        </div>
+        <span style={{ fontSize: '1.5rem', fontWeight: 800, fontFamily: 'Space Grotesk', background: 'linear-gradient(90deg, #fff, var(--accent-cyan))', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', letterSpacing: '-0.5px' }}>
+          VeriLearn
+        </span>
       </Link>
-      <div className="header-nav" style={{ display: 'flex', gap: '2rem', alignItems: 'center' }}>
-        <Link href="/learn" style={{ color: 'var(--text-secondary)', transition: 'color 0.2s', fontWeight: 500, fontSize: '0.9rem' }} onMouseEnter={e => e.currentTarget.style.color = 'var(--accent-cyan)'} onMouseLeave={e => e.currentTarget.style.color = 'var(--text-secondary)'}>Learn / Docs</Link>
+      
+      <div className="header-nav" style={{ display: 'flex', gap: '2.5rem', alignItems: 'center', background: 'rgba(0,229,255,0.05)', padding: '0.6rem 2rem', borderRadius: '100px', border: '1px solid rgba(0,229,255,0.1)', backdropFilter: 'blur(10px)' }}>
+        <Link href="/dashboard" style={{ color: 'var(--text-secondary)', transition: 'all 0.2s', fontWeight: 500, fontSize: '0.95rem' }} onMouseEnter={e => { e.currentTarget.style.color = 'var(--accent-cyan)'; e.currentTarget.style.textShadow = '0 0 8px rgba(0,229,255,0.5)' }} onMouseLeave={e => { e.currentTarget.style.color = 'var(--text-secondary)'; e.currentTarget.style.textShadow = 'none' }}>Dashboard</Link>
+        <Link href="/learn" style={{ color: 'var(--text-secondary)', transition: 'all 0.2s', fontWeight: 500, fontSize: '0.95rem' }} onMouseEnter={e => { e.currentTarget.style.color = 'var(--accent-cyan)'; e.currentTarget.style.textShadow = '0 0 8px rgba(0,229,255,0.5)' }} onMouseLeave={e => { e.currentTarget.style.color = 'var(--text-secondary)'; e.currentTarget.style.textShadow = 'none' }}>Learn & Docs</Link>
+        <Link href="/certificates" style={{ color: 'var(--text-secondary)', transition: 'all 0.2s', fontWeight: 500, fontSize: '0.95rem' }} onMouseEnter={e => { e.currentTarget.style.color = 'var(--accent-cyan)'; e.currentTarget.style.textShadow = '0 0 8px rgba(0,229,255,0.5)' }} onMouseLeave={e => { e.currentTarget.style.color = 'var(--text-secondary)'; e.currentTarget.style.textShadow = 'none' }}>Certificates</Link>
+        <Link href="/network" style={{ color: 'var(--text-secondary)', transition: 'all 0.2s', fontWeight: 500, fontSize: '0.95rem' }} onMouseEnter={e => { e.currentTarget.style.color = 'var(--accent-cyan)'; e.currentTarget.style.textShadow = '0 0 8px rgba(0,229,255,0.5)' }} onMouseLeave={e => { e.currentTarget.style.color = 'var(--text-secondary)'; e.currentTarget.style.textShadow = 'none' }}>Network Status</Link>
       </div>
       
       <div className="header-actions">
