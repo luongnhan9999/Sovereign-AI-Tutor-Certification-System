@@ -343,33 +343,61 @@ export default function Dashboard() {
         </div>
       )}
       
-      <header className="dash-header">
-        <h2>Student Dashboard</h2>
+      <header className="dash-header" style={{ marginBottom: '2rem' }}>
+        <h2 style={{ fontSize: '2.5rem', fontFamily: 'Space Grotesk', fontWeight: 700 }}>Neural <span className="gradient-text">Dashboard</span></h2>
       </header>
 
-      <main className="dash-grid">
-        <section className="courses-panel">
-          <h3 style={{ marginBottom: '1.5rem', color: 'var(--text-muted)' }}>Available Courses</h3>
-          <div className="course-list">
-            {courses.length === 0 ? (
-              <p>Loading courses...</p>
-            ) : (
-              courses.map(c => (
-                <div 
-                  key={c.id} 
-                  className={`glass-card course-card ${selectedCourse === c.id ? 'active' : ''}`}
-                  onClick={() => setSelectedCourse(c.id)}
-                >
-                  <div className="card-icon" style={{ marginBottom: '1rem', width: '40px', height: '40px', fontSize: '1.2rem' }}>📚</div>
-                  <h3>{c.name}</h3>
-                  <p style={{ margin: 0, fontSize: '0.85rem', color: 'var(--text-muted)' }}>Unlimited Quizzes</p>
-                </div>
-              ))
-            )}
+      <main className="dashboard-grid">
+        <aside className="sidebar">
+          
+          <div className="profile-card">
+            <div className="avatar-pro">{account ? account.slice(2,4).toUpperCase() : 'UI'}</div>
+            <div>
+              <h3 style={{ fontSize: '1.2rem', margin: '0 0 0.25rem 0' }}>Student Profile</h3>
+              <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', margin: 0, fontFamily: 'monospace' }}>
+                {account ? `${account.slice(0,6)}...${account.slice(-4)}` : 'Not Connected'}
+              </p>
+            </div>
           </div>
-        </section>
 
-        <section className="study-panel">
+          <div className="stat-group">
+            <div className="stat-box">
+              <div className="val">{progress.completed}</div>
+              <div className="lbl">Quizzes Passed</div>
+            </div>
+            <div className="stat-box">
+              <div className="val">{points.toFixed(0)}</div>
+              <div className="lbl">Tokens Earned</div>
+            </div>
+          </div>
+
+          <div>
+            <h3 style={{ marginBottom: '1rem', color: 'var(--text-secondary)', fontSize: '0.9rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Available Modules</h3>
+            <div className="course-list">
+              {courses.length === 0 ? (
+                <p className="text-muted">Loading modules...</p>
+              ) : (
+                courses.map(c => (
+                  <div 
+                    key={c.id} 
+                    className={`course-item ${selectedCourse === c.id ? 'active' : ''}`}
+                    onClick={() => setSelectedCourse(c.id)}
+                  >
+                    <div>
+                      <h4 style={{ fontFamily: 'Space Grotesk' }}>{c.name}</h4>
+                      <p>Unlimited Generation</p>
+                    </div>
+                    <div style={{ color: selectedCourse === c.id ? 'var(--accent-cyan)' : 'var(--text-muted)' }}>
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M5 12h14"></path><path d="M12 5l7 7-7 7"></path></svg>
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
+        </aside>
+
+        <section className="main-content">
           {selectedCourse ? (
             <div className="glass-card study-room">
               <h2 style={{ fontSize: '1.5rem', marginBottom: '1.5rem' }}>
@@ -483,28 +511,29 @@ export default function Dashboard() {
             </div>
           )}
         </section>
-        
-        <section className="history-panel">
-          <div className="glass-card history-room" style={{ height: '100%', minHeight: '500px', display: 'flex', flexDirection: 'column' }}>
-            <div style={{ display: 'flex', gap: '1.5rem', marginBottom: '1.5rem' }}>
-              <h3 
-                onClick={() => setHistoryTab('history')}
-                style={{ cursor: 'pointer', color: historyTab === 'history' ? 'var(--text-primary)' : 'var(--text-muted)', borderBottom: historyTab === 'history' ? '2px solid var(--accent-blue)' : 'none', paddingBottom: '0.5rem', transition: 'all 0.2s' }}
-              >
-                Quiz History
-              </h3>
-              <h3 
-                onClick={() => setHistoryTab('leaderboard')}
-                style={{ cursor: 'pointer', color: historyTab === 'leaderboard' ? 'var(--text-primary)' : 'var(--text-muted)', borderBottom: historyTab === 'leaderboard' ? '2px solid var(--accent-blue)' : 'none', paddingBottom: '0.5rem', transition: 'all 0.2s' }}
-              >
-                Leaderboard 🏆
-              </h3>
+        <section className="leaderboard-container">
+          <div style={{ height: '100%', minHeight: '500px', display: 'flex', flexDirection: 'column' }}>
+            <div className="leaderboard-header">
+              <div className="tabs">
+                <button 
+                  className={`tab-btn ${historyTab === 'history' ? 'active' : ''}`}
+                  onClick={() => setHistoryTab('history')}
+                >
+                  Neural Logs
+                </button>
+                <button 
+                  className={`tab-btn ${historyTab === 'leaderboard' ? 'active' : ''}`}
+                  onClick={() => setHistoryTab('leaderboard')}
+                >
+                  Leaderboard 🏆
+                </button>
+              </div>
             </div>
             
             {historyTab === 'history' ? (
-              <div style={{ flex: 1, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '1rem', maxHeight: '600px', paddingRight: '0.5rem' }}>
+              <div className="history-list" style={{ flex: 1, overflowY: 'auto', maxHeight: '600px', paddingRight: '0.5rem' }}>
                 {askedQuestions.length === 0 ? (
-                  <p style={{ fontSize: '0.9rem', color: 'rgba(255,255,255,0.4)', textAlign: 'center', marginTop: '2rem' }}>No history yet. Start learning!</p>
+                  <p className="text-muted" style={{ textAlign: 'center', marginTop: '2rem' }}>Awaiting initial telemetry...</p>
                 ) : (
                   [...askedQuestions].reverse().filter(q => q.answered).map((qObj, i) => {
                     const courseObj = courses.find(c => c.id === selectedCourse);
@@ -514,17 +543,17 @@ export default function Dashboard() {
                     const qText = qItem ? qItem.q : "Legacy Question";
                     const correctAns = qItem ? qItem.options[qItem.answerIndex] : "N/A";
                     return (
-                      <div key={i} style={{ padding: '1rem', background: 'rgba(255,255,255,0.02)', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.05)' }}>
+                      <div key={i} className="history-item">
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.5rem' }}>
-                          <p style={{ margin: '0 0 0.5rem 0', fontSize: '0.9rem', lineHeight: '1.4', fontWeight: 600, flex: 1, paddingRight: '1rem' }}>{qText}</p>
-                          <span style={{ fontSize: '0.75rem', padding: '0.2rem 0.5rem', borderRadius: '4px', background: qObj.correct ? 'rgba(34, 197, 94, 0.2)' : 'rgba(239, 68, 68, 0.2)', color: qObj.correct ? '#4ade80' : '#f87171', fontWeight: 600, whiteSpace: 'nowrap' }}>
-                             {qObj.correct ? 'CORRECT' : 'INCORRECT'}
+                          <p className="history-q" style={{ flex: 1, paddingRight: '1rem' }}>{qText}</p>
+                          <span className={`history-status ${qObj.correct ? 'status-correct' : 'status-pending'}`}>
+                             {qObj.correct ? 'VERIFIED' : 'REJECTED'}
                           </span>
                         </div>
-                        <div style={{ fontSize: '0.85rem', marginTop: '0.5rem', padding: '0.5rem', background: qObj.correct ? 'rgba(34, 197, 94, 0.1)' : 'rgba(239, 68, 68, 0.1)', borderLeft: `3px solid ${qObj.correct ? '#4ade80' : '#f87171'}`, borderRadius: '4px' }}>
-                          <div style={{ color: 'var(--text-secondary)' }}>Your answer: <strong style={{ color: qObj.correct ? '#4ade80' : '#f87171' }}>{qObj.selectedAnswer || (qObj.correct ? correctAns : 'Unknown')}</strong></div>
+                        <div style={{ fontSize: '0.85rem', marginTop: '0.5rem', padding: '1rem', background: qObj.correct ? 'rgba(163, 230, 53, 0.05)' : 'rgba(239, 68, 68, 0.05)', borderLeft: `2px solid ${qObj.correct ? 'var(--accent-lime)' : '#ef4444'}` }}>
+                          <div className="text-muted">Extracted Output: <strong style={{ color: qObj.correct ? 'var(--accent-lime)' : '#ef4444' }}>{qObj.selectedAnswer || (qObj.correct ? correctAns : 'Unknown')}</strong></div>
                           {!qObj.correct && (
-                            <div style={{ color: 'var(--text-secondary)', marginTop: '0.25rem' }}>Correct answer: <strong style={{ color: '#4ade80' }}>{correctAns}</strong></div>
+                            <div className="text-muted" style={{ marginTop: '0.25rem' }}>Expected Hash: <strong style={{ color: 'var(--accent-lime)' }}>{correctAns}</strong></div>
                           )}
                         </div>
                       </div>
@@ -533,7 +562,7 @@ export default function Dashboard() {
                 )}
               </div>
             ) : (
-              <div style={{ flex: 1, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '0.8rem', paddingRight: '0.5rem' }}>
+              <div className="lb-list" style={{ flex: 1, overflowY: 'auto', paddingRight: '0.5rem' }}>
                 {(() => {
                   const allPlayers = [...botPlayers];
                   if (account) {
@@ -542,16 +571,12 @@ export default function Dashboard() {
                   allPlayers.sort((a, b) => b.score - a.score);
                   
                   return allPlayers.slice(0, 10).map((player, idx) => (
-                    <div key={idx} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '1rem', background: player.isUser ? 'rgba(99, 102, 241, 0.15)' : 'rgba(255,255,255,0.02)', borderRadius: '8px', border: player.isUser ? '1px solid var(--accent-blue)' : '1px solid rgba(255,255,255,0.05)', transition: 'all 0.3s' }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                        <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: idx === 0 ? '#ffd700' : idx === 1 ? '#c0c0c0' : idx === 2 ? '#cd7f32' : 'rgba(255,255,255,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: idx < 3 ? '#000' : '#fff', fontWeight: 'bold', boxShadow: idx < 3 ? `0 0 10px ${idx === 0 ? '#ffd700' : idx === 1 ? '#c0c0c0' : '#cd7f32'}` : 'none' }}>
-                          {idx + 1}
-                        </div>
-                        <span style={{ fontFamily: 'monospace', color: player.isUser ? 'var(--accent-blue)' : 'var(--text-primary)', fontWeight: player.isUser ? 'bold' : 'normal' }}>
-                          {player.isUser ? player.address + ' (You)' : player.address}
-                        </span>
+                    <div key={idx} className={`lb-item ${player.isUser ? 'is-user' : ''}`}>
+                      <div className="lb-rank">#{idx + 1}</div>
+                      <div className="lb-address">
+                        {player.isUser ? player.address + ' (You)' : player.address}
                       </div>
-                      <div style={{ fontWeight: 'bold', color: 'var(--accent-pink)', fontSize: '1.1rem' }}>
+                      <div className="lb-score">
                         {player.score} <span style={{ fontSize: '0.8rem', fontWeight: 'normal', color: 'var(--text-muted)' }}>pts</span>
                       </div>
                     </div>

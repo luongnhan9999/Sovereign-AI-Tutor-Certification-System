@@ -3,117 +3,85 @@ import Link from 'next/link';
 
 export default function Home() {
   return (
-    <main className="main-container">
-      {/* Hero Section */}
-      <section className="hero-section">
-        <div className="hero-badge">
-          <span className="hero-badge-dot"></span>
-          Live on Ritual Testnet
-        </div>
-        <h1 className="hero-title">
-          The Future of <span className="gradient-text">Learning</span>
-        </h1>
-        <p className="hero-subtitle">
-          An autonomous on‑chain AI tutor that creates personalized quizzes, evaluates your answers, and issues verifiable ERC‑721 certificates.
-        </p>
-        <div className="hero-actions">
-          <Link href="/dashboard" className="btn-primary">
-            Launch App
-          </Link>
-          <a href="#how-it-works" className="btn-secondary">
-            Learn More
-          </a>
-        </div>
-      </section>
-
-      {/* Stats Section */}
-      <section className="stats-section">
-        <div className="stat-item">
-          <div className="stat-value">24/7</div>
-          <div className="stat-label">AI Availability</div>
-        </div>
-        <div className="stat-item">
-          <div className="stat-value">100%</div>
-          <div className="stat-label">On-Chain Verifiable</div>
-        </div>
-        <div className="stat-item">
-          <div className="stat-value">Zero</div>
-          <div className="stat-label">Human Bias</div>
-        </div>
-      </section>
-
-      {/* Features Section */}
-      <section className="section-header" id="features">
-        <div className="section-tag">Features</div>
-        <h2 className="section-title">Powered by Sovereign AI</h2>
-        <p className="section-desc">
-          Experience a new paradigm in education where artificial intelligence meets blockchain technology for transparent and objective learning.
-        </p>
-      </section>
-
-      <section className="cards-section">
-        <div className="glass-card">
-          <div className="card-icon">🧠</div>
-          <h3>Dynamic Quiz Generation</h3>
-          <p>
-            The AI tutor creates personalized quizzes on the fly based on your selected course and progress. No two tests are exactly the same.
+    <>
+      <div className="bg-grid"></div>
+      <main className="main-container">
+        {/* Hero Section */}
+        <section className="hero-section">
+          <div className="hero-badge">
+            <span className="hero-badge-dot"></span>
+            LIVE ON RITUAL TESTNET
+          </div>
+          <h1 className="hero-title">
+            The Future of <br/> <span className="gradient-text">Verifiable Learning</span>
+          </h1>
+          <p className="hero-subtitle">
+            An autonomous on‑chain AI tutor that creates personalized quizzes, evaluates your answers in a Trusted Execution Environment, and issues cryptographically verifiable ERC‑721 certificates.
           </p>
-        </div>
-        <div className="glass-card">
-          <div className="card-icon">⚖️</div>
-          <h3>Objective Evaluation</h3>
-          <p>
-            Your answers are evaluated directly by the AI model running in a Trusted Execution Environment (TEE), ensuring fair and unbiased grading.
-          </p>
-        </div>
-        <div className="glass-card">
-          <div className="card-icon">🏆</div>
-          <h3>Verifiable Certificates</h3>
-          <p>
-            Upon completing a course, receive an ERC-721 NFT certificate directly to your wallet, cryptographically proving your mastery.
-          </p>
-        </div>
-      </section>
+          <div className="hero-actions">
+            <Link href="/dashboard" className="btn-primary">
+              Launch App
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+                <polyline points="12 5 19 12 12 19"></polyline>
+              </svg>
+            </Link>
+            <a href="#features" className="btn-secondary">
+              Explore Tech
+            </a>
+          </div>
+        </section>
 
-      {/* How it Works */}
-      <section className="section-header" id="how-it-works">
-        <div className="section-tag">Process</div>
-        <h2 className="section-title">How It Works</h2>
-      </section>
+        {/* Bento Grid Features */}
+        <section id="features">
+          <div className="bento-grid">
+            
+            <div className="bento-item bento-large">
+              <div className="bento-icon">🧠</div>
+              <h3>Dynamic Neural Generation</h3>
+              <p>
+                The AI tutor dynamically generates quizzes based on your selected course context. Utilizing state-of-the-art LLMs, no two tests are exactly the same, preventing systemic cheating and ensuring true knowledge synthesis.
+              </p>
+            </div>
 
-      <section className="steps-section">
-        <div className="step-card">
-          <div className="step-number">1</div>
-          <h4>Connect Wallet</h4>
-          <p>Link your MetaMask to the Ritual Testnet to start your learning journey.</p>
-        </div>
-        <div className="step-card">
-          <div className="step-number">2</div>
-          <h4>Request a Quiz</h4>
-          <p>Select a course and the smart contract will request the AI to generate a question.</p>
-        </div>
-        <div className="step-card">
-          <div className="step-number">3</div>
-          <h4>Submit Answer</h4>
-          <p>Provide your answer and the AI will evaluate its correctness on-chain.</p>
-        </div>
-        <div className="step-card">
-          <div className="step-number">4</div>
-          <h4>Earn Certificate</h4>
-          <p>Pass all quizzes to automatically mint your verifiable NFT certificate.</p>
-        </div>
-      </section>
+            <div className="bento-item bento-small">
+              <div className="bento-icon">🛡️</div>
+              <h3>TEE Execution</h3>
+              <p>
+                Answers are evaluated directly by the AI model running inside a Trusted Execution Environment (TEE).
+              </p>
+            </div>
 
-      {/* CTA Section */}
-      <section className="cta-section">
-        <div className="cta-card">
-          <h2>Ready to start learning?</h2>
-          <p>Join the decentralized education revolution today.</p>
-          <Link href="/dashboard" className="btn-primary">
-            Go to Dashboard
-          </Link>
-        </div>
-      </section>
-    </main>
+            <div className="bento-item bento-small">
+              <div className="bento-icon">⛓️</div>
+              <h3>On-Chain State</h3>
+              <p>
+                Every interaction, grading decision, and certificate issuance is anchored to the Ethereum blockchain.
+              </p>
+            </div>
+
+            <div className="bento-item bento-medium">
+              <div className="bento-icon">🏆</div>
+              <h3>Verifiable SBT Certificates</h3>
+              <p>
+                Upon passing a course, receive an ERC-721 Soulbound Token (SBT) directly to your Web3 wallet. This acts as an immutable, cryptographically secure proof of your mastery that can be integrated into your decentralized identity.
+              </p>
+            </div>
+
+          </div>
+        </section>
+
+        {/* CTA Section */}
+        <section className="cta-section" style={{ textAlign: 'center', margin: '5rem 0' }}>
+          <div className="glass-card" style={{ padding: '4rem 2rem', borderRadius: 'var(--radius-lg)', background: 'var(--glass-bg)', border: '1px solid var(--glass-border)' }}>
+            <h2 style={{ fontSize: '3rem', marginBottom: '1rem', fontFamily: 'Space Grotesk' }}>Ready to interface?</h2>
+            <p className="text-muted" style={{ marginBottom: '2rem', fontSize: '1.1rem' }}>Initialize your session and connect your neural-link (wallet).</p>
+            <Link href="/dashboard" className="btn-primary" style={{ fontSize: '1.2rem', padding: '1rem 2rem' }}>
+              Initialize Sequence
+            </Link>
+          </div>
+        </section>
+      </main>
+    </>
   );
 }
