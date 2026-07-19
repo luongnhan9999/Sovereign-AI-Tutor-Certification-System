@@ -461,7 +461,7 @@ export default function Dashboard() {
           </div>
         </aside>
 
-        <section className="workspace" style={{ display: 'flex', flexDirection: 'column', gap: '2rem', flex: 1, minHeight: 0 }}>
+        <section className="workspace" style={{ display: 'flex', flexDirection: 'column', gap: '2rem', flex: 1, minHeight: 0, overflowY: 'auto', paddingRight: '0.5rem' }}>
           {selectedCourse ? (
             (() => {
               const courseObj = courses.find(c => c.id === selectedCourse);
@@ -473,7 +473,7 @@ export default function Dashboard() {
               const currentQ = quizId ? questions[currentQIndex] : null;
               
               return (
-                <div className="vip-card study-room" style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+                <div className="vip-card study-room" style={{ display: 'flex', flexDirection: 'column', minHeight: '100%' }}>
                   <h2 style={{ fontSize: '1.8rem', marginBottom: '1.5rem', textShadow: '0 0 15px rgba(255,255,255,0.3)' }}>
                     {courseName}
                   </h2>
