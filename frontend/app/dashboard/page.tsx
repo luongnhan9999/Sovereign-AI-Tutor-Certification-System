@@ -409,17 +409,17 @@ export default function Dashboard() {
       <main className="dashboard-grid">
         <aside className="sidebar vip-card" style={{ display: 'flex', flexDirection: 'column', minHeight: 0 }}>
           
-          <div className="profile-card" style={{ flexShrink: 0, borderBottom: '1px solid rgba(0, 229, 255, 0.2)', paddingBottom: '2rem', marginBottom: '2rem' }}>
+          <div className="profile-card" style={{ flexShrink: 0, borderBottom: '1px solid rgba(0, 229, 255, 0.2)', paddingBottom: '1rem', marginBottom: '1rem' }}>
             <div className="avatar-pro" style={{ boxShadow: '0 0 20px rgba(0, 229, 255, 0.4)', border: '2px solid var(--accent-cyan)' }}>{account ? account.slice(2,4).toUpperCase() : 'UI'}</div>
             <div>
-              <h3 style={{ fontSize: '1.3rem', margin: '0 0 0.25rem 0', textShadow: '0 0 10px rgba(0, 229, 255, 0.3)' }}>Neural Link Profile</h3>
-              <p style={{ color: 'var(--accent-cyan)', fontSize: '0.85rem', margin: 0, fontFamily: 'monospace' }}>
+              <h3 style={{ fontSize: '1.2rem', margin: '0 0 0.2rem 0', textShadow: '0 0 10px rgba(0, 229, 255, 0.3)' }}>Neural Link Profile</h3>
+              <p style={{ color: 'var(--accent-cyan)', fontSize: '0.8rem', margin: 0, fontFamily: 'monospace' }}>
                 {account ? `${account.slice(0,6)}...${account.slice(-4)}` : 'Awaiting Connection'}
               </p>
             </div>
           </div>
 
-          <div className="stat-group" style={{ flexShrink: 0, marginBottom: '2.5rem' }}>
+          <div className="stat-group" style={{ flexShrink: 0, marginBottom: '1rem' }}>
             <div className="stat-box" style={{ background: 'rgba(0,0,0,0.5)', borderColor: 'rgba(0, 229, 255, 0.2)' }}>
               <div className="val" style={{ textShadow: '0 0 10px var(--accent-cyan)' }}>{progress.completed}</div>
               <div className="lbl" style={{ color: 'rgba(255,255,255,0.7)' }}>Nodes Solved</div>
@@ -431,7 +431,7 @@ export default function Dashboard() {
           </div>
 
           <div style={{ display: 'flex', flexDirection: 'column', flex: 1, minHeight: 0 }}>
-            <h3 style={{ flexShrink: 0, marginBottom: '1.5rem', color: 'var(--accent-cyan)', fontSize: '1.1rem', textTransform: 'uppercase', letterSpacing: '0.15em', display: 'flex', alignItems: 'center', gap: '0.5rem', textShadow: '0 0 10px rgba(0, 229, 255, 0.5)' }}>
+            <h3 style={{ flexShrink: 0, marginBottom: '1rem', color: 'var(--accent-cyan)', fontSize: '0.9rem', textTransform: 'uppercase', letterSpacing: '0.1em', display: 'flex', alignItems: 'center', gap: '0.5rem', textShadow: '0 0 10px rgba(0, 229, 255, 0.5)' }}>
               <span className="brand-dot" style={{ background: 'var(--accent-cyan)', boxShadow: '0 0 10px var(--accent-cyan)', animation: 'pulse 2s infinite' }}></span>
               Neural Modules
             </h3>
@@ -447,27 +447,27 @@ export default function Dashboard() {
                     style={{
                       background: selectedCourse === c.id ? 'linear-gradient(135deg, rgba(0, 229, 255, 0.15) 0%, rgba(124, 58, 237, 0.1) 100%)' : 'rgba(0,0,0,0.5)',
                       borderColor: selectedCourse === c.id ? 'var(--accent-cyan)' : 'rgba(255,255,255,0.08)',
-                      boxShadow: selectedCourse === c.id ? '0 0 20px rgba(0, 229, 255, 0.25), inset 0 0 10px rgba(0,229,255,0.1)' : 'none',
-                      padding: '1.5rem',
+                      boxShadow: selectedCourse === c.id ? '0 0 15px rgba(0, 229, 255, 0.2), inset 0 0 10px rgba(0,229,255,0.05)' : 'none',
+                      padding: '1rem',
                       display: 'flex',
                       alignItems: 'center',
-                      gap: '1.2rem',
-                      borderRadius: '12px'
+                      gap: '0.8rem',
+                      borderRadius: '8px'
                     }}
                   >
                     <div style={{
-                      fontSize: '1.8rem',
-                      filter: selectedCourse === c.id ? 'drop-shadow(0 0 10px var(--accent-cyan))' : 'grayscale(0.5)',
+                      fontSize: '1.4rem',
+                      filter: selectedCourse === c.id ? 'drop-shadow(0 0 8px var(--accent-cyan))' : 'grayscale(0.5)',
                       transition: 'all 0.3s'
                     }}>
                       {c.id === 'course-1' ? '⚡' : c.id === 'course-2' ? '📜' : c.id === 'course-3' ? '🕸️' : '🛠️'}
                     </div>
-                    <div style={{ flex: 1 }}>
-                      <h4 style={{ fontFamily: 'Space Grotesk', fontSize: '1.15rem', marginBottom: '0.35rem', color: selectedCourse === c.id ? '#fff' : 'rgba(255,255,255,0.9)', textShadow: selectedCourse === c.id ? '0 0 10px rgba(0,229,255,0.5)' : 'none' }}>{c.name}</h4>
-                      <p style={{ fontSize: '0.9rem', color: selectedCourse === c.id ? 'var(--accent-cyan)' : 'rgba(255,255,255,0.5)', fontWeight: selectedCourse === c.id ? 600 : 400 }}>{c.id === 'course-1' ? 'Beginner' : 'Intermediate'} Module</p>
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <h4 style={{ fontFamily: 'Space Grotesk', fontSize: '1rem', marginBottom: '0.2rem', color: selectedCourse === c.id ? '#fff' : 'rgba(255,255,255,0.9)', textShadow: selectedCourse === c.id ? '0 0 10px rgba(0,229,255,0.5)' : 'none', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{c.name}</h4>
+                      <p style={{ fontSize: '0.75rem', color: selectedCourse === c.id ? 'var(--accent-cyan)' : 'rgba(255,255,255,0.5)', fontWeight: selectedCourse === c.id ? 600 : 400, margin: 0 }}>{c.id === 'course-1' ? 'Beginner' : 'Intermediate'} Module</p>
                     </div>
                     <div style={{ color: selectedCourse === c.id ? 'var(--accent-cyan)' : 'var(--text-muted)' }}>
-                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" style={{ filter: selectedCourse === c.id ? 'drop-shadow(0 0 5px var(--accent-cyan))' : 'none' }}><path d="M5 12h14"></path><path d="M12 5l7 7-7 7"></path></svg>
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" style={{ filter: selectedCourse === c.id ? 'drop-shadow(0 0 5px var(--accent-cyan))' : 'none' }}><path d="M5 12h14"></path><path d="M12 5l7 7-7 7"></path></svg>
                     </div>
                   </div>
                 ))
