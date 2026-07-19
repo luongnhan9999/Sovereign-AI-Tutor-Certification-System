@@ -461,7 +461,7 @@ export default function Dashboard() {
           </div>
         </aside>
 
-        <section className="workspace" style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+        <section className="workspace" style={{ display: 'flex', flexDirection: 'column', gap: '2rem', height: '100%', overflowY: 'auto' }}>
           {selectedCourse ? (
             (() => {
               const courseObj = courses.find(c => c.id === selectedCourse);
@@ -601,7 +601,7 @@ export default function Dashboard() {
           )}
         </section>
 
-        <aside className="telemetry-sidebar" style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+        <aside className="telemetry-sidebar" style={{ display: 'flex', flexDirection: 'column', gap: '2rem', height: '100%', overflowY: 'auto' }}>
           <div className="vip-card" style={{ padding: '1.5rem' }}>
             <h4 style={{ color: 'var(--accent-cyan)', marginBottom: '1rem', fontFamily: 'Space Grotesk', display: 'flex', alignItems: 'center', gap: '0.5rem', textShadow: '0 0 10px rgba(0, 229, 255, 0.4)' }}>
               <span className="brand-dot" style={{ animation: 'pulse 2s infinite', background: 'var(--accent-cyan)', boxShadow: '0 0 10px var(--accent-cyan)' }}></span>
