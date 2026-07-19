@@ -46,7 +46,7 @@ export default function Header() {
   return (
     <header className="header">
       <Link href="/" className="header-brand">
-        🎓 Sovereign AI Tutor
+        🎓 VeriLearn
       </Link>
       
       {account ? (

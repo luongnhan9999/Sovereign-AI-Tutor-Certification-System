@@ -467,7 +467,7 @@ export default function Dashboard() {
               {progress.completed >= 10 && (
                 <div style={{ marginTop: '2rem', padding: '2rem', background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.15) 0%, rgba(236, 72, 153, 0.15) 100%)', border: '1px solid rgba(236, 72, 153, 0.3)', borderRadius: 'var(--radius-md)', textAlign: 'center', boxShadow: '0 0 20px rgba(236, 72, 153, 0.1)' }}>
                   <div style={{ fontSize: '4rem', marginBottom: '1rem', filter: 'drop-shadow(0 0 15px rgba(236, 72, 153, 0.6))' }}>📜</div>
-                  <h3 style={{ color: '#fff', marginBottom: '0.5rem', fontSize: '1.5rem', fontWeight: 700, textShadow: '0 2px 10px rgba(236, 72, 153, 0.5)' }}>Sovereign TCERT NFT</h3>
+                  <h3 style={{ color: '#fff', marginBottom: '0.5rem', fontSize: '1.5rem', fontWeight: 700, textShadow: '0 2px 10px rgba(236, 72, 153, 0.5)' }}>VeriLearn TCERT NFT</h3>
                   {(() => {
                     if (progress.completed >= 201) return <p style={{ color: '#fbcfe8', fontWeight: 600 }}>💎 Diamond Tier Reached! Your NFT Certificate has been auto-minted to your wallet as proof of mastery.</p>;
                     if (progress.completed >= 101) return <p style={{ color: '#fbcfe8' }}>🥇 Gold Tier Reached! Just {201 - progress.completed} more correct answers to Diamond tier to automatically mint this exclusive NFT Certificate.</p>;

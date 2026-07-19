@@ -19,7 +19,7 @@ export default function Navbar() {
   return (
     <nav className="flex items-center justify-between bg-black/30 backdrop-blur-md px-6 py-4 mb-8 rounded-b-xl">
       <Link href="/" className="text-2xl font-bold text-white">
-        Sovereign AI Tutor
+        VeriLearn
       </Link>
       <div className="text-sm text-gray-300">
         {account ? `Connected: ${account.slice(0, 6)}…${account.slice(-4)}` : 'Not connected'}

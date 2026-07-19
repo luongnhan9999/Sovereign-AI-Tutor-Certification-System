@@ -7,7 +7,7 @@ const inter = Inter({ subsets: ['latin'], weight: ['400', '600', '700'] });
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'Sovereign AI Tutor',
+  title: 'VeriLearn',
   description: 'Autonomous on‑chain AI tutor with certificate NFTs',
 };
 
@@ -28,13 +28,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
         {/* Footer */}
         <footer className="footer">
-          <div className="footer-brand">Sovereign AI Tutor</div>
+          <div className="footer-brand">VeriLearn</div>
           <div className="footer-links">
             <a href="#">Terms</a>
             <a href="#">Privacy</a>
             <a href="#">Docs</a>
           </div>
-          <div>© {new Date().getFullYear()} Sovereign AI Tutor. Built on Ritual.</div>
+          <div>© {new Date().getFullYear()} VeriLearn. Built on Ritual.</div>
         </footer>
       </body>
     </html>
