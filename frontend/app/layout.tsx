@@ -19,7 +19,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <div className="ambient-background"></div>
 
         <Header />
-        <main style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+        <main style={{ flex: 1, display: 'flex', flexDirection: 'column', minHeight: 0 }}>
           {children}
         </main>
 
