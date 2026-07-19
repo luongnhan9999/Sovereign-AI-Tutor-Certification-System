@@ -407,7 +407,7 @@ export default function Dashboard() {
       )}
 
       <main className="dashboard-grid">
-        <aside className="sidebar vip-card" style={{ padding: '2rem' }}>
+        <aside className="sidebar vip-card">
           
           <div className="profile-card" style={{ borderBottom: '1px solid rgba(0, 229, 255, 0.2)', paddingBottom: '2rem', marginBottom: '2rem' }}>
             <div className="avatar-pro" style={{ boxShadow: '0 0 20px rgba(0, 229, 255, 0.4)', border: '2px solid var(--accent-cyan)' }}>{account ? account.slice(2,4).toUpperCase() : 'UI'}</div>
@@ -449,7 +449,7 @@ export default function Dashboard() {
                   >
                     <div>
                       <h4 style={{ fontFamily: 'Space Grotesk' }}>{c.name}</h4>
-                      <p>Unlimited Generation</p>
+                      <p style={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.5)', marginTop: '0.25rem' }}>{c.id === 'course-1' ? 'Beginner' : 'Intermediate'} Module</p>
                     </div>
                     <div style={{ color: selectedCourse === c.id ? 'var(--accent-cyan)' : 'var(--text-muted)' }}>
                       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M5 12h14"></path><path d="M12 5l7 7-7 7"></path></svg>
@@ -589,7 +589,7 @@ export default function Dashboard() {
             );
           })()
           ) : (
-            <div className="vip-card" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', minHeight: '500px', textAlign: 'center', background: 'radial-gradient(circle at center, rgba(0,229,255,0.05) 0%, transparent 60%)' }}>
+            <div className="vip-card" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', minHeight: '500px', textAlign: 'center' }}>
               <div style={{ position: 'relative', width: '120px', height: '120px', marginBottom: '2rem' }}>
                 <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, border: '2px solid rgba(0,229,255,0.3)', borderRadius: '50%', borderTopColor: 'var(--accent-cyan)', animation: 'spin 3s linear infinite' }}></div>
                 <div style={{ position: 'absolute', top: '15px', left: '15px', right: '15px', bottom: '15px', border: '2px solid rgba(181, 55, 242, 0.3)', borderRadius: '50%', borderBottomColor: 'var(--accent-purple)', animation: 'spin 2s linear infinite reverse' }}></div>
@@ -602,7 +602,7 @@ export default function Dashboard() {
         </section>
 
         <aside className="telemetry-sidebar" style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
-          <div className="vip-card" style={{ padding: '1.5rem', background: 'rgba(0,0,0,0.5)', border: '1px solid rgba(0, 229, 255, 0.2)' }}>
+          <div className="vip-card" style={{ padding: '1.5rem' }}>
             <h4 style={{ color: 'var(--accent-cyan)', marginBottom: '1rem', fontFamily: 'Space Grotesk', display: 'flex', alignItems: 'center', gap: '0.5rem', textShadow: '0 0 10px rgba(0, 229, 255, 0.4)' }}>
               <span className="brand-dot" style={{ animation: 'pulse 2s infinite', background: 'var(--accent-cyan)', boxShadow: '0 0 10px var(--accent-cyan)' }}></span>
               System Telemetry
@@ -623,7 +623,7 @@ export default function Dashboard() {
             </div>
           </div>
 
-          <div className="vip-card" style={{ height: '100%', minHeight: '500px', display: 'flex', flexDirection: 'column', background: 'rgba(0,0,0,0.5)', border: '1px solid rgba(181, 55, 242, 0.2)', padding: '1.5rem' }}>
+          <div className="vip-card" style={{ height: '100%', minHeight: '500px', display: 'flex', flexDirection: 'column', padding: '1.5rem' }}>
             <div className="leaderboard-header" style={{ marginBottom: '1.5rem' }}>
               <div className="tabs" style={{ display: 'flex', gap: '0.5rem', background: 'rgba(0,0,0,0.3)', padding: '0.25rem', borderRadius: 'var(--radius-sm)' }}>
                 <button 
