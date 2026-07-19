@@ -1,0 +1,42 @@
+import { ethers } from "ethers";
+import * as dotenv from "dotenv";
+
+dotenv.config();
+
+async function main() {
+  const rpc = process.env.RITUAL_RPC || "https://rpc.ritualfoundation.org";
+  const privateKey = process.env.PRIVATE_KEY;
+  if (!privateKey) throw new Error("Missing PRIVATE_KEY in .env");
+
+  const provider = new ethers.JsonRpcProvider(rpc);
+  const wallet = new ethers.Wallet(privateKey, provider);
+
+  const tutorAddress = "0x949f655ea660CC6FD620f2866CE7eE9f924C8368";
+  
+  const tutorAbi = [
+    "function registerCourse(string memory name, uint256 totalQuizzes, uint256 rewardAmount) external",
+    "function nextCourseId() view returns (uint256)"
+  ];
+
+  const tutor = new ethers.Contract(tutorAddress, tutorAbi, wallet);
+
+  console.log("Registering Infernet Architecture...");
+  let tx = await tutor.registerCourse("Infernet Architecture", 3, ethers.parseEther("12"));
+  await tx.wait();
+  console.log("Registered!");
+
+  console.log("Registering Developing with Ritual SDK...");
+  tx = await tutor.registerCourse("Developing with Ritual SDK", 3, ethers.parseEther("10"));
+  await tx.wait();
+  console.log("Registered!");
+
+  console.log("Registering Real-World On-Chain AI Use Cases...");
+  tx = await tutor.registerCourse("Real-World On-Chain AI Use Cases", 2, ethers.parseEther("8"));
+  await tx.wait();
+  console.log("Registered!");
+
+  const nextId = await tutor.nextCourseId();
+  console.log("Next Course ID is now:", nextId.toString());
+}
+
+main().catch(console.error);

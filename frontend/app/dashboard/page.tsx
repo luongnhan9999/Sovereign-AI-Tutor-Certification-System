@@ -73,6 +73,52 @@ const COURSE_QUESTIONS: Record<string, {q: string, options: string[], answerInde
       options: ["All validators re-run it.", "Fraud proofs.", "Product Lattice over proof systems (TEE, ZKP) and committee sampling.", "Trusting a centralized server."],
       answerIndex: 2
     }
+  ],
+  "Infernet Architecture": [
+    {
+      q: "What is Ritual Infernet?",
+      options: ["A blockchain explorer.", "An off-chain platform that executes AI tasks and returns results on-chain.", "A wallet provider.", "A new consensus algorithm."],
+      answerIndex: 1
+    },
+    {
+      q: "Which of the following are core components of an Infernet Node?",
+      options: ["Router, Anvil, Redis, Compute Containers.", "Miner, Sequencer, RPC endpoint.", "CPU, GPU, RAM.", "Validator, Proposer, Delegator."],
+      answerIndex: 0
+    },
+    {
+      q: "How does a smart contract typically request computation from an Infernet node?",
+      options: ["By emitting an event and calling a webhook.", "By calling requestCompute().", "By burning tokens.", "By querying a database."],
+      answerIndex: 1
+    }
+  ],
+  "Developing with Ritual SDK": [
+    {
+      q: "In the Ritual SDK, which function is typically called by the callback to receive results from the AI Node?",
+      options: ["deliver()", "receiveCompute()", "_deliver()", "returnResult()"],
+      answerIndex: 2
+    },
+    {
+      q: "Which environments/frameworks does Ritual primarily support inside its Compute Containers?",
+      options: ["Only JavaScript.", "Python, PyTorch, HuggingFace, etc.", "C++ only.", "Rust macros only."],
+      answerIndex: 1
+    },
+    {
+      q: "How do you ensure the result returned from Infernet is valid?",
+      options: ["Trust the node operator blindly.", "Using Cryptographic Signatures or ZK Proofs.", "By asking another node.", "By checking the timestamp."],
+      answerIndex: 1
+    }
+  ],
+  "Real-World On-Chain AI Use Cases": [
+    {
+      q: "How can Ritual AI Coprocessor be used in DeFi?",
+      options: ["To mint stablecoins.", "To generate profile pictures.", "For real-time credit risk assessment based on wallet history.", "To speed up transactions."],
+      answerIndex: 2
+    },
+    {
+      q: "What new capability does Ritual enable for NFTs?",
+      options: ["Lower gas fees.", "Generative NFTs that evolve dynamically using on-chain AI.", "Free minting.", "Staking rewards."],
+      answerIndex: 1
+    }
   ]
 };
 
