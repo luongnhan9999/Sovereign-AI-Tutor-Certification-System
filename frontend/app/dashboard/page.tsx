@@ -383,7 +383,7 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="dashboard-container" style={{ flex: 1, display: 'flex', flexDirection: 'column', minHeight: 0, padding: '100px 5% 20px', width: '100%' }}>
+    <div className="dashboard-container" style={{ height: '100vh', display: 'flex', flexDirection: 'column', minHeight: 0, padding: '100px 5% 20px', width: '100%' }}>
       {newBadgePopup && (
         <div style={{
           position: 'fixed', top: '20px', right: '20px', zIndex: 9999,
