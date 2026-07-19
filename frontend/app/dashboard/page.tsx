@@ -407,40 +407,45 @@ export default function Dashboard() {
       )}
 
       <main className="dashboard-grid">
-        <aside className="sidebar">
+        <aside className="sidebar vip-card" style={{ padding: '2rem' }}>
           
-          <div className="profile-card">
-            <div className="avatar-pro">{account ? account.slice(2,4).toUpperCase() : 'UI'}</div>
+          <div className="profile-card" style={{ borderBottom: '1px solid rgba(0, 229, 255, 0.2)', paddingBottom: '2rem', marginBottom: '2rem' }}>
+            <div className="avatar-pro" style={{ boxShadow: '0 0 20px rgba(0, 229, 255, 0.4)', border: '2px solid var(--accent-cyan)' }}>{account ? account.slice(2,4).toUpperCase() : 'UI'}</div>
             <div>
-              <h3 style={{ fontSize: '1.2rem', margin: '0 0 0.25rem 0' }}>Student Profile</h3>
-              <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', margin: 0, fontFamily: 'monospace' }}>
-                {account ? `${account.slice(0,6)}...${account.slice(-4)}` : 'Not Connected'}
+              <h3 style={{ fontSize: '1.3rem', margin: '0 0 0.25rem 0', textShadow: '0 0 10px rgba(0, 229, 255, 0.3)' }}>Neural Link Profile</h3>
+              <p style={{ color: 'var(--accent-cyan)', fontSize: '0.85rem', margin: 0, fontFamily: 'monospace' }}>
+                {account ? `${account.slice(0,6)}...${account.slice(-4)}` : 'Awaiting Connection'}
               </p>
             </div>
           </div>
 
-          <div className="stat-group">
-            <div className="stat-box">
-              <div className="val">{progress.completed}</div>
-              <div className="lbl">Quizzes Passed</div>
+          <div className="stat-group" style={{ marginBottom: '2.5rem' }}>
+            <div className="stat-box" style={{ background: 'rgba(0,0,0,0.5)', borderColor: 'rgba(0, 229, 255, 0.2)' }}>
+              <div className="val" style={{ textShadow: '0 0 10px var(--accent-cyan)' }}>{progress.completed}</div>
+              <div className="lbl" style={{ color: 'rgba(255,255,255,0.7)' }}>Nodes Solved</div>
             </div>
-            <div className="stat-box">
-              <div className="val">{points.toFixed(0)}</div>
-              <div className="lbl">Tokens Earned</div>
+            <div className="stat-box" style={{ background: 'rgba(0,0,0,0.5)', borderColor: 'rgba(181, 55, 242, 0.3)' }}>
+              <div className="val" style={{ color: 'var(--accent-purple)', textShadow: '0 0 10px var(--accent-purple)' }}>{points.toFixed(0)}</div>
+              <div className="lbl" style={{ color: 'rgba(255,255,255,0.7)' }}>Neural Tokens</div>
             </div>
           </div>
 
           <div>
-            <h3 style={{ marginBottom: '1rem', color: 'var(--text-secondary)', fontSize: '0.9rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Available Modules</h3>
+            <h3 style={{ marginBottom: '1.2rem', color: 'var(--accent-cyan)', fontSize: '0.9rem', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Neural Modules</h3>
             <div className="course-list">
               {courses.length === 0 ? (
-                <p className="text-muted">Loading modules...</p>
+                <p className="text-muted" style={{ animation: 'pulse 1.5s infinite' }}>Initializing modules...</p>
               ) : (
                 courses.map(c => (
                   <div 
                     key={c.id} 
                     className={`course-item ${selectedCourse === c.id ? 'active' : ''}`}
                     onClick={() => setSelectedCourse(c.id)}
+                    style={{
+                      background: selectedCourse === c.id ? 'rgba(0, 229, 255, 0.1)' : 'rgba(0,0,0,0.4)',
+                      borderColor: selectedCourse === c.id ? 'var(--accent-cyan)' : 'rgba(255,255,255,0.05)',
+                      boxShadow: selectedCourse === c.id ? '0 0 15px rgba(0, 229, 255, 0.2)' : 'none'
+                    }}
                   >
                     <div>
                       <h4 style={{ fontFamily: 'Space Grotesk' }}>{c.name}</h4>
@@ -468,112 +473,115 @@ export default function Dashboard() {
               const currentQ = quizId ? questions[currentQIndex] : null;
               
               return (
-                <div className="glass-card study-room">
-                  <h2 style={{ fontSize: '1.5rem', marginBottom: '1.5rem' }}>
+                <div className="vip-card study-room" style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+                  <h2 style={{ fontSize: '1.8rem', marginBottom: '1.5rem', textShadow: '0 0 15px rgba(255,255,255,0.3)' }}>
                     {courseName}
                   </h2>
                   
                   <div className="progress-bar-container">
-                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem', fontSize: '0.85rem', color: 'var(--text-muted)' }}>
-                      <span>Progress: {progress.completed} of {totalQuestions} Quizzes Completed</span>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem', fontSize: '0.85rem', color: 'rgba(255,255,255,0.7)' }}>
+                      <span>Neural Progress: {progress.completed} of {totalQuestions} Nodes Authenticated</span>
                     </div>
                   </div>
 
                   {!quizId && !isCompleted && (
-                    <button className="btn btn-primary" style={{ width: '100%', marginTop: '2rem' }} onClick={() => requestQuiz(true)} disabled={isSubmitting}>
-                      {isSubmitting ? "Processing..." : progress.completed === 0 ? "Start Course" : "Request Next Quiz"}
+                    <button className="neon-btn" style={{ width: '100%', marginTop: 'auto' }} onClick={() => requestQuiz(true)} disabled={isSubmitting}>
+                      {isSubmitting ? "Syncing..." : progress.completed === 0 ? "Initialize Link" : "Access Next Node"}
                     </button>
                   )}
 
                   {!quizId && isCompleted && (
-                    <div style={{ marginTop: '2rem', padding: '1.5rem', background: 'rgba(132, 204, 22, 0.1)', border: '1px solid var(--accent-lime)', borderRadius: 'var(--radius-md)', textAlign: 'center' }}>
-                      <h3 style={{ color: 'var(--accent-lime)', marginBottom: '0.5rem' }}>Module Completed! 🎉</h3>
-                      <p style={{ color: 'var(--text-secondary)' }}>You have answered all {totalQuestions} questions for this module. Please select another module from the sidebar to continue learning.</p>
+                    <div style={{ marginTop: 'auto', padding: '2rem', background: 'rgba(16, 185, 129, 0.1)', border: '1px solid rgba(16, 185, 129, 0.4)', borderRadius: 'var(--radius-md)', textAlign: 'center', boxShadow: '0 0 20px rgba(16, 185, 129, 0.1)' }}>
+                      <h3 style={{ color: '#10b981', marginBottom: '0.5rem', textShadow: '0 0 10px rgba(16, 185, 129, 0.5)' }}>Sector Cleared! 🛡️</h3>
+                      <p style={{ color: 'rgba(255,255,255,0.8)' }}>You have successfully validated all {totalQuestions} nodes in this sector. Select a new sector from the telemetry sidebar.</p>
                     </div>
                   )}
 
                   {quizId && currentQ && (
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginTop: '2rem' }}>
-                      <div className="quiz-card glass-card" 
-                        style={{ padding: '2rem', background: 'var(--bg-secondary)', border: '1px solid var(--glass-border)', borderRadius: 'var(--radius-md)', zIndex: 10 }}>
-                        <span className="quiz-label" style={{ fontSize: '0.8rem', color: 'var(--accent-magenta)', textTransform: 'uppercase', fontWeight: 700, letterSpacing: '0.05em' }}>
-                          Active Connection (Ritual Network) — Question {currentQIndex + 1} of {totalQuestions}
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', marginTop: '2rem', flexGrow: 1 }}>
+                      <div className="quiz-card" 
+                        style={{ padding: '2rem', background: 'rgba(0,0,0,0.6)', border: '1px solid rgba(0, 229, 255, 0.3)', borderRadius: 'var(--radius-md)', zIndex: 10, boxShadow: 'inset 0 0 20px rgba(0,0,0,0.8)' }}>
+                        <span className="quiz-label" style={{ fontSize: '0.85rem', color: 'var(--accent-cyan)', textTransform: 'uppercase', fontWeight: 700, letterSpacing: '0.1em', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                          <span style={{ width: '8px', height: '8px', background: 'var(--accent-cyan)', borderRadius: '50%', boxShadow: '0 0 5px var(--accent-cyan)' }}></span>
+                          Node Interrogation — Sector {currentQIndex + 1}/{totalQuestions}
                         </span>
-                      <p className="quiz-question" style={{ marginTop: '1rem', fontSize: '1.2rem', lineHeight: '1.6', fontWeight: 500 }}>
+                      <p className="quiz-question" style={{ marginTop: '1.5rem', fontSize: '1.3rem', lineHeight: '1.7', fontWeight: 500, textShadow: '0 0 2px rgba(255,255,255,0.2)' }}>
                         {currentQ.q}
                       </p>
                       
-                      <div className="quiz-options" style={{ marginTop: '1.5rem', display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
+                      <div className="quiz-options" style={{ marginTop: '2rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                         {currentQ.options.length === 1 && currentQ.options[0] === "Submit Essay" ? (
                           <textarea
-                            placeholder="Type your answer here (must be longer than 10 characters)..."
+                            placeholder="Input neural data stream..."
                             value={answer}
                             onChange={(e) => setAnswer(e.target.value)}
                             style={{
                               width: '100%',
-                              padding: '1rem',
-                              background: 'rgba(0,0,0,0.3)',
-                              border: '1px solid var(--glass-border)',
-                              borderRadius: 'var(--radius-md)',
-                              color: 'var(--text-primary)',
-                              fontFamily: 'inherit',
-                              fontSize: '0.95rem',
+                              padding: '1.2rem',
+                              background: 'rgba(0,0,0,0.5)',
+                              border: '1px solid rgba(0, 229, 255, 0.2)',
+                              borderRadius: 'var(--radius-sm)',
+                              color: '#fff',
+                              fontFamily: 'monospace',
+                              fontSize: '1rem',
                               resize: 'vertical',
                               minHeight: '120px',
+                              boxShadow: 'inset 0 0 10px rgba(0,0,0,0.5)'
                             }}
                           />
                         ) : (
                           currentQ.options.map((opt: string, i: number) => (
                             <label key={i} className="quiz-option" style={{
-                              display: 'flex', alignItems: 'center', gap: '1rem', padding: '1rem',
-                              background: answer === opt ? 'rgba(99, 102, 241, 0.2)' : 'rgba(255,255,255,0.03)',
-                              border: answer === opt ? '1px solid var(--accent-blue)' : '1px solid transparent',
-                              borderRadius: '8px', cursor: 'pointer', transition: 'all 0.2s'
+                              display: 'flex', alignItems: 'center', gap: '1rem', padding: '1.2rem',
+                              background: answer === opt ? 'rgba(0, 229, 255, 0.15)' : 'rgba(255,255,255,0.02)',
+                              border: answer === opt ? '1px solid var(--accent-cyan)' : '1px solid rgba(255,255,255,0.05)',
+                              borderRadius: '8px', cursor: 'pointer', transition: 'all 0.3s',
+                              boxShadow: answer === opt ? '0 0 15px rgba(0, 229, 255, 0.1)' : 'none'
                             }}>
-                              <input type="radio" name="quiz_option" value={opt} onChange={() => setAnswer(opt)} checked={answer === opt} style={{ accentColor: 'var(--accent-blue)', width: '18px', height: '18px' }} />
-                              <span style={{ fontSize: '0.95rem' }}>{opt}</span>
+                              <input type="radio" name="quiz_option" value={opt} onChange={() => setAnswer(opt)} checked={answer === opt} style={{ accentColor: 'var(--accent-cyan)', width: '20px', height: '20px' }} />
+                              <span style={{ fontSize: '1rem', textShadow: answer === opt ? '0 0 5px rgba(255,255,255,0.3)' : 'none' }}>{opt}</span>
                             </label>
                           ))
                         )}
                       </div>
                     </div>
                     
-                    <button className="btn btn-secondary" onClick={submitAnswer} disabled={!answer || isSubmitting}>
-                      {isSubmitting ? "Submitting..." : "Submit Answer"}
+                    <button className="neon-btn" style={{ marginTop: 'auto' }} onClick={submitAnswer} disabled={!answer || isSubmitting}>
+                      {isSubmitting ? "Transmitting..." : "Verify Response"}
                     </button>
                   </div>
                 )}
                 
               {(() => {
                 let badge = null;
-                if (progress.completed >= 201) badge = { name: "Diamond Badge", icon: "💎", color: "#00d2ff", bg: "rgba(0, 210, 255, 0.1)" };
-                else if (progress.completed >= 101) badge = { name: "Gold Badge", icon: "🥇", color: "#ffd700", bg: "rgba(255, 215, 0, 0.1)" };
-                else if (progress.completed >= 51) badge = { name: "Silver Badge", icon: "🥈", color: "#c0c0c0", bg: "rgba(192, 192, 192, 0.1)" };
-                else if (progress.completed >= 10) badge = { name: "Bronze Badge", icon: "🥉", color: "#cd7f32", bg: "rgba(205, 127, 50, 0.1)" };
+                if (progress.completed >= 201) badge = { name: "Diamond Node", icon: "💎", color: "#00d2ff", bg: "rgba(0, 210, 255, 0.1)" };
+                else if (progress.completed >= 101) badge = { name: "Gold Node", icon: "🥇", color: "#ffd700", bg: "rgba(255, 215, 0, 0.1)" };
+                else if (progress.completed >= 51) badge = { name: "Silver Node", icon: "🥈", color: "#c0c0c0", bg: "rgba(192, 192, 192, 0.1)" };
+                else if (progress.completed >= 10) badge = { name: "Bronze Node", icon: "🥉", color: "#cd7f32", bg: "rgba(205, 127, 50, 0.1)" };
                 
                 if (!badge) return null;
                 
                 return (
-                  <div style={{ marginTop: '2rem', padding: '1.5rem', background: badge.bg, border: `1px solid ${badge.color}40`, borderRadius: 'var(--radius-md)', display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                    <div style={{ fontSize: '3rem', filter: `drop-shadow(0 0 10px ${badge.color}80)` }}>{badge.icon}</div>
+                  <div style={{ marginTop: '2rem', padding: '1.5rem', background: badge.bg, border: `1px solid ${badge.color}40`, borderRadius: 'var(--radius-md)', display: 'flex', alignItems: 'center', gap: '1rem', boxShadow: `0 0 20px ${badge.color}20` }}>
+                    <div style={{ fontSize: '3rem', filter: `drop-shadow(0 0 15px ${badge.color})` }}>{badge.icon}</div>
                     <div>
-                      <h4 style={{ color: badge.color, marginBottom: '0.25rem', fontSize: '1.1rem' }}>{badge.name} Unlocked!</h4>
-                      <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>You have reached {progress.completed} correct answers.</p>
+                      <h4 style={{ color: badge.color, marginBottom: '0.25rem', fontSize: '1.1rem', textShadow: `0 0 5px ${badge.color}50` }}>{badge.name} Unlocked!</h4>
+                      <p style={{ color: 'rgba(255,255,255,0.7)', fontSize: '0.9rem' }}>Neural pathway fortified. {progress.completed} connections established.</p>
                     </div>
                   </div>
                 );
               })()}
 
               {progress.completed >= 10 && (
-                <div className="glass-card" 
-                  style={{ marginTop: '2rem', padding: '2rem', background: 'linear-gradient(135deg, rgba(247, 37, 133, 0.15) 0%, rgba(157, 78, 221, 0.15) 100%)', border: '1px solid rgba(247, 37, 133, 0.3)', borderRadius: 'var(--radius-md)', textAlign: 'center', boxShadow: '0 0 30px rgba(247, 37, 133, 0.15)' }}>
+                <div className="vip-card" 
+                  style={{ marginTop: '2rem', background: 'linear-gradient(135deg, rgba(247, 37, 133, 0.15) 0%, rgba(157, 78, 221, 0.15) 100%)', borderColor: 'rgba(247, 37, 133, 0.3)', textAlign: 'center' }}>
                   <div style={{ fontSize: '4rem', marginBottom: '1rem', filter: 'drop-shadow(0 0 20px rgba(247, 37, 133, 0.8))' }}>📜</div>
-                  <h3 style={{ color: '#fff', marginBottom: '0.5rem', fontSize: '1.5rem', fontWeight: 700, textShadow: '0 2px 15px rgba(247, 37, 133, 0.8)' }}>VeriLearn TCERT NFT</h3>
+                  <h3 style={{ color: '#fff', marginBottom: '0.5rem', fontSize: '1.5rem', fontWeight: 700, textShadow: '0 2px 15px rgba(247, 37, 133, 0.8)' }}>VeriLearn TCERT Genesis</h3>
                   {(() => {
-                    if (progress.completed >= 201) return <p style={{ color: '#ffb3c6', fontWeight: 600 }}>💎 Diamond Tier Reached! Your NFT Certificate has been auto-minted to your wallet as proof of mastery.</p>;
-                    if (progress.completed >= 101) return <p style={{ color: '#ffb3c6' }}>🥇 Gold Tier Reached! Just {201 - progress.completed} more correct answers to Diamond tier to automatically mint this exclusive NFT Certificate.</p>;
-                    if (progress.completed >= 51) return <p style={{ color: '#ffb3c6' }}>🥈 Silver Tier Reached! Just {201 - progress.completed} more correct answers to Diamond tier to automatically mint this exclusive NFT Certificate.</p>;
-                    return <p style={{ color: '#ffb3c6' }}>🥉 Bronze Tier Reached! Just {201 - progress.completed} more correct answers to Diamond tier to automatically mint this exclusive NFT Certificate.</p>;
+                    if (progress.completed >= 201) return <p style={{ color: '#ffb3c6', fontWeight: 600 }}>💎 Diamond Protocol Active! Genesis NFT auto-minted.</p>;
+                    if (progress.completed >= 101) return <p style={{ color: '#ffb3c6' }}>🥇 Gold Protocol Active! {201 - progress.completed} nodes remaining to Genesis NFT.</p>;
+                    if (progress.completed >= 51) return <p style={{ color: '#ffb3c6' }}>🥈 Silver Protocol Active! {201 - progress.completed} nodes remaining to Genesis NFT.</p>;
+                    return <p style={{ color: '#ffb3c6' }}>🥉 Bronze Protocol Active! {201 - progress.completed} nodes remaining to Genesis NFT.</p>;
                   })()}
                 </div>
               )}
@@ -581,46 +589,54 @@ export default function Dashboard() {
             );
           })()
           ) : (
-            <div className="glass-card" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', minHeight: '300px', color: 'var(--text-muted)' }}>
-              Select a course to start learning
+            <div className="vip-card" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', minHeight: '500px', textAlign: 'center', background: 'radial-gradient(circle at center, rgba(0,229,255,0.05) 0%, transparent 60%)' }}>
+              <div style={{ position: 'relative', width: '120px', height: '120px', marginBottom: '2rem' }}>
+                <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, border: '2px solid rgba(0,229,255,0.3)', borderRadius: '50%', borderTopColor: 'var(--accent-cyan)', animation: 'spin 3s linear infinite' }}></div>
+                <div style={{ position: 'absolute', top: '15px', left: '15px', right: '15px', bottom: '15px', border: '2px solid rgba(181, 55, 242, 0.3)', borderRadius: '50%', borderBottomColor: 'var(--accent-purple)', animation: 'spin 2s linear infinite reverse' }}></div>
+                <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', fontSize: '2rem', filter: 'drop-shadow(0 0 10px var(--accent-cyan))' }}>🧠</div>
+              </div>
+              <h2 style={{ fontSize: '2rem', marginBottom: '1rem', textShadow: '0 0 15px rgba(255,255,255,0.3)' }}>Awaiting Uplink</h2>
+              <p style={{ color: 'rgba(255,255,255,0.6)', maxWidth: '400px', lineHeight: '1.6' }}>Select a neural module from the sidebar to establish a secure connection and begin processing data.</p>
             </div>
           )}
         </section>
 
         <aside className="telemetry-sidebar" style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
-          <div className="glass-card" style={{ padding: '1.5rem', background: 'var(--glass-bg)', border: '1px solid var(--glass-border)', borderRadius: 'var(--radius-md)' }}>
-            <h4 style={{ color: 'var(--accent-cyan)', marginBottom: '1rem', fontFamily: 'Space Grotesk', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+          <div className="vip-card" style={{ padding: '1.5rem', background: 'rgba(0,0,0,0.5)', border: '1px solid rgba(0, 229, 255, 0.2)' }}>
+            <h4 style={{ color: 'var(--accent-cyan)', marginBottom: '1rem', fontFamily: 'Space Grotesk', display: 'flex', alignItems: 'center', gap: '0.5rem', textShadow: '0 0 10px rgba(0, 229, 255, 0.4)' }}>
               <span className="brand-dot" style={{ animation: 'pulse 2s infinite', background: 'var(--accent-cyan)', boxShadow: '0 0 10px var(--accent-cyan)' }}></span>
               System Telemetry
             </h4>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', fontSize: '0.9rem' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', fontSize: '0.95rem' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', paddingBottom: '0.5rem', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
                 <span className="text-muted">Active Nodes:</span>
-                <span style={{ color: 'var(--text-primary)', fontFamily: 'monospace' }}>2,408</span>
+                <span style={{ color: '#fff', fontFamily: 'monospace' }}>2,408</span>
               </div>
-              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', paddingBottom: '0.5rem', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
                 <span className="text-muted">Network Latency:</span>
-                <span style={{ color: 'var(--accent-lime)', fontFamily: 'monospace' }}>12ms</span>
+                <span style={{ color: 'var(--accent-cyan)', fontFamily: 'monospace', textShadow: '0 0 5px var(--accent-cyan)' }}>12ms</span>
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                 <span className="text-muted">TEE Status:</span>
-                <span style={{ color: 'var(--accent-cyan)', fontWeight: 'bold' }}>SECURE</span>
+                <span style={{ color: '#10b981', fontWeight: 'bold', textShadow: '0 0 5px rgba(16, 185, 129, 0.5)' }}>SECURE</span>
               </div>
             </div>
           </div>
 
-          <div style={{ height: '100%', minHeight: '500px', display: 'flex', flexDirection: 'column', background: 'var(--glass-bg)', border: '1px solid var(--glass-border)', borderRadius: 'var(--radius-md)' }}>
-            <div className="leaderboard-header">
-              <div className="tabs">
+          <div className="vip-card" style={{ height: '100%', minHeight: '500px', display: 'flex', flexDirection: 'column', background: 'rgba(0,0,0,0.5)', border: '1px solid rgba(181, 55, 242, 0.2)', padding: '1.5rem' }}>
+            <div className="leaderboard-header" style={{ marginBottom: '1.5rem' }}>
+              <div className="tabs" style={{ display: 'flex', gap: '0.5rem', background: 'rgba(0,0,0,0.3)', padding: '0.25rem', borderRadius: 'var(--radius-sm)' }}>
                 <button 
                   className={`tab-btn ${historyTab === 'history' ? 'active' : ''}`}
                   onClick={() => setHistoryTab('history')}
+                  style={{ flex: 1, padding: '0.5rem', background: historyTab === 'history' ? 'rgba(181, 55, 242, 0.2)' : 'transparent', border: 'none', borderRadius: '4px', color: historyTab === 'history' ? '#fff' : 'var(--text-muted)', cursor: 'pointer', transition: 'all 0.3s' }}
                 >
                   Neural Logs
                 </button>
                 <button 
                   className={`tab-btn ${historyTab === 'leaderboard' ? 'active' : ''}`}
                   onClick={() => setHistoryTab('leaderboard')}
+                  style={{ flex: 1, padding: '0.5rem', background: historyTab === 'leaderboard' ? 'rgba(181, 55, 242, 0.2)' : 'transparent', border: 'none', borderRadius: '4px', color: historyTab === 'leaderboard' ? '#fff' : 'var(--text-muted)', cursor: 'pointer', transition: 'all 0.3s' }}
                 >
                   Leaderboard 🏆
                 </button>
@@ -647,10 +663,10 @@ export default function Dashboard() {
                              {qObj.correct ? 'VERIFIED' : 'REJECTED'}
                           </span>
                         </div>
-                        <div style={{ fontSize: '0.85rem', marginTop: '0.5rem', padding: '1rem', background: qObj.correct ? 'rgba(163, 230, 53, 0.05)' : 'rgba(239, 68, 68, 0.05)', borderLeft: `2px solid ${qObj.correct ? 'var(--accent-lime)' : '#ef4444'}` }}>
-                          <div className="text-muted">Extracted Output: <strong style={{ color: qObj.correct ? 'var(--accent-lime)' : '#ef4444' }}>{qObj.selectedAnswer || (qObj.correct ? correctAns : 'Unknown')}</strong></div>
+                        <div style={{ fontSize: '0.85rem', marginTop: '1rem', padding: '1rem', background: qObj.correct ? 'rgba(16, 185, 129, 0.1)' : 'rgba(239, 68, 68, 0.1)', borderLeft: `3px solid ${qObj.correct ? '#10b981' : '#ef4444'}`, borderRadius: '0 4px 4px 0' }}>
+                          <div className="text-muted">Extracted Output: <strong style={{ color: qObj.correct ? '#10b981' : '#ef4444', textShadow: `0 0 5px ${qObj.correct ? '#10b981' : '#ef4444'}50` }}>{qObj.selectedAnswer || (qObj.correct ? correctAns : 'Unknown')}</strong></div>
                           {!qObj.correct && (
-                            <div className="text-muted" style={{ marginTop: '0.25rem' }}>Expected Hash: <strong style={{ color: 'var(--accent-lime)' }}>{correctAns}</strong></div>
+                            <div className="text-muted" style={{ marginTop: '0.5rem' }}>Expected Hash: <strong style={{ color: '#10b981' }}>{correctAns}</strong></div>
                           )}
                         </div>
                       </div>
