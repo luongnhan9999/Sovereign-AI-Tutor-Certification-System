@@ -88,16 +88,16 @@ export default function Dashboard() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [newBadgePopup, setNewBadgePopup] = useState<{name: string, icon: string, color: string} | null>(null);
   const [historyTab, setHistoryTab] = useState<'history' | 'leaderboard'>('history');
-  const [botPlayers, setBotPlayers] = useState<{address: string, score: number, isUser?: boolean}[]>([
-    { address: '0x1A2B...3C4D', score: 185 },
-    { address: '0x9F8E...7D6C', score: 142 },
-    { address: '0x4B5A...6C7D', score: 98 },
-    { address: '0x2C3D...4E5F', score: 76 },
-    { address: '0x8D9E...0F1A', score: 65 },
-    { address: '0x5E6F...7A8B', score: 43 },
-    { address: '0x3A4B...5C6D', score: 21 },
-    { address: '0x7C8D...9E0F', score: 15 },
-    { address: '0x6B7A...8C9D', score: 8 },
+  const [botPlayers, setBotPlayers] = useState<{address: string, score: number, isUser?: boolean, type?: string}>([
+    { address: 'vitalik.eth', score: 185, type: 'human' },
+    { address: 'NeuralNode_8F', score: 142, type: 'node' },
+    { address: 'ritual_validator.eth', score: 98, type: 'human' },
+    { address: '0x99C2...77FA', score: 76, type: 'wallet' },
+    { address: 'zkVerifier_11', score: 65, type: 'node' },
+    { address: 'cyber.eth', score: 43, type: 'human' },
+    { address: '0x10A9...BB21', score: 21, type: 'wallet' },
+    { address: 'TEE_Operator_X', score: 15, type: 'node' },
+    { address: '0x7172...9990', score: 8, type: 'wallet' },
   ]);
 
   useEffect(() => {
@@ -594,8 +594,20 @@ export default function Dashboard() {
                       {allPlayers.slice(0, 10).map((player, idx) => (
                         <div key={idx} className={`lb-item ${player.isUser ? 'is-user' : ''}`}>
                           <div className="lb-rank">#{idx + 1}</div>
-                          <div className="lb-address">
-                            {player.isUser ? player.address + ' (You)' : player.address}
+                          <div className="lb-address" style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                            {player.isUser ? (
+                              <span style={{ fontSize: '1.2rem' }}>🧑‍🚀</span>
+                            ) : player.type === 'human' ? (
+                              <span style={{ fontSize: '1.2rem' }}>👤</span>
+                            ) : player.type === 'node' ? (
+                              <span style={{ fontSize: '1.2rem' }}>🤖</span>
+                            ) : (
+                              <span style={{ fontSize: '1.2rem' }}>💼</span>
+                            )}
+                            <span style={{ fontWeight: player.isUser ? 'bold' : 'normal', color: player.isUser ? 'var(--accent-cyan)' : 'inherit' }}>
+                              {player.isUser ? player.address + ' (You)' : player.address}
+                            </span>
+                            {player.type === 'node' && <span style={{ fontSize: '0.7rem', padding: '0.1rem 0.4rem', background: 'rgba(247, 37, 133, 0.2)', color: 'var(--accent-magenta)', borderRadius: '4px', marginLeft: '0.5rem' }}>VERIFIER</span>}
                           </div>
                           <div className="lb-score">
                             {player.score} <span style={{ fontSize: '0.8rem', fontWeight: 'normal', color: 'var(--text-muted)' }}>pts</span>
