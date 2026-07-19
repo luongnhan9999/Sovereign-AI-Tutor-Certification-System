@@ -119,6 +119,23 @@ const COURSE_QUESTIONS: Record<string, {q: string, options: string[], answerInde
       options: ["Lower gas fees.", "Generative NFTs that evolve dynamically using on-chain AI.", "Free minting.", "Staking rewards."],
       answerIndex: 1
     }
+  ],
+  "Advanced Cryptography & Sovereign TEEs": [
+    {
+      q: "In a fully Sovereign AI setup, what role does Multi-Party Computation (MPC) play when combined with TEEs?",
+      options: ["It replaces the need for a blockchain.", "It allows multiple non-trusting nodes to jointly compute a model without exposing the weights to any single party.", "It encrypts the user's wallet.", "It accelerates GPU performance."],
+      answerIndex: 1
+    },
+    {
+      q: "What is a 'Phantom Enclave' attack in the context of TEE-based AI computation?",
+      options: ["When a node simulates a TEE environment in software to forge attestation proofs.", "When the AI model hallucinates cryptographic keys.", "When a user deletes their node.", "When the blockchain loses consensus."],
+      answerIndex: 0
+    },
+    {
+      q: "How does VeriLearn utilize the Ritual execution layer to achieve determinism on stochastic AI models?",
+      options: ["By forcing all weights to be integers.", "By aggregating outputs from a decentralized oracle network and using a cryptographic threshold signature.", "By removing randomness seeds.", "It doesn't, AI is always non-deterministic."],
+      answerIndex: 1
+    }
   ]
 };
 
@@ -198,6 +215,15 @@ export default function Dashboard() {
           reward: ethers.formatEther(c[3])
         });
       }
+      
+      // Inject Mock Module
+      loaded.push({
+        id: 999,
+        name: "Advanced Cryptography & Sovereign TEEs",
+        totalQuizzes: 3,
+        reward: "150.0"
+      });
+      
       setCourses(loaded);
     } catch (e) {
       console.error("Fetch courses error", e);
@@ -207,6 +233,17 @@ export default function Dashboard() {
   const fetchProgress = async () => {
     if (!account || !selectedCourse) return 0;
     try {
+      if (selectedCourse === 999) {
+        const stored = localStorage.getItem(`askedQuestions_${account}_999`);
+        let completed = 0;
+        if (stored) {
+           const parsed = JSON.parse(stored);
+           completed = parsed.filter((p: any) => p.correct).length;
+        }
+        setProgress({ completed, certificateMinted: false, askedQuestions: [] });
+        return completed;
+      }
+      
       const readProvider = getReadProvider();
       const contract = new ethers.Contract(CONTRACTS.tutor.address, CONTRACTS.tutor.abi, readProvider);
       const prog = await contract.userProgress(account, selectedCourse);
@@ -263,16 +300,42 @@ export default function Dashboard() {
     }
   }, [askedQuestions, account, selectedCourse]);
 
+  const mintCertificate = async () => {
+    if (!selectedCourse) return;
+    setIsSubmitting(true);
+    try {
+      if (selectedCourse !== 999) {
+        await switchNetwork();
+        const signer = await getSigner();
+        if (!signer) { setIsSubmitting(false); return; }
+        const contract = new ethers.Contract(CONTRACTS.tutor.address, CONTRACTS.tutor.abi, signer);
+        const tx = await contract.mintCertificate(selectedCourse);
+        await tx.wait();
+      } else {
+        await new Promise(r => setTimeout(r, 800));
+        alert("Mock Certificate Minted! (Frontend only)");
+      }
+      await fetchProgress();
+    } catch (e) {
+      console.error(e);
+    }
+    setIsSubmitting(false);
+  };
+
   const requestQuiz = async (forceNetworkSwitch = true) => {
     if (!selectedCourse) return;
     setIsSubmitting(true);
     try {
-      if (forceNetworkSwitch) await switchNetwork();
-      const signer = await getSigner();
-      if (!signer) { setIsSubmitting(false); return; }
-      const contract = new ethers.Contract(CONTRACTS.tutor.address, CONTRACTS.tutor.abi, signer);
-      const tx = await contract.requestQuiz(selectedCourse);
-      await tx.wait();
+      if (selectedCourse !== 999) {
+        if (forceNetworkSwitch) await switchNetwork();
+        const signer = await getSigner();
+        if (!signer) { setIsSubmitting(false); return; }
+        const contract = new ethers.Contract(CONTRACTS.tutor.address, CONTRACTS.tutor.abi, signer);
+        const tx = await contract.requestQuiz(selectedCourse);
+        await tx.wait();
+      } else {
+        await new Promise(r => setTimeout(r, 800));
+      }
       
       const courseObj = courses.find(c => c.id === selectedCourse);
       const courseName = courseObj?.name || "Introduction to VeriLearn";
@@ -296,11 +359,6 @@ export default function Dashboard() {
     if (!selectedCourse || !quizId || !answer) return;
     setIsSubmitting(true);
     try {
-      await switchNetwork();
-      const signer = await getSigner();
-      if (!signer) { setIsSubmitting(false); return; }
-      const contract = new ethers.Contract(CONTRACTS.tutor.address, CONTRACTS.tutor.abi, signer);
-      
       const qIndex = parseInt(quizId.split('-')[4]);
       const courseObj = courses.find(c => c.id === selectedCourse);
       const courseName = courseObj?.name || "Introduction to VeriLearn";
@@ -316,8 +374,16 @@ export default function Dashboard() {
       }
       const payloadAnswer = isCorrect ? "CORRECT_ANSWER_PADDED" : "WRONG";
 
-      const tx = await contract.submitAnswer(selectedCourse, quizId, payloadAnswer);
-      await tx.wait();
+      if (selectedCourse !== 999) {
+        await switchNetwork();
+        const signer = await getSigner();
+        if (!signer) { setIsSubmitting(false); return; }
+        const contract = new ethers.Contract(CONTRACTS.tutor.address, CONTRACTS.tutor.abi, signer);
+        const tx = await contract.submitAnswer(selectedCourse, quizId, payloadAnswer);
+        await tx.wait();
+      } else {
+        await new Promise(r => setTimeout(r, 800));
+      }
       
       setAskedQuestions(prev => {
         const newQ = [...prev];
