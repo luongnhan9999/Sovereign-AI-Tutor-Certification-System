@@ -383,7 +383,7 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="dashboard-container" style={{ flex: 1, display: 'flex', flexDirection: 'column', minHeight: 0, padding: '100px 2% 20px' }}>
+    <div className="dashboard-container" style={{ flex: 1, display: 'flex', flexDirection: 'column', minHeight: 0, padding: '100px 5% 20px', width: '100%' }}>
       {newBadgePopup && (
         <div style={{
           position: 'fixed', top: '20px', right: '20px', zIndex: 9999,
@@ -406,7 +406,7 @@ export default function Dashboard() {
         </div>
       )}
 
-      <main className="dashboard-grid">
+      <main className="dashboard-grid" style={{ width: '100%' }}>
         <aside className="sidebar vip-card" style={{ display: 'flex', flexDirection: 'column', minHeight: 0 }}>
           
           <div className="profile-card" style={{ flexShrink: 0, borderBottom: '1px solid rgba(0, 229, 255, 0.2)', paddingBottom: '1rem' }}>

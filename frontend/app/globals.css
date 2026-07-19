@@ -444,9 +444,8 @@ a { text-decoration: none; color: inherit; }
 
 /* ─── Dashboard Pro UI ─── */
 .dashboard-container {
-  padding: 100px 2% 2rem;
-  max-width: 1600px;
-  margin: 0 auto;
+  padding: 100px 5% 2rem;
+  width: 100%;
 }
 
 .dashboard-grid {
