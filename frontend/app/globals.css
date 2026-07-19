@@ -99,8 +99,8 @@ a { text-decoration: none; color: inherit; }
   pointer-events: none;
   background-color: var(--bg-primary);
   background-image: 
-    linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+    linear-gradient(rgba(0, 229, 255, 0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 229, 255, 0.08) 1px, transparent 1px);
   background-size: 50px 50px;
   background-position: center center;
   animation: gridMove 20s linear infinite;
@@ -119,7 +119,7 @@ a { text-decoration: none; color: inherit; }
   height: 60vw;
   border-radius: 50%;
   filter: blur(120px);
-  opacity: 0.15;
+  opacity: 0.35;
   animation: floatAmbient 30s ease-in-out infinite alternate;
 }
 
@@ -144,11 +144,19 @@ a { text-decoration: none; color: inherit; }
 
 /* ─── Typography Utils ─── */
 .gradient-text {
-  background: var(--gradient-primary);
+  background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple), var(--accent-magenta), var(--accent-cyan));
+  background-size: 300% 300%;
+  animation: gradientTextAnim 5s ease infinite;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
   display: inline-block;
+}
+
+@keyframes gradientTextAnim {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
 }
 
 .gradient-text-alt {
@@ -375,7 +383,7 @@ a { text-decoration: none; color: inherit; }
 
 .bento-item {
   background: var(--glass-bg);
-  border: 1px solid var(--glass-border);
+  border: 1px solid rgba(0, 229, 255, 0.2);
   border-radius: var(--radius-lg);
   padding: 2.5rem;
   position: relative;
@@ -385,7 +393,7 @@ a { text-decoration: none; color: inherit; }
   flex-direction: column;
   backdrop-filter: blur(24px);
   -webkit-backdrop-filter: blur(24px);
-  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 30px rgba(0, 229, 255, 0.05);
 }
 
 .bento-item:hover {
