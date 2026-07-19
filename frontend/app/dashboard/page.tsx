@@ -724,20 +724,20 @@ export default function Dashboard() {
                       {allPlayers.slice(0, 10).map((player, idx) => (
                         <div key={idx} className={`lb-item ${player.isUser ? 'is-user' : ''}`}>
                           <div className="lb-rank">#{idx + 1}</div>
-                          <div className="lb-address" style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                          <div className="lb-address" style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', minWidth: 0 }}>
                             {player.isUser ? (
-                              <span style={{ fontSize: '1.2rem' }}>🧑‍🚀</span>
+                              <span style={{ fontSize: '1.2rem', flexShrink: 0 }}>🧑‍🚀</span>
                             ) : player.type === 'human' ? (
-                              <span style={{ fontSize: '1.2rem' }}>👤</span>
+                              <span style={{ fontSize: '1.2rem', flexShrink: 0 }}>👤</span>
                             ) : player.type === 'node' ? (
-                              <span style={{ fontSize: '1.2rem' }}>🤖</span>
+                              <span style={{ fontSize: '1.2rem', flexShrink: 0 }}>🤖</span>
                             ) : (
-                              <span style={{ fontSize: '1.2rem' }}>💼</span>
+                              <span style={{ fontSize: '1.2rem', flexShrink: 0 }}>💼</span>
                             )}
-                            <span style={{ fontWeight: player.isUser ? 'bold' : 'normal', color: player.isUser ? 'var(--accent-cyan)' : 'inherit' }}>
+                            <span style={{ fontWeight: player.isUser ? 'bold' : 'normal', color: player.isUser ? 'var(--accent-cyan)' : 'inherit', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                               {player.isUser ? player.address + ' (You)' : player.address}
                             </span>
-                            {player.type === 'node' && <span style={{ fontSize: '0.7rem', padding: '0.1rem 0.4rem', background: 'rgba(247, 37, 133, 0.2)', color: 'var(--accent-magenta)', borderRadius: '4px', marginLeft: '0.5rem' }}>VERIFIER</span>}
+                            {player.type === 'node' && <span style={{ fontSize: '0.7rem', padding: '0.1rem 0.4rem', background: 'rgba(247, 37, 133, 0.2)', color: 'var(--accent-magenta)', borderRadius: '4px', marginLeft: '0.5rem', flexShrink: 0 }}>VERIFIER</span>}
                           </div>
                           <div className="lb-score">
                             {player.score} <span style={{ fontSize: '0.8rem', fontWeight: 'normal', color: 'var(--text-muted)' }}>pts</span>
