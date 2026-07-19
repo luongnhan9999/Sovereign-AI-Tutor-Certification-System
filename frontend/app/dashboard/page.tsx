@@ -441,14 +441,7 @@ export default function Dashboard() {
                 
                 return quizId && currentQ ? (
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginTop: '2rem' }}>
-                    <div className="quiz-card tilt-card holo-card" 
-                      onMouseMove={(e) => {
-                        const rect = e.currentTarget.getBoundingClientRect();
-                        const x = e.clientX - rect.left;
-                        const y = e.clientY - rect.top;
-                        e.currentTarget.style.transform = `rotateX(${(rect.height/2 - y)/40}deg) rotateY(${(x - rect.width/2)/40}deg)`;
-                      }} 
-                      onMouseLeave={(e) => e.currentTarget.style.transform = 'rotateX(0) rotateY(0)'}
+                    <div className="quiz-card holo-card" 
                       style={{ padding: '2rem', background: 'var(--bg-secondary)', border: '1px solid var(--glass-border)', borderRadius: 'var(--radius-md)', zIndex: 10 }}>
                       <span className="quiz-label" style={{ fontSize: '0.8rem', color: 'var(--accent-magenta)', textTransform: 'uppercase', fontWeight: 700, letterSpacing: '0.05em' }}>Active Connection (Ritual Network)</span>
                       <p className="quiz-question" style={{ marginTop: '1rem', fontSize: '1.2rem', lineHeight: '1.6', fontWeight: 500 }}>
@@ -518,14 +511,7 @@ export default function Dashboard() {
               })()}
 
               {progress.completed >= 10 && (
-                <div className="holo-card tilt-card" 
-                  onMouseMove={(e) => {
-                    const rect = e.currentTarget.getBoundingClientRect();
-                    const x = e.clientX - rect.left;
-                    const y = e.clientY - rect.top;
-                    e.currentTarget.style.transform = `rotateX(${(rect.height/2 - y)/20}deg) rotateY(${(x - rect.width/2)/20}deg)`;
-                  }} 
-                  onMouseLeave={(e) => e.currentTarget.style.transform = 'rotateX(0) rotateY(0)'}
+                <div className="holo-card" 
                   style={{ marginTop: '2rem', padding: '2rem', background: 'linear-gradient(135deg, rgba(247, 37, 133, 0.15) 0%, rgba(157, 78, 221, 0.15) 100%)', border: '1px solid rgba(247, 37, 133, 0.3)', borderRadius: 'var(--radius-md)', textAlign: 'center', boxShadow: '0 0 30px rgba(247, 37, 133, 0.15)' }}>
                   <div style={{ fontSize: '4rem', marginBottom: '1rem', filter: 'drop-shadow(0 0 20px rgba(247, 37, 133, 0.8))' }}>📜</div>
                   <h3 style={{ color: '#fff', marginBottom: '0.5rem', fontSize: '1.5rem', fontWeight: 700, textShadow: '0 2px 15px rgba(247, 37, 133, 0.8)' }}>VeriLearn TCERT NFT</h3>

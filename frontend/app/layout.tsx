@@ -23,28 +23,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         </div>
         <div className="bg-grid"></div>
         <div className="bg-particles"></div>
-        
-        {/* Custom Cursor Element */}
-        <div id="custom-cursor" className="custom-cursor"></div>
-        <script dangerouslySetInnerHTML={{__html: `
-          if (typeof window !== 'undefined') {
-            document.addEventListener('mousemove', (e) => {
-              const cursor = document.getElementById('custom-cursor');
-              if (cursor) {
-                cursor.style.left = e.clientX + 'px';
-                cursor.style.top = e.clientY + 'px';
-              }
-            });
-            document.addEventListener('mousedown', () => {
-              const cursor = document.getElementById('custom-cursor');
-              if (cursor) cursor.classList.add('active');
-            });
-            document.addEventListener('mouseup', () => {
-              const cursor = document.getElementById('custom-cursor');
-              if (cursor) cursor.classList.remove('active');
-            });
-          }
-        `}} />
 
         <Header />
         {children}

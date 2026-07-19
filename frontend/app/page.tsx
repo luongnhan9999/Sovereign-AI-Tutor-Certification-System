@@ -15,11 +15,9 @@ export default function Home() {
           <h1 className="hero-title" style={{ marginTop: '1rem' }}>
             The Future of <br/> <span className="gradient-text">Verifiable Learning</span>
           </h1>
-          <div style={{ height: '3rem', margin: '1rem 0' }}>
-            <p className="hero-subtitle typing-text" style={{ display: 'inline-block', maxWidth: 'max-content' }}>
-              Initializing Neural Network... establishing secure TEE connection.
-            </p>
-          </div>
+          <p className="hero-subtitle typing-text" style={{ color: 'var(--accent-cyan)' }}>
+            Initializing Neural Network... establishing secure TEE connection.
+          </p>
           <p className="hero-subtitle" style={{ color: 'var(--text-secondary)' }}>
             An autonomous on‑chain AI tutor that creates personalized quizzes, evaluates your answers in a Trusted Execution Environment, and issues cryptographically verifiable ERC‑721 certificates.
           </p>
@@ -41,12 +39,7 @@ export default function Home() {
         <section id="features" style={{ perspective: '1000px' }}>
           <div className="bento-grid">
             
-            <div className="bento-item bento-large tilt-card holo-card" onMouseMove={(e) => {
-              const rect = e.currentTarget.getBoundingClientRect();
-              const x = e.clientX - rect.left;
-              const y = e.clientY - rect.top;
-              e.currentTarget.style.transform = `rotateX(${(rect.height/2 - y)/10}deg) rotateY(${(x - rect.width/2)/10}deg)`;
-            }} onMouseLeave={(e) => e.currentTarget.style.transform = 'rotateX(0) rotateY(0)'}>
+            <div className="bento-item bento-large holo-card">
               <div className="bento-icon" style={{ background: 'rgba(247, 37, 133, 0.1)', color: 'var(--accent-magenta)' }}>🧠</div>
               <h3 style={{ color: 'var(--text-primary)' }}>Dynamic Neural Generation</h3>
               <p>
@@ -54,12 +47,7 @@ export default function Home() {
               </p>
             </div>
 
-            <div className="bento-item bento-small tilt-card holo-card" onMouseMove={(e) => {
-              const rect = e.currentTarget.getBoundingClientRect();
-              const x = e.clientX - rect.left;
-              const y = e.clientY - rect.top;
-              e.currentTarget.style.transform = `rotateX(${(rect.height/2 - y)/10}deg) rotateY(${(x - rect.width/2)/10}deg)`;
-            }} onMouseLeave={(e) => e.currentTarget.style.transform = 'rotateX(0) rotateY(0)'}>
+            <div className="bento-item bento-small holo-card">
               <div className="bento-icon" style={{ background: 'rgba(0, 240, 255, 0.1)', color: 'var(--accent-cyan)' }}>🛡️</div>
               <h3>TEE Execution</h3>
               <p>
@@ -67,12 +55,7 @@ export default function Home() {
               </p>
             </div>
 
-            <div className="bento-item bento-small tilt-card holo-card" onMouseMove={(e) => {
-              const rect = e.currentTarget.getBoundingClientRect();
-              const x = e.clientX - rect.left;
-              const y = e.clientY - rect.top;
-              e.currentTarget.style.transform = `rotateX(${(rect.height/2 - y)/10}deg) rotateY(${(x - rect.width/2)/10}deg)`;
-            }} onMouseLeave={(e) => e.currentTarget.style.transform = 'rotateX(0) rotateY(0)'}>
+            <div className="bento-item bento-small holo-card">
               <div className="bento-icon" style={{ background: 'rgba(157, 78, 221, 0.1)', color: 'var(--accent-purple)' }}>⛓️</div>
               <h3>On-Chain State</h3>
               <p>
@@ -80,12 +63,7 @@ export default function Home() {
               </p>
             </div>
 
-            <div className="bento-item bento-medium tilt-card holo-card" onMouseMove={(e) => {
-              const rect = e.currentTarget.getBoundingClientRect();
-              const x = e.clientX - rect.left;
-              const y = e.clientY - rect.top;
-              e.currentTarget.style.transform = `rotateX(${(rect.height/2 - y)/10}deg) rotateY(${(x - rect.width/2)/10}deg)`;
-            }} onMouseLeave={(e) => e.currentTarget.style.transform = 'rotateX(0) rotateY(0)'}>
+            <div className="bento-item bento-medium holo-card">
               <div className="bento-icon" style={{ background: 'rgba(255, 215, 0, 0.1)', color: 'var(--accent-gold)' }}>🏆</div>
               <h3>Verifiable SBT Certificates</h3>
               <p>
@@ -98,14 +76,7 @@ export default function Home() {
 
         {/* CTA Section */}
         <section className="cta-section" style={{ textAlign: 'center', margin: '5rem 0', perspective: '1000px' }}>
-          <div className="glass-card holo-card tilt-card" 
-            onMouseMove={(e) => {
-              const rect = e.currentTarget.getBoundingClientRect();
-              const x = e.clientX - rect.left;
-              const y = e.clientY - rect.top;
-              e.currentTarget.style.transform = `rotateX(${(rect.height/2 - y)/30}deg) rotateY(${(x - rect.width/2)/30}deg)`;
-            }} 
-            onMouseLeave={(e) => e.currentTarget.style.transform = 'rotateX(0) rotateY(0)'}
+          <div className="glass-card holo-card" 
             style={{ padding: '4rem 2rem', borderRadius: 'var(--radius-lg)', background: 'var(--bg-secondary)', border: '1px solid var(--glass-border)' }}>
             <h2 style={{ fontSize: '3rem', marginBottom: '1rem', fontFamily: 'Space Grotesk' }}>Ready to interface?</h2>
             <p className="text-muted" style={{ marginBottom: '2rem', fontSize: '1.1rem' }}>Initialize your session and connect your neural-link (wallet).</p>
