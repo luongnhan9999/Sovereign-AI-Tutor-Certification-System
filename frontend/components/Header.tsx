@@ -57,6 +57,7 @@ export default function Header() {
         VeriLearn
       </Link>
       <div className="header-nav" style={{ display: 'flex', gap: '2rem', alignItems: 'center' }}>
+        <Link href="/learn" style={{ color: 'var(--text-secondary)', transition: 'color 0.2s', fontWeight: 500, fontSize: '0.9rem' }} onMouseEnter={e => e.currentTarget.style.color = 'var(--accent-cyan)'} onMouseLeave={e => e.currentTarget.style.color = 'var(--text-secondary)'}>Learn / Docs</Link>
         <a href="https://x.com" target="_blank" rel="noreferrer" style={{ color: 'var(--text-secondary)', transition: 'color 0.2s', fontWeight: 500, fontSize: '0.9rem' }} onMouseEnter={e => e.currentTarget.style.color = '#fff'} onMouseLeave={e => e.currentTarget.style.color = 'var(--text-secondary)'}>X (Twitter)</a>
         <a href="https://discord.com" target="_blank" rel="noreferrer" style={{ color: 'var(--text-secondary)', transition: 'color 0.2s', fontWeight: 500, fontSize: '0.9rem' }} onMouseEnter={e => e.currentTarget.style.color = '#fff'} onMouseLeave={e => e.currentTarget.style.color = 'var(--text-secondary)'}>Discord</a>
         <a href="https://ritual.net" target="_blank" rel="noreferrer" style={{ color: 'var(--text-secondary)', transition: 'color 0.2s', fontWeight: 500, fontSize: '0.9rem' }} onMouseEnter={e => e.currentTarget.style.color = '#fff'} onMouseLeave={e => e.currentTarget.style.color = 'var(--text-secondary)'}>Ritual Network</a>
