@@ -98,6 +98,17 @@ a { text-decoration: none; color: inherit; }
   overflow: hidden;
   pointer-events: none;
   background-color: var(--bg-primary);
+  background-image: 
+    linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+  background-size: 50px 50px;
+  background-position: center center;
+  animation: gridMove 20s linear infinite;
+}
+
+@keyframes gridMove {
+  0% { background-position: 0 0; }
+  100% { background-position: 50px 50px; }
 }
 
 .ambient-background::before,
@@ -369,7 +380,7 @@ a { text-decoration: none; color: inherit; }
   padding: 2.5rem;
   position: relative;
   overflow: hidden;
-  transition: var(--transition-normal);
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   display: flex;
   flex-direction: column;
   backdrop-filter: blur(24px);
@@ -378,10 +389,11 @@ a { text-decoration: none; color: inherit; }
 }
 
 .bento-item:hover {
-  background: var(--glass-hover);
-  border-color: rgba(255, 255, 255, 0.1);
-  transform: translateY(-2px);
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+  background: var(--glass-active);
+  border-color: var(--accent-cyan);
+  transform: translateY(-5px) scale(1.02);
+  box-shadow: 0 15px 40px rgba(0, 229, 255, 0.2), inset 0 0 20px rgba(0, 229, 255, 0.05);
+  z-index: 10;
 }
 
 .bento-item::after {
