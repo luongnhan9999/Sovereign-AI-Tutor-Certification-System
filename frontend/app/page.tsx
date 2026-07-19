@@ -14,9 +14,17 @@ export default function Home() {
           <h1 className="hero-title" style={{ marginTop: '1rem' }}>
             The Future of <br/> <span className="gradient-text">Verifiable Learning</span>
           </h1>
-          <p className="hero-subtitle typing-text" style={{ color: 'var(--accent-cyan)' }}>
-            Initializing Neural Network... establishing secure TEE connection.
-          </p>
+          <div style={{ display: 'flex', gap: '2rem', marginBottom: '3rem', marginTop: '1rem', flexWrap: 'wrap', justifyContent: 'center' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', background: 'var(--glass-bg)', padding: '0.5rem 1rem', borderRadius: '100px', border: '1px solid var(--glass-border)' }}>
+              <span style={{ width: '8px', height: '8px', background: 'var(--accent-cyan)', borderRadius: '50%', boxShadow: '0 0 10px var(--accent-cyan)' }}></span>
+              <span style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>Secured by Ritual TEE</span>
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', background: 'var(--glass-bg)', padding: '0.5rem 1rem', borderRadius: '100px', border: '1px solid var(--glass-border)' }}>
+              <span style={{ width: '8px', height: '8px', background: 'var(--accent-lime)', borderRadius: '50%', boxShadow: '0 0 10px var(--accent-lime)' }}></span>
+              <span style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>2,408 Active Nodes</span>
+            </div>
+          </div>
+          
           <p className="hero-subtitle" style={{ color: 'var(--text-secondary)' }}>
             An autonomous on‑chain AI tutor that creates personalized quizzes, evaluates your answers in a Trusted Execution Environment, and issues cryptographically verifiable ERC‑721 certificates.
           </p>
@@ -38,7 +46,7 @@ export default function Home() {
         <section id="features" style={{ perspective: '1000px' }}>
           <div className="bento-grid">
             
-            <div className="bento-item bento-large">
+            <div className="bento-item bento-medium">
               <div className="bento-icon" style={{ background: 'rgba(247, 37, 133, 0.05)', color: 'var(--accent-magenta)' }}>🧠</div>
               <h3 style={{ color: 'var(--text-primary)' }}>Dynamic Neural Generation</h3>
               <p>
@@ -46,7 +54,7 @@ export default function Home() {
               </p>
             </div>
 
-            <div className="bento-item bento-small">
+            <div className="bento-item bento-medium">
               <div className="bento-icon" style={{ background: 'rgba(0, 240, 255, 0.05)', color: 'var(--accent-cyan)' }}>🛡️</div>
               <h3>TEE Execution</h3>
               <p>
@@ -54,7 +62,7 @@ export default function Home() {
               </p>
             </div>
 
-            <div className="bento-item bento-small">
+            <div className="bento-item bento-medium">
               <div className="bento-icon" style={{ background: 'rgba(157, 78, 221, 0.05)', color: 'var(--accent-purple)' }}>⛓️</div>
               <h3>On-Chain State</h3>
               <p>
@@ -73,12 +81,18 @@ export default function Home() {
           </div>
         </section>
 
-        <section className="cta-section" style={{ textAlign: 'center', margin: '5rem 0', perspective: '1000px' }}>
+        <section className="cta-section" style={{ margin: '8rem 0', perspective: '1000px' }}>
           <div className="glass-card" 
-            style={{ padding: '4rem 2rem', borderRadius: 'var(--radius-lg)', background: 'var(--glass-bg)', border: '1px solid var(--glass-border)', backdropFilter: 'blur(24px)' }}>
-            <h2 style={{ fontSize: '3rem', marginBottom: '1rem', fontFamily: 'Space Grotesk' }}>Ready to interface?</h2>
-            <p className="text-muted" style={{ marginBottom: '2rem', fontSize: '1.1rem' }}>Initialize your session and connect your neural-link (wallet).</p>
-            <Link href="/dashboard" className="btn-primary" style={{ fontSize: '1.2rem', padding: '1rem 2rem' }}>
+            style={{ 
+              padding: '4rem 4rem', borderRadius: 'var(--radius-lg)', background: 'var(--glass-bg)', 
+              border: '1px solid var(--glass-border)', backdropFilter: 'blur(24px)',
+              display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '2rem', flexWrap: 'wrap'
+            }}>
+            <div>
+              <h2 style={{ fontSize: '3rem', marginBottom: '0.5rem', fontFamily: 'Space Grotesk' }}>Ready to interface?</h2>
+              <p className="text-muted" style={{ fontSize: '1.1rem', margin: 0 }}>Initialize your session and connect your neural-link (wallet).</p>
+            </div>
+            <Link href="/dashboard" className="btn-primary" style={{ fontSize: '1.2rem', padding: '1rem 2rem', whiteSpace: 'nowrap' }}>
               Initialize Sequence
             </Link>
           </div>
