@@ -88,7 +88,7 @@ export default function Dashboard() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [newBadgePopup, setNewBadgePopup] = useState<{name: string, icon: string, color: string} | null>(null);
   const [historyTab, setHistoryTab] = useState<'history' | 'leaderboard'>('history');
-  const [botPlayers, setBotPlayers] = useState<{address: string, score: number, isUser?: boolean, type?: string}>([
+  const [botPlayers, setBotPlayers] = useState<{address: string, score: number, isUser?: boolean, type?: string}[]>([
     { address: 'vitalik.eth', score: 185, type: 'human' },
     { address: 'NeuralNode_8F', score: 142, type: 'node' },
     { address: 'ritual_validator.eth', score: 98, type: 'human' },
