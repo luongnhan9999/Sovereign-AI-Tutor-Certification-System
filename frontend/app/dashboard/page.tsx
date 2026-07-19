@@ -414,7 +414,7 @@ export default function Dashboard() {
           </div>
         </aside>
 
-        <section className="main-content">
+        <section className="workspace" style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
           {selectedCourse ? (
             <div className="glass-card study-room">
               <h2 style={{ fontSize: '1.5rem', marginBottom: '1.5rem' }}>
@@ -441,7 +441,7 @@ export default function Dashboard() {
                 
                 return quizId && currentQ ? (
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginTop: '2rem' }}>
-                    <div className="quiz-card holo-card" 
+                    <div className="quiz-card glass-card" 
                       style={{ padding: '2rem', background: 'var(--bg-secondary)', border: '1px solid var(--glass-border)', borderRadius: 'var(--radius-md)', zIndex: 10 }}>
                       <span className="quiz-label" style={{ fontSize: '0.8rem', color: 'var(--accent-magenta)', textTransform: 'uppercase', fontWeight: 700, letterSpacing: '0.05em' }}>Active Connection (Ritual Network)</span>
                       <p className="quiz-question" style={{ marginTop: '1rem', fontSize: '1.2rem', lineHeight: '1.6', fontWeight: 500 }}>
@@ -511,7 +511,7 @@ export default function Dashboard() {
               })()}
 
               {progress.completed >= 10 && (
-                <div className="holo-card" 
+                <div className="glass-card" 
                   style={{ marginTop: '2rem', padding: '2rem', background: 'linear-gradient(135deg, rgba(247, 37, 133, 0.15) 0%, rgba(157, 78, 221, 0.15) 100%)', border: '1px solid rgba(247, 37, 133, 0.3)', borderRadius: 'var(--radius-md)', textAlign: 'center', boxShadow: '0 0 30px rgba(247, 37, 133, 0.15)' }}>
                   <div style={{ fontSize: '4rem', marginBottom: '1rem', filter: 'drop-shadow(0 0 20px rgba(247, 37, 133, 0.8))' }}>📜</div>
                   <h3 style={{ color: '#fff', marginBottom: '0.5rem', fontSize: '1.5rem', fontWeight: 700, textShadow: '0 2px 15px rgba(247, 37, 133, 0.8)' }}>VeriLearn TCERT NFT</h3>
@@ -530,8 +530,30 @@ export default function Dashboard() {
             </div>
           )}
         </section>
-        <section className="leaderboard-container">
-          <div style={{ height: '100%', minHeight: '500px', display: 'flex', flexDirection: 'column' }}>
+
+        <aside className="telemetry-sidebar" style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+          <div className="glass-card" style={{ padding: '1.5rem', background: 'var(--glass-bg)', border: '1px solid var(--glass-border)', borderRadius: 'var(--radius-md)' }}>
+            <h4 style={{ color: 'var(--accent-cyan)', marginBottom: '1rem', fontFamily: 'Space Grotesk', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <span className="brand-dot" style={{ animation: 'pulse 2s infinite', background: 'var(--accent-cyan)', boxShadow: '0 0 10px var(--accent-cyan)' }}></span>
+              System Telemetry
+            </h4>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', fontSize: '0.9rem' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <span className="text-muted">Active Nodes:</span>
+                <span style={{ color: 'var(--text-primary)', fontFamily: 'monospace' }}>2,408</span>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <span className="text-muted">Network Latency:</span>
+                <span style={{ color: 'var(--accent-lime)', fontFamily: 'monospace' }}>12ms</span>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <span className="text-muted">TEE Status:</span>
+                <span style={{ color: 'var(--accent-cyan)', fontWeight: 'bold' }}>SECURE</span>
+              </div>
+            </div>
+          </div>
+
+          <div style={{ height: '100%', minHeight: '500px', display: 'flex', flexDirection: 'column', background: 'var(--glass-bg)', border: '1px solid var(--glass-border)', borderRadius: 'var(--radius-md)' }}>
             <div className="leaderboard-header">
               <div className="tabs">
                 <button 
@@ -614,39 +636,13 @@ export default function Dashboard() {
                           </div>
                         </div>
                       ))}
-                      
-                      {/* Telemetry Widget */}
-                      <div className="holo-card tilt-card" style={{ marginTop: '2rem', padding: '1.5rem', background: 'rgba(0,0,0,0.4)', border: '1px solid var(--glass-border)', borderRadius: 'var(--radius-md)' }}>
-                        <h4 style={{ color: 'var(--accent-cyan)', marginBottom: '1rem', fontFamily: 'Space Grotesk', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                          <span className="brand-dot" style={{ animation: 'pulse 2s infinite' }}></span>
-                          System Telemetry
-                        </h4>
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', fontSize: '0.9rem' }}>
-                          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                            <span className="text-muted">Active Nodes:</span>
-                            <span style={{ color: '#fff', fontFamily: 'monospace' }}>2,408</span>
-                          </div>
-                          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                            <span className="text-muted">Network Latency:</span>
-                            <span style={{ color: '#a3e635', fontFamily: 'monospace' }}>12ms</span>
-                          </div>
-                          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                            <span className="text-muted">TEE Status:</span>
-                            <span style={{ color: 'var(--accent-magenta)', fontWeight: 'bold' }}>SECURE</span>
-                          </div>
-                          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                            <span className="text-muted">Last Block:</span>
-                            <span style={{ color: '#fff', fontFamily: 'monospace' }}>18,452,901</span>
-                          </div>
-                        </div>
-                      </div>
                     </>
                   );
                 })()}
               </div>
             )}
           </div>
-        </section>
+        </aside>
       </main>
     </div>
   );

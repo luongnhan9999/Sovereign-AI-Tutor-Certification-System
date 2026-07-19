@@ -15,14 +15,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" className={inter.className}>
       <body className="app-body">
-        {/* Animated Background */}
-        <div className="bg-animation">
-          <div className="bg-orb bg-orb-1"></div>
-          <div className="bg-orb bg-orb-2"></div>
-          <div className="bg-orb bg-orb-3"></div>
-        </div>
-        <div className="bg-grid"></div>
-        <div className="bg-particles"></div>
+        {/* Ambient Mesh Background */}
+        <div className="ambient-background"></div>
 
         <Header />
         {children}
