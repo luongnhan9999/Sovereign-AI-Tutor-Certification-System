@@ -35,10 +35,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           flexWrap: 'wrap',
           gap: '1rem'
         }}>
-          <div style={{ display: 'flex', gap: '2rem', alignItems: 'center' }}>
-            <a href="/terms" style={{ color: 'var(--text-secondary)', textDecoration: 'none', fontSize: '0.9rem', transition: 'color 0.2s' }} onMouseEnter={e => e.currentTarget.style.color = 'var(--text-primary)'} onMouseLeave={e => e.currentTarget.style.color = 'var(--text-secondary)'}>Terms of Service</a>
-            <a href="/privacy" style={{ color: 'var(--text-secondary)', textDecoration: 'none', fontSize: '0.9rem', transition: 'color 0.2s' }} onMouseEnter={e => e.currentTarget.style.color = 'var(--text-primary)'} onMouseLeave={e => e.currentTarget.style.color = 'var(--text-secondary)'}>Privacy Policy</a>
-            <a href="https://docs.ritual.net" target="_blank" rel="noreferrer" style={{ color: 'var(--text-secondary)', textDecoration: 'none', fontSize: '0.9rem', transition: 'color 0.2s' }} onMouseEnter={e => e.currentTarget.style.color = 'var(--text-primary)'} onMouseLeave={e => e.currentTarget.style.color = 'var(--text-secondary)'}>Documentation</a>
+          <div className="footer-links" style={{ display: 'flex', gap: '2rem', alignItems: 'center' }}>
+            <a href="/terms" style={{ fontSize: '0.9rem' }}>Terms of Service</a>
+            <a href="/privacy" style={{ fontSize: '0.9rem' }}>Privacy Policy</a>
+            <a href="https://docs.ritual.net" target="_blank" rel="noreferrer" style={{ fontSize: '0.9rem' }}>Documentation</a>
           </div>
           <div style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', fontWeight: 500 }}>
             © {new Date().getFullYear()} VeriLearn. Secured by Ritual TEE.
