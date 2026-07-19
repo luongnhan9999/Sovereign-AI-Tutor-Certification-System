@@ -442,12 +442,17 @@ a { text-decoration: none; color: inherit; }
 }
 
 /* ─── Dashboard Pro UI ─── */
+.dashboard-container {
+  padding: 100px 2% 2rem;
+  max-width: 1600px;
+  margin: 0 auto;
+}
+
 .dashboard-grid {
   display: grid;
   grid-template-columns: 280px 1fr 350px;
   gap: 1.5rem;
   min-height: calc(100vh - 120px);
-  padding-top: 100px;
 }
 
 @media (max-width: 1400px) {

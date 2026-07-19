@@ -4,7 +4,7 @@ import Link from 'next/link';
 
 export default function LearnPage() {
   return (
-    <div className="dashboard-container" style={{ minHeight: '80vh', padding: '4rem 5%', maxWidth: '1200px', margin: '0 auto' }}>
+    <div className="dashboard-container" style={{ minHeight: '80vh', padding: '100px 5%', maxWidth: '1200px', margin: '0 auto' }}>
       <div style={{ marginBottom: '3rem' }}>
         <h1 style={{ fontFamily: 'Space Grotesk', fontSize: '3rem', fontWeight: 700, marginBottom: '1rem' }}>
           Learning <span className="text-gradient">Resources</span>
