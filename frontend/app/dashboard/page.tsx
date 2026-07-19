@@ -462,34 +462,47 @@ export default function Dashboard() {
 
         <section className="workspace" style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
           {selectedCourse ? (
-            <div className="glass-card study-room">
-              <h2 style={{ fontSize: '1.5rem', marginBottom: '1.5rem' }}>
-                {courses.find(c => c.id === selectedCourse)?.name}
-              </h2>
+            (() => {
+              const courseObj = courses.find(c => c.id === selectedCourse);
+              const courseName = courseObj?.name || "Introduction to VeriLearn";
+              const questions = COURSE_QUESTIONS[courseName] || COURSE_QUESTIONS["Introduction to VeriLearn"];
+              const totalQuestions = questions.length;
+              const isCompleted = progress.completed >= totalQuestions;
+              const currentQIndex = quizId && quizId.split('-').length > 4 ? parseInt(quizId.split('-')[4]) : 0;
+              const currentQ = quizId ? questions[currentQIndex] : null;
               
-              <div className="progress-bar-container">
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem', fontSize: '0.85rem', color: 'var(--text-muted)' }}>
-                  <span>Progress: {progress.completed} Quizzes Completed</span>
-                </div>
-              </div>
+              return (
+                <div className="glass-card study-room">
+                  <h2 style={{ fontSize: '1.5rem', marginBottom: '1.5rem' }}>
+                    {courseName}
+                  </h2>
+                  
+                  <div className="progress-bar-container">
+                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem', fontSize: '0.85rem', color: 'var(--text-muted)' }}>
+                      <span>Progress: {progress.completed} of {totalQuestions} Quizzes Completed</span>
+                    </div>
+                  </div>
 
-              {!quizId && (
-                <button className="btn btn-primary" style={{ width: '100%', marginTop: '2rem' }} onClick={() => requestQuiz(true)} disabled={isSubmitting}>
-                  {isSubmitting ? "Processing..." : progress.completed === 0 ? "Start Course" : "Request Next Quiz"}
-                </button>
-              )}
+                  {!quizId && !isCompleted && (
+                    <button className="btn btn-primary" style={{ width: '100%', marginTop: '2rem' }} onClick={() => requestQuiz(true)} disabled={isSubmitting}>
+                      {isSubmitting ? "Processing..." : progress.completed === 0 ? "Start Course" : "Request Next Quiz"}
+                    </button>
+                  )}
 
-              {(() => {
-                const courseObj = courses.find(c => c.id === selectedCourse);
-                const courseName = courseObj?.name || "Introduction to VeriLearn";
-                const questions = COURSE_QUESTIONS[courseName] || COURSE_QUESTIONS["Introduction to VeriLearn"];
-                const currentQ = quizId && quizId.split('-').length > 4 ? questions[parseInt(quizId.split('-')[4])] : null;
-                
-                return quizId && currentQ ? (
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginTop: '2rem' }}>
-                    <div className="quiz-card glass-card" 
-                      style={{ padding: '2rem', background: 'var(--bg-secondary)', border: '1px solid var(--glass-border)', borderRadius: 'var(--radius-md)', zIndex: 10 }}>
-                      <span className="quiz-label" style={{ fontSize: '0.8rem', color: 'var(--accent-magenta)', textTransform: 'uppercase', fontWeight: 700, letterSpacing: '0.05em' }}>Active Connection (Ritual Network)</span>
+                  {!quizId && isCompleted && (
+                    <div style={{ marginTop: '2rem', padding: '1.5rem', background: 'rgba(132, 204, 22, 0.1)', border: '1px solid var(--accent-lime)', borderRadius: 'var(--radius-md)', textAlign: 'center' }}>
+                      <h3 style={{ color: 'var(--accent-lime)', marginBottom: '0.5rem' }}>Module Completed! 🎉</h3>
+                      <p style={{ color: 'var(--text-secondary)' }}>You have answered all {totalQuestions} questions for this module. Please select another module from the sidebar to continue learning.</p>
+                    </div>
+                  )}
+
+                  {quizId && currentQ && (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginTop: '2rem' }}>
+                      <div className="quiz-card glass-card" 
+                        style={{ padding: '2rem', background: 'var(--bg-secondary)', border: '1px solid var(--glass-border)', borderRadius: 'var(--radius-md)', zIndex: 10 }}>
+                        <span className="quiz-label" style={{ fontSize: '0.8rem', color: 'var(--accent-magenta)', textTransform: 'uppercase', fontWeight: 700, letterSpacing: '0.05em' }}>
+                          Active Connection (Ritual Network) — Question {currentQIndex + 1} of {totalQuestions}
+                        </span>
                       <p className="quiz-question" style={{ marginTop: '1rem', fontSize: '1.2rem', lineHeight: '1.6', fontWeight: 500 }}>
                         {currentQ.q}
                       </p>
@@ -533,9 +546,8 @@ export default function Dashboard() {
                       {isSubmitting ? "Submitting..." : "Submit Answer"}
                     </button>
                   </div>
-                ) : null;
-              })()}
-              
+                )}
+                
               {(() => {
                 let badge = null;
                 if (progress.completed >= 201) badge = { name: "Diamond Badge", icon: "💎", color: "#00d2ff", bg: "rgba(0, 210, 255, 0.1)" };
@@ -570,6 +582,8 @@ export default function Dashboard() {
                 </div>
               )}
             </div>
+            );
+          })()
           ) : (
             <div className="glass-card" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', minHeight: '300px', color: 'var(--text-muted)' }}>
               Select a course to start learning
