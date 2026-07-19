@@ -286,6 +286,20 @@ export default function Dashboard() {
         return newQ;
       });
 
+      if (isCorrect) {
+        // Fire confetti
+        for (let i = 0; i < 30; i++) {
+          const confetti = document.createElement('div');
+          confetti.classList.add('confetti');
+          confetti.style.left = '50%';
+          confetti.style.top = '50%';
+          confetti.style.setProperty('--tx', `${(Math.random() - 0.5) * 300}px`);
+          confetti.style.setProperty('--ty', `${(Math.random() - 0.5) * 300}px`);
+          document.body.appendChild(confetti);
+          setTimeout(() => confetti.remove(), 1500);
+        }
+      }
+
       const oldCompleted = progress.completed;
       const newProg = await fetchProgress();
       setQuizId('');
@@ -427,9 +441,17 @@ export default function Dashboard() {
                 
                 return quizId && currentQ ? (
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginTop: '2rem' }}>
-                    <div className="quiz-card" style={{ padding: '1.5rem', background: 'var(--bg-secondary)', border: '1px solid var(--glass-border)', borderRadius: 'var(--radius-md)' }}>
-                      <span className="quiz-label" style={{ fontSize: '0.8rem', color: 'var(--accent-blue)', textTransform: 'uppercase', fontWeight: 600 }}>Active Quiz (Ritual Network)</span>
-                      <p className="quiz-question" style={{ marginTop: '1rem', fontSize: '1.1rem', lineHeight: '1.6', fontWeight: 500 }}>
+                    <div className="quiz-card tilt-card holo-card" 
+                      onMouseMove={(e) => {
+                        const rect = e.currentTarget.getBoundingClientRect();
+                        const x = e.clientX - rect.left;
+                        const y = e.clientY - rect.top;
+                        e.currentTarget.style.transform = `rotateX(${(rect.height/2 - y)/40}deg) rotateY(${(x - rect.width/2)/40}deg)`;
+                      }} 
+                      onMouseLeave={(e) => e.currentTarget.style.transform = 'rotateX(0) rotateY(0)'}
+                      style={{ padding: '2rem', background: 'var(--bg-secondary)', border: '1px solid var(--glass-border)', borderRadius: 'var(--radius-md)', zIndex: 10 }}>
+                      <span className="quiz-label" style={{ fontSize: '0.8rem', color: 'var(--accent-magenta)', textTransform: 'uppercase', fontWeight: 700, letterSpacing: '0.05em' }}>Active Connection (Ritual Network)</span>
+                      <p className="quiz-question" style={{ marginTop: '1rem', fontSize: '1.2rem', lineHeight: '1.6', fontWeight: 500 }}>
                         {currentQ.q}
                       </p>
                       
@@ -496,14 +518,22 @@ export default function Dashboard() {
               })()}
 
               {progress.completed >= 10 && (
-                <div style={{ marginTop: '2rem', padding: '2rem', background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.15) 0%, rgba(236, 72, 153, 0.15) 100%)', border: '1px solid rgba(236, 72, 153, 0.3)', borderRadius: 'var(--radius-md)', textAlign: 'center', boxShadow: '0 0 20px rgba(236, 72, 153, 0.1)' }}>
-                  <div style={{ fontSize: '4rem', marginBottom: '1rem', filter: 'drop-shadow(0 0 15px rgba(236, 72, 153, 0.6))' }}>📜</div>
-                  <h3 style={{ color: '#fff', marginBottom: '0.5rem', fontSize: '1.5rem', fontWeight: 700, textShadow: '0 2px 10px rgba(236, 72, 153, 0.5)' }}>VeriLearn TCERT NFT</h3>
+                <div className="holo-card tilt-card" 
+                  onMouseMove={(e) => {
+                    const rect = e.currentTarget.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+                    e.currentTarget.style.transform = `rotateX(${(rect.height/2 - y)/20}deg) rotateY(${(x - rect.width/2)/20}deg)`;
+                  }} 
+                  onMouseLeave={(e) => e.currentTarget.style.transform = 'rotateX(0) rotateY(0)'}
+                  style={{ marginTop: '2rem', padding: '2rem', background: 'linear-gradient(135deg, rgba(247, 37, 133, 0.15) 0%, rgba(157, 78, 221, 0.15) 100%)', border: '1px solid rgba(247, 37, 133, 0.3)', borderRadius: 'var(--radius-md)', textAlign: 'center', boxShadow: '0 0 30px rgba(247, 37, 133, 0.15)' }}>
+                  <div style={{ fontSize: '4rem', marginBottom: '1rem', filter: 'drop-shadow(0 0 20px rgba(247, 37, 133, 0.8))' }}>📜</div>
+                  <h3 style={{ color: '#fff', marginBottom: '0.5rem', fontSize: '1.5rem', fontWeight: 700, textShadow: '0 2px 15px rgba(247, 37, 133, 0.8)' }}>VeriLearn TCERT NFT</h3>
                   {(() => {
-                    if (progress.completed >= 201) return <p style={{ color: '#fbcfe8', fontWeight: 600 }}>💎 Diamond Tier Reached! Your NFT Certificate has been auto-minted to your wallet as proof of mastery.</p>;
-                    if (progress.completed >= 101) return <p style={{ color: '#fbcfe8' }}>🥇 Gold Tier Reached! Just {201 - progress.completed} more correct answers to Diamond tier to automatically mint this exclusive NFT Certificate.</p>;
-                    if (progress.completed >= 51) return <p style={{ color: '#fbcfe8' }}>🥈 Silver Tier Reached! Just {201 - progress.completed} more correct answers to Diamond tier to automatically mint this exclusive NFT Certificate.</p>;
-                    return <p style={{ color: '#fbcfe8' }}>🥉 Bronze Tier Reached! Just {201 - progress.completed} more correct answers to Diamond tier to automatically mint this exclusive NFT Certificate.</p>;
+                    if (progress.completed >= 201) return <p style={{ color: '#ffb3c6', fontWeight: 600 }}>💎 Diamond Tier Reached! Your NFT Certificate has been auto-minted to your wallet as proof of mastery.</p>;
+                    if (progress.completed >= 101) return <p style={{ color: '#ffb3c6' }}>🥇 Gold Tier Reached! Just {201 - progress.completed} more correct answers to Diamond tier to automatically mint this exclusive NFT Certificate.</p>;
+                    if (progress.completed >= 51) return <p style={{ color: '#ffb3c6' }}>🥈 Silver Tier Reached! Just {201 - progress.completed} more correct answers to Diamond tier to automatically mint this exclusive NFT Certificate.</p>;
+                    return <p style={{ color: '#ffb3c6' }}>🥉 Bronze Tier Reached! Just {201 - progress.completed} more correct answers to Diamond tier to automatically mint this exclusive NFT Certificate.</p>;
                   })()}
                 </div>
               )}
@@ -573,17 +603,47 @@ export default function Dashboard() {
                   }
                   allPlayers.sort((a, b) => b.score - a.score);
                   
-                  return allPlayers.slice(0, 10).map((player, idx) => (
-                    <div key={idx} className={`lb-item ${player.isUser ? 'is-user' : ''}`}>
-                      <div className="lb-rank">#{idx + 1}</div>
-                      <div className="lb-address">
-                        {player.isUser ? player.address + ' (You)' : player.address}
+                  return (
+                    <>
+                      {allPlayers.slice(0, 10).map((player, idx) => (
+                        <div key={idx} className={`lb-item ${player.isUser ? 'is-user' : ''}`}>
+                          <div className="lb-rank">#{idx + 1}</div>
+                          <div className="lb-address">
+                            {player.isUser ? player.address + ' (You)' : player.address}
+                          </div>
+                          <div className="lb-score">
+                            {player.score} <span style={{ fontSize: '0.8rem', fontWeight: 'normal', color: 'var(--text-muted)' }}>pts</span>
+                          </div>
+                        </div>
+                      ))}
+                      
+                      {/* Telemetry Widget */}
+                      <div className="holo-card tilt-card" style={{ marginTop: '2rem', padding: '1.5rem', background: 'rgba(0,0,0,0.4)', border: '1px solid var(--glass-border)', borderRadius: 'var(--radius-md)' }}>
+                        <h4 style={{ color: 'var(--accent-cyan)', marginBottom: '1rem', fontFamily: 'Space Grotesk', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                          <span className="brand-dot" style={{ animation: 'pulse 2s infinite' }}></span>
+                          System Telemetry
+                        </h4>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', fontSize: '0.9rem' }}>
+                          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                            <span className="text-muted">Active Nodes:</span>
+                            <span style={{ color: '#fff', fontFamily: 'monospace' }}>2,408</span>
+                          </div>
+                          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                            <span className="text-muted">Network Latency:</span>
+                            <span style={{ color: '#a3e635', fontFamily: 'monospace' }}>12ms</span>
+                          </div>
+                          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                            <span className="text-muted">TEE Status:</span>
+                            <span style={{ color: 'var(--accent-magenta)', fontWeight: 'bold' }}>SECURE</span>
+                          </div>
+                          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                            <span className="text-muted">Last Block:</span>
+                            <span style={{ color: '#fff', fontFamily: 'monospace' }}>18,452,901</span>
+                          </div>
+                        </div>
                       </div>
-                      <div className="lb-score">
-                        {player.score} <span style={{ fontSize: '0.8rem', fontWeight: 'normal', color: 'var(--text-muted)' }}>pts</span>
-                      </div>
-                    </div>
-                  ));
+                    </>
+                  );
                 })()}
               </div>
             )}

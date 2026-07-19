@@ -6,35 +6,38 @@
 
 :root {
   /* Core Colors */
-  --bg-primary: #000000;
-  --bg-secondary: #050505;
-  --bg-tertiary: #0a0a0a;
+  --bg-primary: #030305;
+  --bg-secondary: #08080a;
+  --bg-tertiary: #111115;
   
   /* Text Colors */
-  --text-primary: #ffffff;
+  --text-primary: #f0f0f5;
   --text-secondary: #a1a1aa;
   --text-muted: #52525b;
   
-  /* Accents (Cyber Neon) */
+  /* Accents (Obsidian & Plasma) */
   --accent-cyan: #00f0ff;
   --accent-blue: #3b82f6;
-  --accent-purple: #8b5cf6;
-  --accent-lime: #a3e635;
+  --accent-purple: #9d4edd;
+  --accent-magenta: #f72585;
+  --accent-lime: #b5e48c;
+  --accent-gold: #ffd700;
   
   /* Gradients */
-  --gradient-primary: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue));
-  --gradient-purple: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
-  --gradient-glow: linear-gradient(90deg, transparent, rgba(0, 240, 255, 0.4), transparent);
+  --gradient-primary: linear-gradient(135deg, var(--accent-magenta), var(--accent-purple), var(--accent-blue));
+  --gradient-purple: linear-gradient(135deg, var(--accent-purple), var(--accent-cyan));
+  --gradient-glow: linear-gradient(90deg, transparent, rgba(247, 37, 133, 0.4), transparent);
+  --gradient-hologram: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.8) 50%, rgba(255,255,255,0.1) 100%);
   
   /* Glassmorphism */
-  --glass-bg: rgba(255, 255, 255, 0.02);
-  --glass-border: rgba(255, 255, 255, 0.05);
-  --glass-hover: rgba(255, 255, 255, 0.05);
-  --glass-active: rgba(255, 255, 255, 0.08);
+  --glass-bg: rgba(255, 255, 255, 0.03);
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --glass-hover: rgba(255, 255, 255, 0.06);
+  --glass-active: rgba(255, 255, 255, 0.1);
   
   /* Shadows & Glows */
-  --shadow-neon: 0 0 20px rgba(0, 240, 255, 0.15);
-  --shadow-neon-strong: 0 0 40px rgba(0, 240, 255, 0.3);
+  --shadow-neon: 0 0 20px rgba(157, 78, 221, 0.2);
+  --shadow-neon-strong: 0 0 40px rgba(247, 37, 133, 0.4);
   
   /* Geometry */
   --radius-sm: 8px;
@@ -61,6 +64,43 @@ body {
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
   line-height: 1.6;
+  cursor: none; /* Custom cursor */
+}
+
+/* Custom Cursor */
+.custom-cursor {
+  position: fixed;
+  top: 0; left: 0;
+  width: 20px; height: 20px;
+  border-radius: 50%;
+  background: rgba(247, 37, 133, 0.5);
+  box-shadow: 0 0 15px var(--accent-magenta);
+  pointer-events: none;
+  z-index: 9999;
+  transform: translate(-50%, -50%);
+  transition: width 0.2s, height 0.2s, background 0.2s;
+  mix-blend-mode: screen;
+}
+
+.custom-cursor.active {
+  width: 40px; height: 40px;
+  background: rgba(0, 240, 255, 0.3);
+  box-shadow: 0 0 20px var(--accent-cyan);
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg-secondary);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--glass-border);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255,255,255,0.2);
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -79,8 +119,27 @@ a { text-decoration: none; color: inherit; }
   z-index: -1;
   overflow: hidden;
   pointer-events: none;
-  background: radial-gradient(circle at 50% 0%, rgba(59, 130, 246, 0.1) 0%, transparent 50%),
-              radial-gradient(circle at 100% 100%, rgba(139, 92, 246, 0.08) 0%, transparent 50%);
+  background: radial-gradient(circle at 10% 20%, rgba(157, 78, 221, 0.15) 0%, transparent 40%),
+              radial-gradient(circle at 90% 80%, rgba(247, 37, 133, 0.12) 0%, transparent 40%);
+}
+
+.bg-particles {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-image: 
+    radial-gradient(var(--accent-cyan) 1px, transparent 1px),
+    radial-gradient(var(--accent-magenta) 1px, transparent 1px);
+  background-size: 100px 100px;
+  background-position: 0 0, 50px 50px;
+  opacity: 0.15;
+  animation: floatParticles 60s linear infinite;
+}
+
+@keyframes floatParticles {
+  0% { transform: translateY(0) rotate(0deg); }
+  100% { transform: translateY(-100px) rotate(5deg); }
 }
 
 .bg-grid {
@@ -798,4 +857,78 @@ a { text-decoration: none; color: inherit; }
 
 @keyframes spin {
   to { transform: rotate(360deg); }
+}
+
+/* ─── Phase 3: Holographic & 3D Cards ─── */
+.tilt-card {
+  transform-style: preserve-3d;
+  transition: transform 0.1s ease-out;
+  perspective: 1000px;
+}
+
+.holo-card {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--radius-md);
+  background: var(--bg-secondary);
+  border: 1px solid rgba(255,255,255,0.1);
+}
+
+.holo-card::before {
+  content: "";
+  position: absolute;
+  inset: -50%;
+  background: var(--gradient-hologram);
+  transform: rotate(45deg);
+  opacity: 0;
+  transition: opacity 0.3s, transform 0.5s;
+  pointer-events: none;
+  mix-blend-mode: color-dodge;
+}
+
+.holo-card:hover::before {
+  opacity: 0.8;
+  animation: holoSweep 2s infinite linear;
+}
+
+@keyframes holoSweep {
+  0% { transform: rotate(45deg) translateY(-100%); }
+  100% { transform: rotate(45deg) translateY(100%); }
+}
+
+/* ─── Confetti Particles ─── */
+.confetti {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  background: var(--accent-magenta);
+  border-radius: 50%;
+  box-shadow: 0 0 10px var(--accent-magenta);
+  animation: confettiFall 1.5s ease-out forwards;
+  pointer-events: none;
+  z-index: 1000;
+}
+
+@keyframes confettiFall {
+  0% { transform: translate(0, 0) scale(1); opacity: 1; }
+  100% { transform: translate(var(--tx), var(--ty)) scale(0); opacity: 0; }
+}
+
+/* ─── Typing Effect ─── */
+.typing-text {
+  overflow: hidden;
+  border-right: 2px solid var(--accent-cyan);
+  white-space: nowrap;
+  margin: 0 auto;
+  animation: typing 2.5s steps(40, end), blink-caret 0.75s step-end infinite;
+}
+
+@keyframes typing {
+  from { width: 0 }
+  to { width: 100% }
+}
+
+@keyframes blink-caret {
+  from, to { border-color: transparent }
+  50% { border-color: var(--accent-cyan) }
 }
