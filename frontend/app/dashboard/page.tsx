@@ -502,9 +502,28 @@ export default function Dashboard() {
                   </div>
 
                   {!quizId && !isCompleted && (
-                    <button className="neon-btn" style={{ width: '100%', marginTop: 'auto' }} onClick={() => requestQuiz(true)} disabled={isSubmitting}>
-                      {isSubmitting ? "Syncing..." : progress.completed === 0 ? "Initialize Link" : "Access Next Node"}
-                    </button>
+                    <>
+                      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center', padding: '2rem', animation: 'fadeIn 0.5s ease-out' }}>
+                        <div style={{ width: '80px', height: '80px', borderRadius: '50%', background: 'rgba(0, 229, 255, 0.1)', border: '2px solid rgba(0, 229, 255, 0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1.5rem', boxShadow: '0 0 30px rgba(0, 229, 255, 0.2)' }}>
+                          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="var(--accent-cyan)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                            <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+                            <polyline points="2 17 12 22 22 17"></polyline>
+                            <polyline points="2 12 12 17 22 12"></polyline>
+                          </svg>
+                        </div>
+                        <h3 style={{ fontSize: '1.4rem', marginBottom: '1rem', color: '#fff', textShadow: '0 0 10px rgba(0,229,255,0.4)' }}>
+                          {progress.completed === 0 ? "Neural Node Ready for Initialization" : "Next Node Sequence Queued"}
+                        </h3>
+                        <p style={{ color: 'var(--text-secondary)', maxWidth: '500px', lineHeight: '1.6', fontSize: '0.95rem' }}>
+                          {progress.completed === 0 
+                            ? `You are about to enter the "${courseName}" sector. Prepare your local node to synchronize data and validate neural computations. Click the button below when ready.`
+                            : `You have successfully validated ${progress.completed} nodes. The next node in the sequence is ready for interrogation. Proceed to continue.`}
+                        </p>
+                      </div>
+                      <button className="neon-btn" style={{ width: '100%', marginTop: 'auto' }} onClick={() => requestQuiz(true)} disabled={isSubmitting}>
+                        {isSubmitting ? "Syncing..." : progress.completed === 0 ? "Initialize Link" : "Access Next Node"}
+                      </button>
+                    </>
                   )}
 
                   {!quizId && isCompleted && (
